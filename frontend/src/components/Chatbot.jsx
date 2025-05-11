@@ -185,7 +185,7 @@ export default function Chatbot() {
               </div>
             </div>
             <div className="text-center mt-2">
-              <span className="text-xs text-gray-500">Powered by Shortify AI</span>
+              <span className="text-xs text-gray-500">Powered by GroqCloud</span>
             </div>
           </div>
         </div>
