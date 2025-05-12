@@ -69,14 +69,11 @@ export default function Chatbot() {
     }
   }, [isOpen]);
 
-  // Scroll to bottom when new messages are added
   useEffect(() => {
     if (messageContainerRef.current && messages.length > 0) {
       const lastMessage = messages[messages.length - 1];
       
-      // Only auto-scroll for bot messages
       if (lastMessage.sender === 'bot') {
-        // Give DOM time to render the message
         setTimeout(() => {
           const messageElements = messageContainerRef.current.querySelectorAll('[data-message-id]');
           const lastElement = messageElements[messageElements.length - 1];
