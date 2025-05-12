@@ -96,7 +96,7 @@ export default function ShortifyPage() {
                   </div>
                   <div className="flex justify-center">
                     <a href={link}>
-                      <button className="text-white bg-gradient-to-r from-blue-500 to-green-500 py-2 px-6 rounded-lg hover:from-blue-400 hover:to-green-400">{label}</button>
+                      <button className="text-white bg-gradient-to-r from-blue-500 to-green-500 py-2 px-6 rounded-full hover:from-blue-400 hover:to-green-400">{label}</button>
                     </a>
                   </div>
                 </div>
@@ -124,7 +124,7 @@ export default function ShortifyPage() {
               </div>
               <div className="flex justify-center">
                 <a href="/features/shorts-generator">
-                  <button className="mt-4 text-white bg-gradient-to-r from-blue-500 to-green-500 py-2.5 px-7 rounded-lg hover:from-blue-400 hover:to-green-400">Get Started</button>
+                  <button className="mt-4 text-white bg-gradient-to-r from-blue-500 to-indigo-500 py-2.5 px-7 rounded-full hover:from-blue-400 hover:to-green-400">Get Started</button>
                 </a>
               </div>
             </div>
@@ -150,7 +150,7 @@ export default function ShortifyPage() {
               </div>
               <div className="flex justify-center">
                 <a href="/features/summarizer">
-                  <button className="mt-4 text-white bg-gradient-to-r from-purple-500 to-pink-500 py-2.5 px-7 rounded-lg hover:from-purple-400 hover:to-pink-400">Coming Soon</button>
+                  <button className="mt-4 text-white bg-gradient-to-r from-purple-500 to-pink-500 py-2.5 px-7 rounded-full hover:from-purple-400 hover:to-pink-400">Coming Soon</button>
                 </a>
               </div>
             </div>
@@ -176,7 +176,7 @@ export default function ShortifyPage() {
               </div>
               <div className="flex justify-center">
                 <a href="/features/pdf-summarizer">
-                  <button className="mt-4 text-white bg-gradient-to-r from-green-500 to-blue-500 py-2.5 px-7 rounded-lg hover:from-green-400 hover:to-blue-400">Coming Soon</button>
+                  <button className="mt-4 text-white bg-gradient-to-r from-green-500 to-blue-500 py-2.5 px-7 rounded-full hover:from-green-400 hover:to-blue-400">Coming Soon</button>
                 </a>
               </div>
             </div>

@@ -164,7 +164,8 @@ export default function EducatorUseCase() {
          <a href='/features/summarizer'> <button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-medium py-3 px-6 rounded-full transition-all duration-200 shadow-lg hover:shadow-xl flex items-center mx-auto">
             Start Learning
             <ChevronRight className="ml-2 h-5 w-5" />
-          </button> </a>
+          </button>
+          <p className="text-sm px-7 text-gray-500 mt-2">Better now than never.</p> </a>
         </div>
       </div>
     </div>
