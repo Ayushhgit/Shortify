@@ -199,7 +199,7 @@ export default function CreatorsUseCase() {
               </div>
               
               <div className="mt-8">
-                <a href='features/shorts-generator'><button className="bg-gradient-to-r from-indigo-600 to-purple-600   hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-full transition-colors">
+                <a href='/features/shorts-generator'><button className="bg-gradient-to-r from-indigo-600 to-purple-600   hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-full transition-colors">
                   Try Shortify for Free
                 </button> </a>
                 <p className="text-sm px-7 text-gray-500 mt-2">Limited period only.</p>
