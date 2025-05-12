@@ -54,7 +54,6 @@ export default function Chatbot() {
       };
       setMessages((prev) => [...prev, errorMessage]);
     }
-
   };
 
   const handleKeyPress = (e) => {
@@ -70,13 +69,22 @@ export default function Chatbot() {
     }
   }, [isOpen]);
 
+  // Scroll to bottom when new messages are added
   useEffect(() => {
-    const ref = messageContainerRef.current;
-    if (ref) {
-      const { scrollHeight, scrollTop, clientHeight } = ref;
-      const nearBottom = scrollHeight - scrollTop - clientHeight < 100;
-      setShowScrollButton(!nearBottom);
-      if (nearBottom) ref.scrollTop = scrollHeight;
+    if (messageContainerRef.current && messages.length > 0) {
+      const lastMessage = messages[messages.length - 1];
+      
+      // Only auto-scroll for bot messages
+      if (lastMessage.sender === 'bot') {
+        // Give DOM time to render the message
+        setTimeout(() => {
+          const messageElements = messageContainerRef.current.querySelectorAll('[data-message-id]');
+          const lastElement = messageElements[messageElements.length - 1];
+          if (lastElement) {
+            lastElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 50);
+      }
     }
   }, [messages]);
 
@@ -127,6 +135,7 @@ export default function Chatbot() {
             {messages.map((msg) => (
               <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div
+                  data-message-id={msg.id}
                   className={`max-w-[80%] px-4 py-2 rounded-2xl ${
                     msg.sender === 'user'
                       ? 'bg-green-500 text-white rounded-tr-none'
@@ -134,7 +143,7 @@ export default function Chatbot() {
                   }`}
                 >
                   <p className="text-sm">{msg.text}</p>
-                  <span className="text-[10px] block text-right mt-1 text-opacity-70">
+                  <span className="text-[10px] block text-right mt-1 opacity-70">
                     {msg.time}
                   </span>
                 </div>
