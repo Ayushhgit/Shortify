@@ -10,6 +10,7 @@ import ShortsGenerator from "./pages/ShortsGenerator";
 import PdfSummarizer from "./pages/PdfSummarizer";
 import ShortifyPage from "./pages/ShortifyPage";
 import Pricing from "./pages/Pricing";
+import CreatorsUseCase from "./pages/CreatorsUseCase";
 
 const LayoutWrapper = ({ children }) => {
   const location = useLocation();
@@ -36,6 +37,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/pricing" element={<Pricing />} />
+          <Route path="/use-cases/creators" element={<CreatorsUseCase />} />
           <Route path="/shortify" element={<ShortifyPage />} />
           <Route path="/features/summarizer" element={<Summarizer />} />
           <Route path="/features/shorts-generator" element={<ShortsGenerator />} />
