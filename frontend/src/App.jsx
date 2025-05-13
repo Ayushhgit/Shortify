@@ -17,7 +17,13 @@ import CorporateSection from "./pages/CorporateUseCase";
 const LayoutWrapper = ({ children }) => {
   const location = useLocation();
 
-  const hideLayoutPaths = ["/shortify","/features/pdf-summarizer"];
+  // Add all paths where Header and Footer should be hidden
+  const hideLayoutPaths = [
+    "/shortify",
+    "/features/pdf-summarizer",
+    "/features/shorts-generator"
+  ];
+  
   const shouldHideLayout = hideLayoutPaths.includes(location.pathname);
 
   return (
@@ -27,7 +33,7 @@ const LayoutWrapper = ({ children }) => {
         {children}
       </main>
       {!shouldHideLayout && <Footer />}
-      <Chatbot /> 
+      <Chatbot />
     </div>
   );
 };
