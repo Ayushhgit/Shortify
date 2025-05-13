@@ -17,7 +17,7 @@ import CorporateSection from "./pages/CorporateUseCase";
 const LayoutWrapper = ({ children }) => {
   const location = useLocation();
 
-  const hideLayoutPaths = ["/shortify"];
+  const hideLayoutPaths = ["/shortify","/features/pdf-summarizer"];
   const shouldHideLayout = hideLayoutPaths.includes(location.pathname);
 
   return (
