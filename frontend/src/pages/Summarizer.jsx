@@ -114,12 +114,11 @@ export default function YouTubeSummarizer() {
                   <User className="h-5 w-5 text-gray-600" />
                 </button>
               </Link>
-              <button
-                className="p-2 rounded-full hover:bg-green-100 hover:border-2 border-bold transition"
-                aria-label="Settings"
-              >
-                <Settings className="h-5 w-5 text-gray-600" />
-              </button>
+              <Link to="/Settings">
+                <button className="p-2 rounded-full hover:bg-indigo-100 hover:border-2 border-bold transition">
+                 <Settings className="h-5 w-5 text-gray-600" />
+                </button>
+               </Link>
             </div>
           </div>
         </div>

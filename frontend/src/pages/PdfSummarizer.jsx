@@ -113,12 +113,14 @@ export default function PdfSummarizer() {
                   <User className="h-5 w-5 text-gray-600" />
                 </button>
               </a>
-              <button
-                className="p-2 rounded-full hover:bg-green-100 hover:border-2 border-bold transition"
-                aria-label="Settings"
-              >
-                <Settings className="h-5 w-5 text-gray-600" />
-              </button>
+              <a href="/Settings">
+                <button
+                  className="p-2 rounded-full hover:bg-green-100 hover:border-2 border-bold transition"
+                  aria-label="Go to Profile"
+                >
+                  <Settings className="h-5 w-5 text-gray-600" />
+                </button>
+              </a>
             </div>
           </div>
         </div>

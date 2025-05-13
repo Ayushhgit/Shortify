@@ -14,6 +14,7 @@ import CreatorsUseCase from "./pages/CreatorsUseCase";
 import EducatorsUseCase from "./pages/EducatorsUseCase";
 import CorporateSection from "./pages/CorporateUseCase";
 import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 
 
 const LayoutWrapper = ({ children }) => {
@@ -26,7 +27,9 @@ const LayoutWrapper = ({ children }) => {
     "/features/shorts-generator",
     "/features/summarizer",
     "/profile",
-    "/Profile"
+    "/Profile",
+    "/Settings"
+    
   ];
   
   const shouldHideLayout = hideLayoutPaths.includes(location.pathname);
@@ -58,6 +61,7 @@ function App() {
           <Route path="/features/shorts-generator" element={<ShortsGenerator />} />
           <Route path="/features/pdf-summarizer" element={<PdfSummarizer />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/settings" element={<Settings />} />
         </Routes>
       </LayoutWrapper>
     </BrowserRouter>

@@ -188,6 +188,7 @@ export default function ShortifyPage() {
           Shortify © 2025. All rights reserved.
         </div>
       </div>
+      
     </div>
   );
 }
