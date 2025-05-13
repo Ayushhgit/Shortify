@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import {Home ,Settings, User, Upload, FileText, X, Check, Loader2, HeartOff } from "lucide-react";
+import { Home, Settings, User, Upload, FileText, X, Check, Loader2 } from "lucide-react";
 import Toast from "../components/Toast";
 
 export default function PdfSummarizer() {
@@ -11,24 +11,19 @@ export default function PdfSummarizer() {
   const [summary, setSummary] = useState("");
   const fileInputRef = useRef(null);
 
-  // Display toast notification
   const displayToast = (message, type = "success") => {
     setToastMessage(message);
     setToastType(type);
     setShowToast(true);
   };
 
-  // Handle file selection
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
     if (selectedFile) {
-      // Validate file type
       if (!selectedFile.type.includes("pdf")) {
         displayToast("Please select a PDF file", "error");
         return;
       }
-      
-      // Validate file size (max 10MB)
       if (selectedFile.size > 10 * 1024 * 1024) {
         displayToast("File size exceeds 10MB limit", "error");
         return;
@@ -39,24 +34,19 @@ export default function PdfSummarizer() {
     }
   };
 
-  // Handle drag and drop
   const handleDrop = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    
     if (event.dataTransfer.files && event.dataTransfer.files[0]) {
       const droppedFile = event.dataTransfer.files[0];
-      
       if (!droppedFile.type.includes("pdf")) {
         displayToast("Please drop a PDF file", "error");
         return;
       }
-      
       if (droppedFile.size > 10 * 1024 * 1024) {
         displayToast("File size exceeds 10MB limit", "error");
         return;
       }
-      
       setFile(droppedFile);
       displayToast("PDF dropped successfully!");
     }
@@ -67,7 +57,6 @@ export default function PdfSummarizer() {
     event.stopPropagation();
   };
 
-  // Handle form submission
   const handleSubmit = async () => {
     if (!file) {
       displayToast("Please select a PDF file first", "error");
@@ -76,13 +65,8 @@ export default function PdfSummarizer() {
 
     try {
       setIsProcessing(true);
-      
-      // Simulate API call with timeout
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Mock success response
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       setSummary("Summary will appear here.");
-      
       displayToast("PDF summarized successfully!");
       setIsProcessing(false);
     } catch (error) {
@@ -92,7 +76,6 @@ export default function PdfSummarizer() {
     }
   };
 
-  // Clear the selected file and summary
   const handleClear = () => {
     setFile(null);
     setSummary("");
@@ -114,19 +97,26 @@ export default function PdfSummarizer() {
               </span>
             </div>
             <div className="flex items-center space-x-4">
-             <a href="/shortify"> <button 
-                className="p-2 rounded-full hover:bg-green-100 hover:border-2 border-bold transition" 
-                aria-label="User profile">
-                <Home className="h-5 w-5 text-gray-600" />
-              </button> </a>
-              <button 
-                className="p-2 rounded-full hover:bg-green-100 hover:border-2 border-bold transition" 
-                aria-label="User profile">
-                <User className="h-5 w-5 text-gray-600" />
-              </button>
-              <button 
-                className="p-2 rounded-full hover:bg-green-100 hover:border-2 border-bold transition" 
-                aria-label="Settings">
+              <a href="/shortify">
+                <button
+                  className="p-2 rounded-full hover:bg-green-100 hover:border-2 border-bold transition"
+                  aria-label="Go to Shortify Home"
+                >
+                  <Home className="h-5 w-5 text-gray-600" />
+                </button>
+              </a>
+              <a href="/profile">
+                <button
+                  className="p-2 rounded-full hover:bg-green-100 hover:border-2 border-bold transition"
+                  aria-label="Go to Profile"
+                >
+                  <User className="h-5 w-5 text-gray-600" />
+                </button>
+              </a>
+              <button
+                className="p-2 rounded-full hover:bg-green-100 hover:border-2 border-bold transition"
+                aria-label="Settings"
+              >
                 <Settings className="h-5 w-5 text-gray-600" />
               </button>
             </div>
@@ -147,15 +137,23 @@ export default function PdfSummarizer() {
 
         {/* Step Indicator */}
         <div className="flex justify-center items-center mb-8">
-          <div className={`flex items-center ${file ? 'text-green-500' : 'text-gray-500'}`}>
-            <div className={`rounded-full h-8 w-8 flex items-center justify-center border-2 ${file ? 'border-green-500 bg-green-100' : 'border-gray-300'}`}>
+          <div className={`flex items-center ${file ? "text-green-500" : "text-gray-500"}`}>
+            <div
+              className={`rounded-full h-8 w-8 flex items-center justify-center border-2 ${
+                file ? "border-green-500 bg-green-100" : "border-gray-300"
+              }`}
+            >
               {file ? <Check className="h-5 w-5" /> : "1"}
             </div>
             <span className="ml-2 font-medium">Upload</span>
           </div>
           <div className="h-1 w-12 mx-4 bg-gray-200"></div>
-          <div className={`flex items-center ${summary ? 'text-green-500' : 'text-gray-500'}`}>
-            <div className={`rounded-full h-8 w-8 flex items-center justify-center border-2 ${summary ? 'border-green-500 bg-green-100' : 'border-gray-300'}`}>
+          <div className={`flex items-center ${summary ? "text-green-500" : "text-gray-500"}`}>
+            <div
+              className={`rounded-full h-8 w-8 flex items-center justify-center border-2 ${
+                summary ? "border-green-500 bg-green-100" : "border-gray-300"
+              }`}
+            >
               {summary ? <Check className="h-5 w-5" /> : "2"}
             </div>
             <span className="ml-2 font-medium">Summarize</span>
@@ -168,8 +166,10 @@ export default function PdfSummarizer() {
         </div>
 
         {/* File Upload Area */}
-        <div 
-          className={`max-w-md mx-auto mb-8 p-6 rounded-lg border-2 border-dashed ${file ? 'border-green-500 bg-green-50' : 'border-gray-300 hover:border-green-400'} transition-all`}
+        <div
+          className={`max-w-md mx-auto mb-8 p-6 rounded-lg border-2 border-dashed ${
+            file ? "border-green-500 bg-green-50" : "border-gray-300 hover:border-green-400"
+          } transition-all`}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
         >
@@ -177,7 +177,10 @@ export default function PdfSummarizer() {
             <div className="text-center">
               <Upload className="mx-auto h-12 w-12 text-gray-400" />
               <div className="mt-4 flex flex-col text-sm">
-                <label htmlFor="file-upload" className="cursor-pointer bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md font-medium transition inline-block mx-auto">
+                <label
+                  htmlFor="file-upload"
+                  className="cursor-pointer bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md font-medium transition inline-block mx-auto"
+                >
                   Choose PDF
                   <input
                     id="file-upload"
@@ -202,7 +205,7 @@ export default function PdfSummarizer() {
                   <p className="text-gray-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                 </div>
               </div>
-              <button 
+              <button
                 onClick={handleClear}
                 className="p-1 rounded-full bg-gray-200 hover:bg-gray-300 transition"
                 aria-label="Remove file"
@@ -219,7 +222,7 @@ export default function PdfSummarizer() {
             onClick={handleSubmit}
             disabled={!file || isProcessing}
             className={`flex items-center justify-center py-2 px-6 rounded-md font-medium transition 
-              ${!file || isProcessing ? 'bg-gray-300 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600 text-white'}`}
+              ${!file || isProcessing ? "bg-gray-300 cursor-not-allowed" : "bg-green-500 hover:bg-green-600 text-white"}`}
           >
             {isProcessing ? (
               <>
@@ -227,7 +230,7 @@ export default function PdfSummarizer() {
                 Processing...
               </>
             ) : (
-              'Summarize PDF'
+              "Summarize PDF"
             )}
           </button>
           {file && (
