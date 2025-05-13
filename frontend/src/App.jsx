@@ -21,7 +21,8 @@ const LayoutWrapper = ({ children }) => {
   const hideLayoutPaths = [
     "/shortify",
     "/features/pdf-summarizer",
-    "/features/shorts-generator"
+    "/features/shorts-generator",
+    "/features/summarizer",
   ];
   
   const shouldHideLayout = hideLayoutPaths.includes(location.pathname);

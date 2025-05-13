@@ -12,9 +12,16 @@ import {
 export default function ShortsGenerator() {
   const [url, setUrl] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [youtubeUrl, setYoutubeUrl] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
   const clipsRef = useRef(null);
 
-  const handleSubmit = () => {
+  const isValidYouTubeUrl = (url) => {
+    const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+/;
+    return youtubeRegex.test(url);
+  };
+
+  const handleSubmit = async (event) => {
     if (url.trim()) {
       setSubmitted(true);
     }
