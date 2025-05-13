@@ -41,11 +41,9 @@ export default function Profile() {
             </button>
 
             {/* Settings Button */}
-            <Link to="/Settings">
-                <button className="p-2 rounded-full hover:bg-indigo-100 hover:border-2 border-bold transition">
-                    <Settings className="h-5 w-5 text-gray-600" />
-                </button>
-             </Link>
+            <button className="p-2 rounded-full hover:bg-indigo-100 hover:border-2 border-bold transition">
+              <Settings className="h-5 w-5 text-gray-600" />
+            </button>
           </div>
         </div>
       </header>
@@ -61,11 +59,14 @@ export default function Profile() {
                 <User size={18} />
                 Profile
               </button>
-              <button className="flex items-center w-full gap-3 text-sm text-gray-700 hover:text-indigo-600 transition">
-                <Settings size={18} />
-                Settings
-              </button>
-              <button className="flex items-center w-full gap-3 text-sm text-gray-700 hover:text-indigo-600 transition">
+              {/* Settings Button */}
+              <Link to="/Settings">
+                <button className="flex items-center w-full gap-3 text-sm text-gray-700 hover:text-indigo-600 transition mb-4">
+                  <Settings size={18} />
+                  Settings
+                </button>
+              </Link>
+              <button className="flex items-center w-full gap-3 text-sm text-gray-700 hover:text-indigo-600 transition ">
                 <Lock size={18} />
                 Security
               </button>
@@ -132,11 +133,12 @@ export default function Profile() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white flex items-center border-t border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center w-full">
-          <p className="text-sm text-gray-600">&copy; 2025 Shortify. All rights reserved.</p>
+        <footer className="bg-white border-t border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 py-6 flex justify-center items-center w-full">
+            <p className="text-sm text-gray-600">&copy; 2025 Shortify. All rights reserved.</p>
         </div>
-      </footer>
+        </footer>
+
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   Home,
   Settings as SettingsIcon,
@@ -28,6 +28,12 @@ export default function Settings() {
   const [privacy, setPrivacy] = useState("Public");
   const [showSuccessToast, setShowSuccessToast] = useState(false);
 
+  // Refs to scroll to specific sections
+  const appearanceRef = useRef(null);
+  const languageRef = useRef(null);
+  const notificationsRef = useRef(null);
+  const privacyRef = useRef(null);
+
   // Toggle functions
   const toggleDarkMode = () => setDarkMode(!darkMode);
   const toggleEmailNotifications = () => setEmailNotifications(!emailNotifications);
@@ -47,11 +53,16 @@ export default function Settings() {
   const handleSaveSettings = () => {
     // You would implement actual saving logic here
     setShowSuccessToast(true);
-    
+
     // Auto-hide toast after 3 seconds
     setTimeout(() => {
       setShowSuccessToast(false);
     }, 3000);
+  };
+
+  // Scroll to a section
+  const scrollToSection = (section) => {
+    section.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -95,15 +106,24 @@ export default function Settings() {
           <aside className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm h-fit">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">Settings</h3>
             <nav className="space-y-3">
-              <button className="flex items-center w-full gap-3 text-sm text-green-600 font-medium transition">
+              <button
+                className="flex items-center w-full gap-3 text-sm text-green-600 font-medium transition"
+                onClick={() => scrollToSection(appearanceRef)}
+              >
                 <SettingsIcon size={18} />
                 General
               </button>
-              <button className="flex items-center w-full gap-3 text-sm text-gray-700 hover:text-green-600 transition">
+              <button
+                className="flex items-center w-full gap-3 text-sm text-gray-700 hover:text-green-600 transition"
+                onClick={() => scrollToSection(languageRef)}
+              >
                 <Bell size={18} />
                 Notifications
               </button>
-              <button className="flex items-center w-full gap-3 text-sm text-gray-700 hover:text-green-600 transition">
+              <button
+                className="flex items-center w-full gap-3 text-sm text-gray-700 hover:text-green-600 transition"
+                onClick={() => scrollToSection(privacyRef)}
+              >
                 <Shield size={18} />
                 Privacy
               </button>
@@ -129,7 +149,7 @@ export default function Settings() {
             
             <div className="p-6 space-y-6">
               {/* Appearance Settings */}
-              <div>
+              <div ref={appearanceRef}>
                 <h3 className="text-lg font-medium text-gray-900 mb-4">Appearance</h3>
                 <div className="bg-gray-50 rounded-lg p-4 flex items-center justify-between">
                   <div className="flex items-center">
@@ -146,7 +166,7 @@ export default function Settings() {
               </div>
 
               {/* Language Settings */}
-              <div>
+              <div ref={languageRef}>
                 <h3 className="text-lg font-medium text-gray-900 mb-4">Language</h3>
                 <div className="bg-gray-50 rounded-lg p-4">
                   <div className="flex items-center mb-3">
@@ -169,7 +189,7 @@ export default function Settings() {
               </div>
 
               {/* Notification Settings */}
-              <div>
+              <div ref={notificationsRef}>
                 <h3 className="text-lg font-medium text-gray-900 mb-4">Notifications</h3>
                 <div className="space-y-3">
                   <div className="bg-gray-50 rounded-lg p-4 flex items-center justify-between">
@@ -195,7 +215,7 @@ export default function Settings() {
               </div>
 
               {/* Privacy Settings */}
-              <div>
+              <div ref={privacyRef}>
                 <h3 className="text-lg font-medium text-gray-900 mb-4">Privacy</h3>
                 <div className="bg-gray-50 rounded-lg p-4">
                   <div className="flex items-center mb-3">
@@ -216,7 +236,7 @@ export default function Settings() {
 
               {/* Account Actions */}
               <div className="flex items-center pt-4 border-t border-gray-200">
-                <button 
+                <button
                   onClick={handleSaveSettings}
                   className="bg-gradient-to-r from-green-500 to-green-500 hover:from-green-400 hover:to-green-400 text-white px-6 py-3 rounded-lg flex items-center"
                 >
@@ -242,9 +262,9 @@ export default function Settings() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white flex items-center border-t border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center w-full">
-          <p className="text-sm text-gray-600">&copy; 2025 Shortify. All rights reserved.</p>
+      <footer className="bg-white border-t border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 py-6 flex justify-center items-center w-full">
+            <p className="text-sm text-gray-600">&copy; 2025 Shortify. All rights reserved.</p>
         </div>
       </footer>
 
