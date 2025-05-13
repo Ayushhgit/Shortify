@@ -126,7 +126,7 @@ export default function YouTubeSummarizer() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 pt-24 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+      <main className="flex-1 pt-30 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
         <div className="text-center mb-8">
           <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-gray-900">
             Summ<span className="text-green-500">lytic</span>
