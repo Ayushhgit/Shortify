@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routes import chatbot_router
+from chatbot.routes import chatbot_router
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
