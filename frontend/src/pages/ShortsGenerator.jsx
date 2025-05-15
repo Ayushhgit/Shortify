@@ -25,6 +25,8 @@ export default function ShortsGenerator() {
   const [toastType, setToastType] = useState("success");
   const [videoDetails, setVideoDetails] = useState(null);
   const clipsRef = useRef(null);
+  const [clips, setClips] = useState([]);
+
 
   const displayToast = (message, type = "success") => {
     setToastMessage(message);
@@ -33,13 +35,55 @@ export default function ShortsGenerator() {
   };
 
   const isValidYouTubeUrl = (url) => {
-    const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+/;
+    const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[\w-]{11}.*$/;
     return youtubeRegex.test(url);
   };
 
   const handleUrlChange = (event) => {
     setUrl(event.target.value);
     setInputError("");
+  };
+
+  // Extract YouTube video ID from URL
+  const extractVideoId = (url) => {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  };
+
+  // Fetch YouTube video metadata using oEmbed
+  const fetchVideoMetadata = async (url) => {
+    try {
+      const videoId = extractVideoId(url);
+      if (!videoId) throw new Error("Could not extract video ID");
+      
+      const oEmbedUrl = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`;
+      const response = await fetch(oEmbedUrl);
+      
+      if (!response.ok) {
+        throw new Error("Failed to fetch video metadata");
+      }
+      
+      const data = await response.json();
+      
+      return {
+        title: data.title,
+        channelName: data.author_name,
+        thumbnailUrl: data.thumbnail_url,
+        duration: "N/A", // oEmbed doesn't provide duration
+        publishDate: new Date().toLocaleDateString(),
+      };
+    } catch (error) {
+      console.error("Error fetching video metadata:", error);
+      // Return default values if metadata fetching fails
+      return {
+        title: "YouTube Video",
+        channelName: "YouTube Channel",
+        duration: "N/A",
+        publishDate: new Date().toLocaleDateString(),
+        thumbnailUrl: "/assets/yt.webp"
+      };
+    }
   };
 
   const handleSubmit = async (event) => {
@@ -57,27 +101,107 @@ export default function ShortsGenerator() {
 
     try {
       setIsProcessing(true);
+      setSubmitted(false);
+      setVideoDetails(null);
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Ensure URL has protocol
+      let formattedUrl = url.trim();
+      if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
+        formattedUrl = 'https://' + formattedUrl;
+      }
 
-      setVideoDetails({
-        title: "How to Make Perfect Pasta | Complete Tutorial",
-        channelName: "Cooking Masters",
-        duration: "18:45",
-        publishDate: "May 10, 2025",
-        thumbnailUrl: "/api/placeholder/640/360"
+      // Fetch video metadata in parallel with processing
+      const metadataPromise = fetchVideoMetadata(formattedUrl);
+
+      // Debug logging
+      console.log('Original URL:', url);
+      console.log('Formatted URL:', formattedUrl);
+      console.log('Is valid YouTube URL:', isValidYouTubeUrl(formattedUrl));
+
+      // Updated request body structure based on the Postman example
+      const requestBody = { 
+        request: {
+          url: formattedUrl,
+          use_whisper: false,
+          use_gpt: false
+        }
+      };
+      
+      console.log('Request body:', JSON.stringify(requestBody, null, 2));
+
+      // Step 1: Send URL to backend
+      const response = await fetch("http://localhost:8000/api/shorts/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(requestBody)
       });
 
+      if (!response.ok) {
+        let errorMessage = `HTTP error! status: ${response.status}`;
+        try {
+          const errorData = await response.json();
+          console.log('Error data:', errorData);  // Log full error for debugging
+          
+          // Handle Pydantic validation errors
+          if (errorData.detail) {
+            if (Array.isArray(errorData.detail)) {
+              errorMessage = errorData.detail.map(err => err.msg).join(', ');
+            } else {
+              errorMessage = errorData.detail;
+            }
+          }
+        } catch (e) {
+          console.error('Failed to parse error response');
+        }
+        throw new Error(errorMessage);
+      }
+
+      const data = await response.json();
+      const { task_id } = data;
+
+      if (!task_id) throw new Error("Failed to get task ID.");
+
+      // Step 2: Poll the task status
+      let status = "pending";
+      let result = null;
+
+      while (status !== "completed") {
+        const pollRes = await fetch(`http://localhost:8000/api/shorts/status/${task_id}`);
+        
+        if (!pollRes.ok) {
+          throw new Error(`HTTP error! status: ${pollRes.status}`);
+        }
+
+        const data = await pollRes.json();
+        status = data.status;
+        
+        if (status === "completed") {
+          result = data.result;
+          break;
+        } else if (status === "failed") {
+          throw new Error("Task failed on the server");
+        }
+        
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+      }
+
+      // Step 3: Get the metadata we were fetching in parallel
+      const metadata = await metadataPromise;
+      setVideoDetails(metadata);
+
+      setClips(result.clips);
       setSubmitted(true);
       displayToast("Shorts generated successfully!");
-      setIsProcessing(false);
     } catch (error) {
-      setIsProcessing(false);
-      displayToast("Error processing video. Please try again.", "error");
       console.error("Error:", error);
+      displayToast(`Failed to generate shorts: ${error.message}`, "error");
+    } finally {
+      setIsProcessing(false);
     }
   };
+
 
   const handleReset = () => {
     setUrl("");
@@ -91,18 +215,6 @@ export default function ShortsGenerator() {
       clipsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }, [submitted]);
-
-  const clips = Array.from({ length: 4 }).map((_, i) => ({
-    id: i + 1,
-    title: `Clip #${i + 1}`,
-    duration: `${Math.floor(Math.random() * 50) + 10}s`,
-    highlight: [
-      "Perfect pasta cooking technique",
-      "Secret ingredient revealed",
-      "Professional chef tips",
-      "Common mistakes to avoid"
-    ][i],
-  }));
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -270,7 +382,7 @@ export default function ShortsGenerator() {
             )}
 
             {/* Generated Clips Section */}
-            {submitted && (
+            {submitted && clips.length > 0 && (
               <div ref={clipsRef} className="mt-12 animate-fade-in pb-16">
                 <div className="text-center mb-6">
                   <h2 className="text-2xl font-semibold text-indigo-700">
@@ -281,43 +393,42 @@ export default function ShortsGenerator() {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                   {clips.map((clip, index) => (
                     <div
-                      key={clip.id}
-                      className="bg-white border border-gray-200 rounded-xl p-4 shadow hover:shadow-md transition animate-slide-up"
-                      style={{ animationDelay: `${index * 100}ms` }}
+                      key={index}
+                      className="bg-white border rounded-xl shadow hover:shadow-md transition p-4"
                     >
-                      <div className="aspect-[9/16] bg-gray-100 rounded-lg mb-3 flex items-center justify-center text-gray-400 text-sm relative">
-                        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/50 rounded-lg"></div>
-                        <div className="absolute bottom-2 left-2 text-white text-xs">
-                          {clip.duration}
-                        </div>
-                        <PlayCircle className="w-12 h-12 text-white/80" />
+                      <video
+                        controls
+                        className="rounded-lg w-full aspect-[9/16] bg-black"
+                        src={`http://localhost:8000${clip.url}`}
+                      />
+                      <div className="mt-3 text-sm text-gray-700">
+                        <div>⏱ {clip.start} - {clip.end}</div>
+                        <div>🎯 Confidence: {(clip.confidence * 100).toFixed(1)}%</div>
                       </div>
-                      <h4 className="font-medium text-sm mb-1">{clip.title}</h4>
-                      <p className="text-xs text-gray-600 mb-3">{clip.highlight}</p>
-                      <div className="flex justify-between items-center">
-                        <div className="flex gap-2">
-                          <button
-                            className="p-2 bg-indigo-500 text-white rounded-full hover:bg-indigo-600 transition"
-                            title="Download"
-                          >
-                            <Download size={16} />
-                          </button>
-                          <button
-                            className="p-2 bg-gray-200 text-gray-600 rounded-full hover:bg-gray-300 transition"
-                            title="Share"
-                          >
-                            <Share size={16} />
-                          </button>
-                        </div>
+                      <div className="flex justify-between mt-2 text-xs text-gray-500">
+                        <a
+                          href={`http://localhost:8000${clip.url}`}
+                          download
+                          className="text-indigo-600 hover:underline"
+                        >
+                          <Download className="inline w-4 h-4 mr-1" /> Download
+                        </a>
+                        <button
+                          onClick={() => navigator.clipboard.writeText(`http://localhost:8000${clip.url}`)}
+                          className="hover:text-indigo-600"
+                        >
+                          <Share className="inline w-4 h-4 mr-1" /> Copy Link
+                        </button>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
             )}
+
 
             {/* How It Works Section */}
             {!submitted && (
@@ -364,7 +475,7 @@ export default function ShortsGenerator() {
 
       {/* Footer */}
       <footer className="bg-white flex items-center border-t border-gray-200 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center w-full">
+        <div className="max-w-7xl mx-auto px-130 py-6 flex justify-between items-center w-full">
           <p className="text-sm text-gray-600">
             &copy; 2025 Shortify. All rights reserved.
           </p>
