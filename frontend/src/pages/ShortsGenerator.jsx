@@ -26,7 +26,8 @@ export default function ShortsGenerator() {
   const [videoDetails, setVideoDetails] = useState(null);
   const clipsRef = useRef(null);
   const [clips, setClips] = useState([]);
-
+  const [processingProgress, setProcessingProgress] = useState(0);
+  const [processingMessage, setProcessingMessage] = useState("");
 
   const displayToast = (message, type = "success") => {
     setToastMessage(message);
@@ -86,6 +87,35 @@ export default function ShortsGenerator() {
     }
   };
 
+  // Get dynamic progress messages based on progress percentage
+  const getProgressMessage = (progress) => {
+    const messages = {
+      0: "Initializing task...",
+      5: "Task received by server...",
+      10: "Analyzing YouTube URL...",
+      15: "Extracting video information...",
+      20: "Downloading video content...",
+      35: "Video download in progress...",
+      50: "Processing audio stream...",
+      60: "Analyzing energy levels...",
+      70: "Detecting best segments...",
+      80: "Creating short clips...",
+      90: "Finalizing output...",
+      95: "Almost there...",
+      100: "Processing complete!"
+    };
+
+    // Find the closest message
+    let currentMessage = messages[0];
+    for (const [threshold, message] of Object.entries(messages)) {
+      if (progress >= parseInt(threshold)) {
+        currentMessage = message;
+      }
+    }
+    
+    return currentMessage;
+  };
+
   const handleSubmit = async (event) => {
     if (event) event.preventDefault();
 
@@ -103,6 +133,8 @@ export default function ShortsGenerator() {
       setIsProcessing(true);
       setSubmitted(false);
       setVideoDetails(null);
+      setProcessingProgress(0);
+      setProcessingMessage(getProgressMessage(0));
 
       // Ensure URL has protocol
       let formattedUrl = url.trim();
@@ -118,7 +150,7 @@ export default function ShortsGenerator() {
       console.log('Formatted URL:', formattedUrl);
       console.log('Is valid YouTube URL:', isValidYouTubeUrl(formattedUrl));
 
-      // Updated request body structure based on the Postman example
+      // Request body structure
       const requestBody = { 
         request: {
           url: formattedUrl,
@@ -129,6 +161,10 @@ export default function ShortsGenerator() {
       
       console.log('Request body:', JSON.stringify(requestBody, null, 2));
 
+      // Initial progress
+      setProcessingProgress(5);
+      setProcessingMessage(getProgressMessage(5));
+
       // Step 1: Send URL to backend
       const response = await fetch("http://localhost:8000/api/shorts/generate", {
         method: "POST",
@@ -137,6 +173,9 @@ export default function ShortsGenerator() {
         },
         body: JSON.stringify(requestBody)
       });
+
+      setProcessingProgress(10);
+      setProcessingMessage(getProgressMessage(10));
 
       if (!response.ok) {
         let errorMessage = `HTTP error! status: ${response.status}`;
@@ -163,10 +202,11 @@ export default function ShortsGenerator() {
 
       if (!task_id) throw new Error("Failed to get task ID.");
 
-      // Step 2: Poll the task status
+      // Step 2: Poll the task status with progress updates
       let status = "pending";
       let result = null;
-
+      let pollCount = 0;
+      
       while (status !== "completed") {
         const pollRes = await fetch(`http://localhost:8000/api/shorts/status/${task_id}`);
         
@@ -174,22 +214,39 @@ export default function ShortsGenerator() {
           throw new Error(`HTTP error! status: ${pollRes.status}`);
         }
 
-        const data = await pollRes.json();
-        status = data.status;
+        const statusData = await pollRes.json();
+        status = statusData.status;
         
-        if (status === "completed") {
-          result = data.result;
-          break;
-        } else if (status === "failed") {
-          throw new Error("Task failed on the server");
+        // Update progress based on backend status
+        if (statusData.progress) {
+          setProcessingProgress(statusData.progress);
+          setProcessingMessage(getProgressMessage(statusData.progress));
+        } else {
+          // Estimate progress based on time elapsed
+          const estimatedProgress = Math.min(15 + (pollCount * 5), 90);
+          setProcessingProgress(estimatedProgress);
+          setProcessingMessage(getProgressMessage(estimatedProgress));
         }
         
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        if (status === "completed") {
+          result = statusData.result;
+          setProcessingProgress(95);
+          setProcessingMessage(getProgressMessage(95));
+          break;
+        } else if (status === "failed") {
+          throw new Error(statusData.error || "Task failed on the server");
+        }
+        
+        pollCount++;
+        await new Promise((resolve) => setTimeout(resolve, 2000)); 
       }
 
       // Step 3: Get the metadata we were fetching in parallel
       const metadata = await metadataPromise;
       setVideoDetails(metadata);
+
+      setProcessingProgress(100);
+      setProcessingMessage(getProgressMessage(100));
 
       setClips(result.clips);
       setSubmitted(true);
@@ -202,12 +259,12 @@ export default function ShortsGenerator() {
     }
   };
 
-
   const handleReset = () => {
     setUrl("");
     setSubmitted(false);
     setVideoDetails(null);
     setInputError("");
+    setClips([]);
   };
 
   useEffect(() => {
@@ -215,6 +272,37 @@ export default function ShortsGenerator() {
       clipsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }, [submitted]);
+
+  // Skeleton loader component
+  const ClipSkeleton = () => (
+    <div className="bg-white border rounded-xl shadow p-4 animate-pulse">
+      <div className="rounded-lg w-full aspect-[9/16] bg-gray-300"></div>
+      <div className="mt-3 space-y-2">
+        <div className="h-4 bg-gray-300 rounded w-3/4"></div>
+        <div className="h-4 bg-gray-300 rounded w-1/2"></div>
+      </div>
+      <div className="flex justify-between mt-3">
+        <div className="h-3 bg-gray-300 rounded w-16"></div>
+        <div className="h-3 bg-gray-300 rounded w-16"></div>
+      </div>
+    </div>
+  );
+
+  // Progress Bar component
+  const ProgressBar = ({ progress, message }) => (
+    <div className="mt-4 space-y-2">
+      <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+        <div 
+          className="h-full bg-gradient-to-r from-indigo-500 to-indigo-600 transition-all duration-500 ease-out relative"
+          style={{ width: `${progress}%` }}
+        >
+          <div className="absolute inset-0 bg-indigo-400 opacity-20 animate-pulse"></div>
+        </div>
+      </div>
+      <p className="text-sm text-gray-600 text-center font-medium">{message}</p>
+      <p className="text-xs text-gray-500 text-center">{progress}% complete</p>
+    </div>
+  );
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -344,6 +432,11 @@ export default function ShortsGenerator() {
                     </button>
                   )}
                 </div>
+
+                {/* Progress Bar */}
+                {isProcessing && (
+                  <ProgressBar progress={processingProgress} message={processingMessage} />
+                )}
               </form>
             </div>
 
@@ -381,8 +474,28 @@ export default function ShortsGenerator() {
               </div>
             )}
 
+            {/* Skeleton Loader */}
+            {isProcessing && (
+              <div ref={clipsRef} className="mt-12 pb-16">
+                <div className="text-center mb-6">
+                  <h2 className="text-2xl font-semibold text-indigo-700">
+                    Generating your shorts...
+                  </h2>
+                  <p className="text-sm text-gray-500 mt-1">
+                    This may take a few moments
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                  {[...Array(6)].map((_, index) => (
+                    <ClipSkeleton key={index} />
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Generated Clips Section */}
-            {submitted && clips.length > 0 && (
+            {submitted && clips.length > 0 && !isProcessing && (
               <div ref={clipsRef} className="mt-12 animate-fade-in pb-16">
                 <div className="text-center mb-6">
                   <h2 className="text-2xl font-semibold text-indigo-700">
@@ -417,7 +530,10 @@ export default function ShortsGenerator() {
                           <Download className="inline w-4 h-4 mr-1" /> Download
                         </a>
                         <button
-                          onClick={() => navigator.clipboard.writeText(`http://localhost:8000${clip.url}`)}
+                          onClick={() => {
+                            navigator.clipboard.writeText(`http://localhost:8000${clip.url}`);
+                            displayToast("Link copied to clipboard!", "success");
+                          }}
                           className="hover:text-indigo-600"
                         >
                           <Share className="inline w-4 h-4 mr-1" /> Copy Link
@@ -428,7 +544,6 @@ export default function ShortsGenerator() {
                 </div>
               </div>
             )}
-
 
             {/* How It Works Section */}
             {!submitted && (
@@ -517,6 +632,19 @@ export default function ShortsGenerator() {
 
         .animate-slide-up {
           animation: slide-up 0.5s ease-out forwards;
+        }
+
+        .animate-pulse {
+          animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: .5;
+          }
         }
       `}</style>
     </div>
