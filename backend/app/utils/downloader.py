@@ -22,34 +22,17 @@ class VideoDownloader:
     ) -> Tuple[str, Path, Dict[str, Any]]:
         """
         Download a YouTube video and save it locally with metadata
-        
-        Args:
-            url: YouTube video URL
-            format: Optional format specification for yt-dlp
-            max_filesize: Optional maximum filesize (e.g., '500M')
-            max_duration: Optional maximum duration in seconds
-            download_thumbnail: Whether to download thumbnail image
-            
-        Returns:
-            Tuple containing (video_id, video_path, video_info)
-            
-        Raises:
-            ValueError: If URL is invalid
-            RuntimeError: If download fails
-            FileNotFoundError: If download doesn't complete
         """
-        # Validate URL
-        if not url or 'youtube.com' not in url and 'youtu.be' not in url:
+        if not url or ('youtube.com' not in url and 'youtu.be' not in url):
             raise ValueError("Invalid YouTube URL")
-        
+
         video_id = str(uuid.uuid4())
         video_path = settings.ORIGINALS_DIR / f"{video_id}.mp4"
         thumbnail_path = settings.ORIGINALS_DIR / f"{video_id}.jpg" if download_thumbnail else None
-        
-        # Ensure directory exists
+
         video_path.parent.mkdir(parents=True, exist_ok=True)
-        
-        # Configure download options
+
+        # Fixed postprocessor configuration
         ydl_opts = {
             'format': format or 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
             'outtmpl': str(video_path),
@@ -59,68 +42,65 @@ class VideoDownloader:
             'merge_output_format': 'mp4',
             'writethumbnail': download_thumbnail,
             'postprocessors': [
-                {'key': 'FFmpegVideoConvertor', 'preferedformat': 'mp4'},
-                *([{'key': 'FFmpegThumbnailsConvertor', 'format': 'jpg', 'when': 'postprocess'}] 
-                  if download_thumbnail else [])
-            ],
+                *(
+                    [{'key': 'FFmpegThumbnailsConvertor', 'format': 'jpg'}]
+                    if download_thumbnail else []
+                )
+            ]
         }
-        
+
         if max_filesize:
             ydl_opts['max_filesize'] = max_filesize
         if max_duration:
             ydl_opts['max_duration'] = max_duration
-        
+
         try:
-            # Run synchronous yt-dlp in a thread
             def sync_download():
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                     info = ydl.extract_info(url, download=True)
                     return ydl.sanitize_info(info)
-            
+
             video_info = await asyncio.to_thread(sync_download)
-            
-            # Verify download was successful
+
             if not video_path.exists():
                 raise FileNotFoundError(f"Downloaded video not found at {video_path}")
-            
+
             if video_path.stat().st_size == 0:
                 video_path.unlink()
                 if thumbnail_path and thumbnail_path.exists():
                     thumbnail_path.unlink()
                 raise ValueError("Downloaded video file is empty")
-            
-            # Process video info
+
             processed_info = {
                 'id': video_info.get('id'),
-                'title': video_info.get('title'),
+                'title': video_info.get('title', 'Untitled'),
                 'duration': timedelta(seconds=video_info.get('duration', 0)),
-                'uploader': video_info.get('uploader'),
-                'upload_date': video_info.get('upload_date'),
-                'view_count': video_info.get('view_count'),
+                'uploader': video_info.get('uploader', 'Unknown'),
+                'upload_date': video_info.get('upload_date', None),
+                'view_count': video_info.get('view_count', 0),
                 'thumbnail': str(thumbnail_path) if thumbnail_path and thumbnail_path.exists() else None,
-                'resolution': video_info.get('resolution'),
-                'fps': video_info.get('fps'),
+                'resolution': video_info.get('resolution', 'unknown'),
+                'fps': video_info.get('fps', 0),
                 'filesize': video_path.stat().st_size,
                 'original_url': url
             }
-            
+
             logger.info(
                 f"Downloaded video {video_id} ({processed_info['title']}) "
                 f"Duration: {processed_info['duration']}, "
                 f"Size: {processed_info['filesize']} bytes"
             )
-            
+
             return video_id, video_path, processed_info
-            
+
         except yt_dlp.DownloadError as e:
             logger.error(f"YouTube download failed: {str(e)}")
-            # Clean up any partial files
             if video_path.exists():
                 video_path.unlink()
             if thumbnail_path and thumbnail_path.exists():
                 thumbnail_path.unlink()
             raise RuntimeError(f"Failed to download video: {str(e)}")
-            
+
         except Exception as e:
             logger.error(f"Unexpected error downloading video: {str(e)}")
             if video_path.exists():
@@ -131,16 +111,10 @@ class VideoDownloader:
 
     @staticmethod
     async def cleanup_files(video_id: str) -> None:
-        """
-        Clean up downloaded files for a video
-        
-        Args:
-            video_id: The ID of the video to clean up
-        """
         base_path = settings.ORIGINALS_DIR / video_id
         video_file = base_path.with_suffix('.mp4')
         thumb_file = base_path.with_suffix('.jpg')
-        
+
         try:
             if video_file.exists():
                 video_file.unlink()

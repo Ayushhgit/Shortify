@@ -1,85 +1,77 @@
 import logging
-from pathlib import Path
 from typing import Dict, Any, List, Optional
 
 from app.utils.downloader import VideoDownloader
 from app.utils.analyzer import VideoAnalyzer
 from app.utils.editor import VideoEditor
-from app.models.schemas import VideoClipsResponse, ClipInfo
+from app.models.schemas import VideoClipsResponse, ClipInfo, TaskStatusEnum
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
+
 class ShortsService:
-    @staticmethod
-    async def generate_shorts(
-        url: str,
-        use_whisper: bool = False,
-        use_gpt: bool = False
-    ) -> Dict[str, Any]:
-        """
-        Generate short clips from YouTube video
-        
-        Args:
-            url: YouTube video URL
-            use_whisper: Whether to use Whisper for transcription
-            use_gpt: Whether to use GPT-4 for analyzing virality
-            
-        Returns:
-            Dictionary containing video ID and task information
-        """
-        # Start the task asynchronously to avoid timeout
-        return {
-            "url": url,
-            "use_whisper": use_whisper,
-            "use_gpt": use_gpt
-        }
-    
     @staticmethod
     async def process_video(
         url: str,
         use_whisper: bool = False,
-        use_gpt: bool = False
+        use_gpt: bool = False,
+        task_id: Optional[str] = None
     ) -> VideoClipsResponse:
         """
-        Process video to generate short clips
-        
+        Download a YouTube video, analyze for viral segments, and generate short clips.
+
         Args:
-            url: YouTube video URL
-            use_whisper: Whether to use Whisper for transcription
-            use_gpt: Whether to use GPT-4 for analyzing virality
-            
+            url (str): YouTube video URL
+            use_whisper (bool): Whether to use Whisper for transcription
+            use_gpt (bool): Whether to use GPT-4 for analyzing virality
+            task_id (Optional[str]): Celery task ID for tracking
+
         Returns:
-            VideoClipsResponse object
+            VideoClipsResponse: Result containing generated clips
         """
         try:
-            # Download the video
+            logger.info(f"[ShortsService] Starting processing for: {url}")
+
+            # Step 1: Download the video
             video_id, video_path, video_info = await VideoDownloader.download_youtube(url)
-            
-            # Find viral segments
+            logger.info(f"[ShortsService] Video downloaded: {video_path} (ID: {video_id})")
+
+            # Step 2: Analyze for viral segments
             segments = await VideoAnalyzer.find_viral_segments(
-                video_path, use_whisper, use_gpt
+                video_path, use_whisper=use_whisper, use_gpt=use_gpt
             )
-            
-            # Create clips from segments
+
+            if not segments:
+                logger.warning(f"[ShortsService] No segments found for video {video_id}")
+                return VideoClipsResponse(
+                    video_id=video_id,
+                    original_url=url,
+                    clips=[],
+                    task_id=task_id,
+                    status=TaskStatusEnum.failed
+                )
+
+            logger.info(f"[ShortsService] {len(segments)} segments found for video {video_id}")
+
+            # Step 3: Generate clips
             clips = await VideoEditor.create_clips(video_path, segments)
-            
-            # Create response
-            response = VideoClipsResponse(
+            logger.info(f"[ShortsService] {len(clips)} clips created for video {video_id}")
+
+            return VideoClipsResponse(
                 video_id=video_id,
                 original_url=url,
                 clips=clips,
-                status="completed"
+                task_id=task_id,
+                status=TaskStatusEnum.completed
             )
-            
-            return response
-            
+
         except Exception as e:
-            logger.error(f"Error processing video: {e}")
-            # Return error response
+            logger.error(f"[ShortsService] Error processing video {url}: {e}", exc_info=True)
             return VideoClipsResponse(
                 video_id="error",
                 original_url=url,
                 clips=[],
-                status="failed"
+                task_id=task_id,
+                status=TaskStatusEnum.failed
             )

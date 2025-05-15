@@ -1,4 +1,4 @@
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status,Body
 from typing import Optional
 
 from app.models.schemas import VideoGenerateRequest, VideoClipsResponse, TaskStatusResponse
@@ -34,7 +34,7 @@ async def create_shorts(
     try:
         # Start Celery task
         task = generate_shorts.delay(
-            request.url,
+            str(request.url),
             request.use_whisper,
             request.use_gpt
         )

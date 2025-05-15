@@ -1,7 +1,7 @@
 import os
 import pathlib
 from typing import Optional, Dict, Any
-from pydantic import validator
+from pydantic import field_validator
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
@@ -35,7 +35,7 @@ class Settings(BaseSettings):
     USE_WHISPER: Optional[bool] = None
 
     # Video Clip Settings
-    MIN_CLIP_DURATION: int = 15  # in seconds
+    MIN_CLIP_DURATION: int = 5  # in seconds
     MAX_CLIP_DURATION: int = 60  # in seconds
     MAX_CLIPS: int = 4
 
@@ -46,37 +46,37 @@ class Settings(BaseSettings):
 
     # ---------- VALIDATORS ----------
 
-    @validator("STORAGE_TYPE")
+    @field_validator("STORAGE_TYPE")
     def validate_storage_type(cls, v: str) -> str:
         allowed = {"local", "s3"}
         if v not in allowed:
             raise ValueError(f"Invalid STORAGE_TYPE: {v}. Must be one of {allowed}")
         return v
 
-    @validator("UPLOAD_DIR", "ORIGINALS_DIR", "CLIPS_DIR", pre=True, always=True)
+    @field_validator("UPLOAD_DIR", "ORIGINALS_DIR", "CLIPS_DIR", mode="before")
     def ensure_directories_exist(cls, v) -> pathlib.Path:
         path= pathlib.Path(v).resolve()  # Convert to pathlib.Path and resolve
         path.mkdir(parents=True, exist_ok=True)  # Create dir if needed
         return path
 
 
-    @validator("CELERY_BROKER_URL", pre=True, always=True)
+    @field_validator("CELERY_BROKER_URL", mode="before")
     def default_celery_broker(cls, v: Optional[str], values: Dict[str, Any]) -> str:
         if v:
             return v
         return f"redis://{values.get('REDIS_HOST', 'localhost')}:{values.get('REDIS_PORT', 6379)}/0"
 
-    @validator("CELERY_RESULT_BACKEND", pre=True, always=True)
+    @field_validator("CELERY_RESULT_BACKEND", mode="before")
     def default_celery_backend(cls, v: Optional[str], values: Dict[str, Any]) -> str:
         if v:
             return v
         return f"redis://{values.get('REDIS_HOST', 'localhost')}:{values.get('REDIS_PORT', 6379)}/0"
 
-    @validator("USE_GPT", pre=True, always=True)
+    @field_validator("USE_GPT", mode="before")
     def enable_gpt_if_key_exists(cls, v: Optional[bool], values: Dict[str, Any]) -> bool:
         return bool(values.get("OPENAI_API_KEY")) if v is None else v
 
-    @validator("USE_WHISPER", pre=True, always=True)
+    @field_validator("USE_WHISPER", mode="before")
     def enable_whisper_if_key_exists(cls, v: Optional[bool], values: Dict[str, Any]) -> bool:
         return bool(values.get("OPENAI_API_KEY")) if v is None else v
 

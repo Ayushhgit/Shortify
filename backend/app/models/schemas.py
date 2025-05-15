@@ -1,5 +1,5 @@
 from typing import List, Optional
-from pydantic import BaseModel, HttpUrl, validator
+from pydantic import BaseModel, HttpUrl, field_validator
 from enum import Enum
 from datetime import datetime
 import re
@@ -15,7 +15,7 @@ class VideoGenerateRequest(BaseModel):
     use_whisper: Optional[bool] = False
     use_gpt: Optional[bool] = False
 
-    @validator('url')
+    @field_validator('url')
     def validate_youtube_url(cls, v):
         youtube_pattern = re.compile(
             r'^(https?://)?(www\.)?(youtube\.com/watch\?v=|youtu\.be/)[\w-]{11}.*$'
@@ -31,7 +31,7 @@ class ClipInfo(BaseModel):
     confidence: float
     caption: Optional[str] = None
 
-    @validator('start', 'end')
+    @field_validator('start', 'end')
     def validate_time_format(cls, v):
         try:
             datetime.strptime(v, "%H:%M:%S")
