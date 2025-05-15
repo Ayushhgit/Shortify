@@ -70,14 +70,17 @@ class VideoAnalyzer:
         energy = await VideoAnalyzer.analyze_energy(str(audio_path))
         segments = []
 
-        energy = np.nan_to_num(energy)
-        energy = np.clip(energy, 0, None)
+        energy = np.nan_to_num(energy) #Replace NaNs with 0s.
+        energy = np.clip(energy, 0, None) #Clip negative values (if any) to 0.
 
+
+        #normalize the energy range b/w 0-1.
         if np.max(energy) - np.min(energy) == 0:
             energy_norm = np.zeros_like(energy)
         else:
             energy_norm = (energy - np.min(energy)) / (np.max(energy) - np.min(energy))
 
+        #Thresholding High-Energy Audio Frames
         if len(energy_norm) > 0:
             mean_energy = np.mean(energy_norm)
             std_energy = np.std(energy_norm)
@@ -89,6 +92,7 @@ class VideoAnalyzer:
 
         logger.info(f"High energy frames found: {len(high_energy_frames)}")
 
+        # Group Consecutive High-Energy Frames into Segments.
         if len(high_energy_frames) > 0:
             avg_frame_gap = np.mean(np.diff(high_energy_frames)) if len(high_energy_frames) > 1 else 0
             gap_tolerance = max(50, int(2 * avg_frame_gap))
@@ -100,6 +104,7 @@ class VideoAnalyzer:
             hop_length = 512
             sr = 44100
 
+            #Convert Frame Indices to Time + Adjust Durations
             for i, segment in enumerate(segments_idx):
                 if len(segment) == 0:
                     continue
@@ -111,11 +116,11 @@ class VideoAnalyzer:
                 logger.debug(f"Segment candidate duration: {duration:.2f}s")
                 logger.debug(f"Segment: start={start_time:.2f}, end={end_time:.2f}, duration={duration:.2f}")
 
-                min_duration = getattr(settings, 'MIN_CLIP_DURATION', 5.0)
+                min_duration = getattr(settings, 'MIN_CLIP_DURATION', 15.0)
                 max_duration = getattr(settings, 'MAX_CLIP_DURATION', 60.0)
 
                 if duration < min_duration:
-                    extension_frames = int((min_duration - duration) * sr / hop_length)
+                    extension_frames = int((min_duration - duration) * sr / hop_length) #expand segment if too short
                     new_end_frame = min(segment[-1] + extension_frames, len(energy_norm) - 1)
                     new_start_frame = max(0, segment[0] - max(0, extension_frames - (new_end_frame - segment[-1])))
 
@@ -126,6 +131,7 @@ class VideoAnalyzer:
 
                     logger.debug(f"Extended segment {i}: {start_time:.2f}-{end_time:.2f}s")
 
+                #give each a confidence score
                 confidence = float(np.mean(energy_norm[segment]))
 
                 if min_duration <= duration <= max_duration:
@@ -142,7 +148,7 @@ class VideoAnalyzer:
                 logger.error(f"Could not read video duration: {e}")
                 video_duration = 60
 
-            min_duration = getattr(settings, 'MIN_CLIP_DURATION', 5.0)
+            min_duration = getattr(settings, 'MIN_CLIP_DURATION', 15.0)
             max_duration = getattr(settings, 'MAX_CLIP_DURATION', 60.0)
             optimal_duration = min(30.0, max_duration)
 
