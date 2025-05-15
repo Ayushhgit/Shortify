@@ -510,7 +510,7 @@ export default function ShortsGenerator() {
                   {clips.map((clip, index) => (
                     <div
                       key={index}
-                      className="bg-white border rounded-xl shadow hover:shadow-md transition p-4"
+                      className="bg-white rounded-xl shadow overflow-hidden border border-gray-200 hover:shadow-md transition p-4"
                     >
                       <video
                         controls
@@ -590,7 +590,7 @@ export default function ShortsGenerator() {
 
       {/* Footer */}
       <footer className="bg-white flex items-center border-t border-gray-200 mt-auto">
-        <div className="max-w-7xl mx-auto px-1 py-6 flex justify-between items-center w-full">
+        <div className="max-w-7xl mx-auto px-126 py-6 flex justify-between items-center w-full">
           <p className="text-sm text-gray-600">
             &copy; 2025 Shortify. All rights reserved.
           </p>

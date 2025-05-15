@@ -18,7 +18,7 @@ class VideoEditor:
         end_time: float
     ) -> Tuple[Path, Dict[str, Any]]:
         """
-        Extract a clip from a video using ffmpeg
+        Extract a clip from a video using ffmpeg and convert to zoomed/cropped portrait (9:16)
         
         Args:
             video_path: Path to the video file
@@ -35,10 +35,16 @@ class VideoEditor:
         start_str = VideoEditor.format_timestamp(start_time)
         duration = end_time - start_time
         
+        # Target portrait dimensions (9:16)
+        target_height = 1280  # Standard portrait height
+        target_width = int(target_height * 9 / 16)  # 720 for 1280 height
+        
         cmd = [
             "ffmpeg", "-i", str(video_path),
             "-ss", start_str,
             "-t", str(duration),
+            # Scale to fill height while maintaining aspect ratio, then crop to 9:16
+            "-vf", f"scale=-1:{target_height},crop={target_width}:{target_height}",
             "-c:v", "libx264", "-c:a", "aac",
             "-preset", "fast", "-y",
             str(output_path)
@@ -47,19 +53,31 @@ class VideoEditor:
         try:
             subprocess.run(cmd, check=True, capture_output=True)
             
+            # Verify output dimensions
+            verify_cmd = [
+                "ffprobe",
+                "-v", "error",
+                "-select_streams", "v:0",
+                "-show_entries", "stream=width,height",
+                "-of", "csv=p=0",
+                str(output_path)
+            ]
+            dimensions = subprocess.run(verify_cmd, check=True, capture_output=True).stdout.decode().strip()
+            logger.info(f"Output video dimensions: {dimensions}")
+            
             # Generate clip info
             clip_info = {
                 "url": f"/uploads/clips/{output_path.name}",
                 "start": VideoEditor.format_timestamp(start_time),
                 "end": VideoEditor.format_timestamp(end_time),
-                "confidence": 0.0,  # Will be updated later
+                "confidence": 0.0,
+                "aspect_ratio": "9:16 (zoomed & cropped)",
             }
             
             return output_path, clip_info
             
         except subprocess.CalledProcessError as e:
-            logger.error(f"Error extracting clip: {e}")
-            # Clean up any partial files
+            logger.error(f"Error extracting clip: {e.stderr.decode()}")
             if os.path.exists(output_path):
                 os.remove(output_path)
             raise
