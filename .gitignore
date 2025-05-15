@@ -44,3 +44,5 @@ backend/*.sqlite3
 *.tmp
 *.swp
 *.idea/
+
+backend/.uploads/
