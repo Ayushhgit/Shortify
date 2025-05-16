@@ -116,6 +116,13 @@ export default function ShortsGenerator() {
     return currentMessage;
   };
 
+  async function fetchBackendConfig() {
+        const res = await fetch('http://localhost:8000/config');
+        if (!res.ok) throw new Error('Fialed to fetch config');
+        return await res.json();
+        
+      }
+
   const handleSubmit = async (event) => {
     if (event) event.preventDefault();
 
@@ -150,12 +157,13 @@ export default function ShortsGenerator() {
       console.log('Formatted URL:', formattedUrl);
       console.log('Is valid YouTube URL:', isValidYouTubeUrl(formattedUrl));
 
+      const config = fetchBackendConfig();
       // Request body structure
       const requestBody = { 
         request: {
           url: formattedUrl,
-          use_whisper: false,
-          use_gpt: false
+          use_whisper: true,
+          use_gpt: true,
         }
       };
       

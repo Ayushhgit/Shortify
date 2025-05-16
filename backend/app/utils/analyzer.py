@@ -63,8 +63,9 @@ class VideoAnalyzer:
         use_gpt: bool = False
     ) -> List[Tuple[float, float, float]]:
         """Find the most engaging segments in a video using audio analysis."""
+        # Import here to avoid circular imports
         from app.utils.transcriber import WhisperTranscriber
-        from app.utils.enhancer import GPTEnhancer
+        from app.utils.enhancer import LangchainHFEnhancer
 
         audio_path = await VideoAnalyzer.extract_audio(video_path)
         energy = await VideoAnalyzer.analyze_energy(str(audio_path))
@@ -72,7 +73,6 @@ class VideoAnalyzer:
 
         energy = np.nan_to_num(energy) #Replace NaNs with 0s.
         energy = np.clip(energy, 0, None) #Clip negative values (if any) to 0.
-
 
         #normalize the energy range b/w 0-1.
         if np.max(energy) - np.min(energy) == 0:
@@ -174,7 +174,7 @@ class VideoAnalyzer:
         if use_whisper and settings.USE_WHISPER:
             segments = await WhisperTranscriber.enhance_segments(video_path, segments)
         if use_gpt and settings.USE_GPT:
-            segments = await GPTEnhancer.enhance_segments(video_path, segments)
+            segments = await LangchainHFEnhancer.enhance_segments(video_path, segments)
 
         segments.sort(key=lambda x: x[2], reverse=True)
         return segments[:getattr(settings, 'MAX_CLIPS', 5)]
@@ -185,35 +185,3 @@ class VideoAnalyzer:
         m, s = divmod(int(seconds), 60)
         h, m = divmod(m, 60)
         return f"{h:02d}:{m:02d}:{s:02d}"
-
-
-class GPTEnhancer:
-    @staticmethod
-    async def enhance_segments(
-        video_path: Path,
-        segments: List[Tuple[float, float, float]]
-    ) -> List[Tuple[float, float, float]]:
-        if not settings.USE_GPT or not settings.OPENAI_API_KEY:
-            logger.info("GPT enhancement skipped.")
-            return segments
-        logger.info(f"Mock GPT enhancement for {video_path}")
-        return segments
-
-
-class WhisperTranscriber:
-    @staticmethod
-    async def transcribe_video(video_path: Path) -> Dict[str, Any]:
-        if not settings.USE_WHISPER or not settings.OPENAI_API_KEY:
-            logger.info("Whisper transcription skipped.")
-            return {}
-        audio_path = await VideoAnalyzer.extract_audio(video_path)
-        logger.info(f"Mock transcription for {audio_path}")
-        return {"segments": []}
-
-    @staticmethod
-    async def enhance_segments(
-        video_path: Path,
-        segments: List[Tuple[float, float, float]]
-    ) -> List[Tuple[float, float, float]]:
-        _ = await WhisperTranscriber.transcribe_video(video_path)
-        return segments

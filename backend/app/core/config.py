@@ -3,6 +3,9 @@ import pathlib
 from typing import Optional, Dict, Any
 from pydantic import field_validator
 from pydantic_settings import BaseSettings
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class Settings(BaseSettings):
     # General
@@ -28,11 +31,14 @@ class Settings(BaseSettings):
     CELERY_BROKER_URL: Optional[str] = None
     CELERY_RESULT_BACKEND: Optional[str] = None
 
+    def str_to_bool(value: str) -> bool:
+        return value.lower() in ("1", "true", "yes") if value else False
+
     # AI Services
-    GROQ_API_KEY: Optional[str] = None
-    OPENAI_API_KEY: Optional[str] = None
-    USE_GPT: Optional[bool] = None
-    USE_WHISPER: Optional[bool] = None
+    GROQ_API_KEY:str = os.getenv("GROQ_API_KEY")
+    OPENAI_API_KEY:str = os.getenv("OPEN_API_KEY")
+    USE_GPT: bool = str_to_bool(os.getenv("USE_GPT"))
+    USE_WHISPER: bool = str_to_bool(os.getenv("USE_WHISPER"))
 
     # Video Clip Settings
     MIN_CLIP_DURATION: int = 5  # in seconds

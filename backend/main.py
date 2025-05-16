@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 import logging
 
-from app.routers import shorts
+from app.routers import shorts, config
 
 logging.basicConfig(
     level=logging.INFO,
@@ -30,6 +30,7 @@ app.add_middleware(
 app.mount("/uploads", StaticFiles(directory=Path("uploads")), name="uploads")
 
 app.include_router(chatbot_router)
+app.include_router(config.router)
 app.include_router(shorts.router, prefix="/api/shorts", tags=["shorts"])
 
 @app.get("/", tags=["status"])
