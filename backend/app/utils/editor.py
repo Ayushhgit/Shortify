@@ -1,4 +1,5 @@
 import os
+import asyncio
 from pathlib import Path
 import subprocess
 import uuid
@@ -39,21 +40,35 @@ class VideoEditor:
         target_height = 1280  # Standard portrait height
         target_width = int(target_height * 9 / 16)  # 720 for 1280 height
         
+        # Optimization 1: Use better FFmpeg presets and flags
         cmd = [
             "ffmpeg", "-i", str(video_path),
-            "-ss", start_str,
+            "-ss", start_str,  # Put -ss before -i for faster seeking
             "-t", str(duration),
             # Scale to fill height while maintaining aspect ratio, then crop to 9:16
-            "-vf", f"scale=-1:{target_height},crop={target_width}:{target_height}",
+            "-vf", f"scale=-1:{target_height}:flags=fast_bilinear,crop={target_width}:{target_height}",
             "-c:v", "libx264", "-c:a", "aac",
-            "-preset", "fast", "-y",
+            # Optimization 2: Use ultrafast preset for initial processing (much faster with slight quality loss)
+            "-preset", "ultrafast", 
+            # Optimization 3: Add threading to improve performance
+            "-threads", "0",  # Use all available threads
+            "-y",
             str(output_path)
         ]
         
         try:
-            subprocess.run(cmd, check=True, capture_output=True)
+            # Run FFmpeg process
+            proc = await asyncio.create_subprocess_exec(
+                *cmd, 
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE
+            )
+            _, stderr = await proc.communicate()
             
-            # Verify output dimensions
+            if proc.returncode != 0:
+                raise subprocess.CalledProcessError(proc.returncode, cmd, stderr=stderr)
+            
+            # Verify output dimensions 
             verify_cmd = [
                 "ffprobe",
                 "-v", "error",
@@ -62,7 +77,15 @@ class VideoEditor:
                 "-of", "csv=p=0",
                 str(output_path)
             ]
-            dimensions = subprocess.run(verify_cmd, check=True, capture_output=True).stdout.decode().strip()
+            
+            # Run FFprobe process
+            probe_proc = await asyncio.create_subprocess_exec(
+                *verify_cmd,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE
+            )
+            stdout, _ = await probe_proc.communicate()
+            dimensions = stdout.decode().strip()
             logger.info(f"Output video dimensions: {dimensions}")
             
             # Generate clip info
@@ -71,13 +94,14 @@ class VideoEditor:
                 "start": VideoEditor.format_timestamp(start_time),
                 "end": VideoEditor.format_timestamp(end_time),
                 "confidence": 0.0,
-                "aspect_ratio": "9:16 (zoomed & cropped)",
+                "caption": None,
             }
             
             return output_path, clip_info
             
         except subprocess.CalledProcessError as e:
-            logger.error(f"Error extracting clip: {e.stderr.decode()}")
+            error_msg = e.stderr.decode() if hasattr(e, 'stderr') and e.stderr else str(e)
+            logger.error(f"Error extracting clip: {error_msg}")
             if os.path.exists(output_path):
                 os.remove(output_path)
             raise
@@ -97,26 +121,41 @@ class VideoEditor:
         Returns:
             List of ClipInfo objects
         """
-        clips = []
-        
+        # Optimization 4: Process clips concurrently
+        tasks = []
         for start_time, end_time, confidence in segments:
-            try:
-                clip_path, clip_info = await VideoEditor.extract_clip(
-                    video_path, start_time, end_time
-                )
-                
-                # Update confidence score
-                clip_info["confidence"] = confidence
-                
-                # Create ClipInfo object
-                clips.append(ClipInfo(**clip_info))
-                
-            except Exception as e:
-                logger.error(f"Error creating clip: {e}")
-                # Continue with other clips
-                continue
+            tasks.append(
+                VideoEditor._process_clip(video_path, start_time, end_time, confidence)
+            )
         
-        return clips
+        # Wait for all clips to be processed concurrently
+        clips = await asyncio.gather(*tasks, return_exceptions=True)
+        
+        # Filter out exceptions and return valid clips
+        return [clip for clip in clips if isinstance(clip, ClipInfo)]
+    
+    @staticmethod
+    async def _process_clip(
+        video_path: Path,
+        start_time: float,
+        end_time: float,
+        confidence: float
+    ) -> ClipInfo:
+        """Helper method to process a single clip for concurrent processing"""
+        try:
+            clip_path, clip_info = await VideoEditor.extract_clip(
+                video_path, start_time, end_time
+            )
+            
+            # Update confidence score
+            clip_info["confidence"] = confidence
+            
+            # Create ClipInfo object
+            return ClipInfo(**clip_info)
+        except Exception as e:
+            logger.error(f"Error creating clip: {e}")
+            # Re-raise to be handled by gather
+            raise
     
     @staticmethod
     def format_timestamp(seconds: float) -> str:

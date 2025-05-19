@@ -1,5 +1,6 @@
-# --- app/services/shorts.py ---
+import os
 import logging
+import asyncio
 from typing import Optional
 
 from app.utils.downloader import VideoDownloader
@@ -21,11 +22,15 @@ class ShortsService:
         try:
             logger.info(f"[ShortsService] Starting processing for: {url}")
 
+            # Download the video
             video_id, video_path, video_info = await VideoDownloader.download_youtube(url)
             logger.info(f"[ShortsService] Video downloaded: {video_path} (ID: {video_id})")
 
+            # Run analysis to find segments
             segments = await VideoAnalyzer.find_viral_segments(
-                video_path, use_whisper=use_whisper, use_gpt=use_gpt
+                video_path, 
+                use_whisper=use_whisper, 
+                use_gpt=use_gpt
             )
 
             if not segments:
@@ -40,6 +45,7 @@ class ShortsService:
 
             logger.info(f"[ShortsService] {len(segments)} segments found for video {video_id}")
 
+            # Create clips concurrently using the optimized method
             clips = await VideoEditor.create_clips(video_path, segments)
             logger.info(f"[ShortsService] {len(clips)} clips created for video {video_id}")
 
@@ -60,4 +66,3 @@ class ShortsService:
                 task_id=task_id,
                 status=TaskStatusEnum.failed
             )
-

@@ -45,4 +45,4 @@ backend/*.sqlite3
 *.swp
 *.idea/
 
-backend/.uploads/
+uploads/
