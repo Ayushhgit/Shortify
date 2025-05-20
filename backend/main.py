@@ -1,8 +1,9 @@
-# --- main.py ---
 from fastapi import FastAPI
 from chatbot.routes import chatbot_router
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from app.core.database import Base, engine
+from app.routers import auth_router
 from pathlib import Path
 import logging
 
@@ -27,8 +28,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 app.mount("/uploads", StaticFiles(directory=Path("uploads")), name="uploads")
 
+app.include_router(auth_router.router, prefix="/api")
 app.include_router(chatbot_router)
 app.include_router(shorts.router, prefix="/api/shorts", tags=["shorts"])
 
