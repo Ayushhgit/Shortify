@@ -1,15 +1,28 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import logo from '../assets/logo.png';
 import { FaGithub } from "react-icons/fa";
 import yt from '../assets/yt.webp';
 import summary from '../assets/summary.jpg';
 import notes from '../assets/notes.jpg';
-import SignUpModal from '../components/SignUpModal';
-import { Home, Youtube, Video, FileText, Zap } from 'lucide-react';
+import AuthModalSystem from '../components/AuthModalSystem';
+import { Home, Youtube, Video, FileText, Zap, User } from 'lucide-react';
+import { auth } from '../firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 
 export default function ShortifyPage() {
   const [activeTab, setActiveTab] = useState('home');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    // Listen for auth state changes
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -51,11 +64,22 @@ export default function ShortifyPage() {
           <h1 className="text-xl font-semibold">{getTitle()}</h1>
           <div className="flex items-center gap-4">
             <a href="https://github.com/Ayushhgit" className="text-gray-500 hover:text-gray-700"><FaGithub size={20} /></a>
-            <button onClick={openModal} className="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded-lg flex items-center gap-1">
-              <span className="font-medium">Login</span>
-              <Zap />
-            </button>
-            {isModalOpen && <SignUpModal onClose={closeModal} />}
+            
+            {user ? (
+              <a href="/profile">
+              <button className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded-lg flex items-center gap-1">
+                <User size={18} />
+                <span className="font-medium">Profile</span>
+              </button>
+              </a>
+            ) : (
+              <button onClick={openModal} className="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded-lg flex items-center gap-1">
+                <span className="font-medium">Login</span>
+                <Zap size={18} />
+              </button>
+            )}
+            
+            {isModalOpen && <AuthModalSystem onClose={closeModal} initialMode="login" />}
           </div>
         </div>
 

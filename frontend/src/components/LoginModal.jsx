@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
-import { User, Mail, X, ChevronRight } from 'lucide-react';
+import { Mail, X, ChevronRight, Lock } from 'lucide-react';
 import { auth, googleProvider } from '../firebase';
 import {
-  createUserWithEmailAndPassword,
-  sendEmailVerification,
+  signInWithEmailAndPassword,
   signInWithPopup
 } from 'firebase/auth';
 import Toast from './Toast';
 
-export default function SignUpModal({ onClose, openLoginModal }) {
-  const [name, setName] = useState('');
+export default function LoginModal({ onClose, onSwitchToSignUp }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -23,44 +21,33 @@ export default function SignUpModal({ onClose, openLoginModal }) {
     setToast({ show: false, message: '' });
   };
 
-  const handleSignUp = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      await sendEmailVerification(userCredential.user);
-      showToast("✅ Verification email sent! Please check your inbox.");
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const token = await userCredential.user.getIdToken();
 
-      // Wait for email to be verified (or skip waiting in dev)
-      const interval = setInterval(async () => {
-        await userCredential.user.reload();
-        const isVerified = userCredential.user.emailVerified;
-        if (isVerified) {
-          clearInterval(interval);
+      // You might want to send this to your backend to validate the session
+      await fetch("http://localhost:8000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          email: email,
+          uid: userCredential.user.uid,
+        }),
+      });
 
-          const token = await userCredential.user.getIdToken();
-
-          // Send to backend
-          await fetch("http://localhost:8000/api/auth/firebase", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              name: name,
-              email: email,
-              uid: userCredential.user.uid,
-            }),
-          });
-
-          setEmail('');
-          setPassword('');
-          setName('');
-          onClose();
-        }
-      }, 3000);
+      showToast("✅ Successfully logged in!");
+      setTimeout(() => {
+        setEmail('');
+        setPassword('');
+        onClose();
+      }, 1500);
     } catch (err) {
       showToast(`❌ ${err.message}`);
     } finally {
@@ -92,7 +79,7 @@ export default function SignUpModal({ onClose, openLoginModal }) {
       });
       
       showToast("✅ Successfully signed in with Google!");
-      setTimeout(onClose, 2000);
+      setTimeout(onClose, 1500);
     } catch (err) {
       showToast(`❌ ${err.message}`);
     } finally {
@@ -101,7 +88,7 @@ export default function SignUpModal({ onClose, openLoginModal }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-bg-black/40 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
       <div className="bg-white rounded-2xl p-8 w-full max-w-md shadow-xl relative max-h-[90vh] overflow-y-auto">
         <button
           onClick={onClose}
@@ -110,35 +97,11 @@ export default function SignUpModal({ onClose, openLoginModal }) {
           <X size={20} />
         </button>
 
-        <div className="flex justify-center mb-4">
-          <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
-            <User size={32} className="text-gray-400" />
-          </div>
-        </div>
-
         <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-center">
-          Create a new account
+          Welcome back
         </h2>
 
-        <form className="space-y-5" onSubmit={handleSignUp}>
-          <div>
-            <label htmlFor="name" className="block text-gray-700 text-base mb-1">Name</label>
-            <div className="relative">
-              <input
-                type="text"
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg py-3 px-4 pl-12 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Type your name here"
-                required
-              />
-              <div className="absolute left-4 top-3.5">
-                <User size={20} className="text-gray-400" />
-              </div>
-            </div>
-          </div>
-
+        <form className="space-y-5" onSubmit={handleLogin}>
           <div>
             <label htmlFor="email" className="block text-gray-700 text-base mb-1">Email</label>
             <div className="relative">
@@ -148,7 +111,7 @@ export default function SignUpModal({ onClose, openLoginModal }) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full border border-gray-300 rounded-lg py-3 px-4 pl-12 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Type your email here"
+                placeholder="Enter your email"
                 required
               />
               <div className="absolute left-4 top-3.5">
@@ -159,15 +122,23 @@ export default function SignUpModal({ onClose, openLoginModal }) {
 
           <div>
             <label htmlFor="password" className="block text-gray-700 text-base mb-1">Password</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Choose a strong password"
-              required
-            />
+            <div className="relative">
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg py-3 px-4 pl-12 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter your password"
+                required
+              />
+              <div className="absolute left-4 top-3.5">
+                <Lock size={20} className="text-gray-400" />
+              </div>
+            </div>
+            <div className="flex justify-end mt-1">
+              <a href="#" className="text-sm text-blue-500 hover:underline">Forgot password?</a>
+            </div>
           </div>
 
           <button
@@ -175,7 +146,7 @@ export default function SignUpModal({ onClose, openLoginModal }) {
             disabled={loading}
             className={`w-full bg-blue-500 text-white font-medium py-3 px-4 rounded-full hover:bg-blue-600 transition-colors ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
-            {loading ? 'Signing up...' : 'Sign up'}
+            {loading ? 'Logging in...' : 'Log in'}
           </button>
         </form>
 
@@ -196,12 +167,12 @@ export default function SignUpModal({ onClose, openLoginModal }) {
 
         <div className="text-center mt-5">
           <p>
-            Already have an account?{' '}
+            Don't have an account?{' '}
             <button 
-              onClick={openLoginModal}  // Trigger login modal
+              onClick={onSwitchToSignUp}
               className="text-blue-500 font-medium hover:underline"
             >
-              Login
+              Sign up
             </button>
           </p>
         </div>
