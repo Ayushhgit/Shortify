@@ -1,14 +1,61 @@
 import firebase_admin
-from firebase_admin import auth, credentials
-from fastapi import HTTPException
+from firebase_admin import credentials, auth
+from fastapi import HTTPException, Request, status
+from typing import Dict, Any, Optional
 
 # Initialize Firebase Admin SDK
-cred = credentials.Certificate("firebase-admin-sdk.json")  # Download this from Firebase Console
-firebase_admin.initialize_app(cred)
+# You'll need to provide a path to your service account JSON file
+# Generate this from Firebase Console > Project Settings > Service accounts
+try:
+    cred = credentials.Certificate(r"C:\Hari om\Shortify\backend\shortify-696e1-firebase-adminsdk-fbsvc-d55865f793.json")
+    firebase_app = firebase_admin.initialize_app(cred)
+except ValueError:
+    # App already initialized
+    firebase_app = firebase_admin.get_app()
 
-def verify_firebase_token(id_token: str):
+async def verify_firebase_token(token: str) -> Dict[str, Any]:
+    """
+    Verify Firebase ID token and return user data
+    
+    Args:
+        token: Firebase ID token
+    
+    Returns:
+        Dictionary containing user data
+    
+    Raises:
+        HTTPException: If token is invalid or expired
+    """
     try:
-        decoded_token = auth.verify_id_token(id_token)
+        decoded_token = auth.verify_id_token(token)
         return decoded_token
     except Exception as e:
-        raise HTTPException(status_code=401, detail="Invalid Firebase token")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f"Invalid authentication credentials: {str(e)}",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+def get_current_firebase_user(request: Request) -> Dict[str, Any]:
+    """
+    Get current user from Firebase token in Authorization header
+    
+    Args:
+        request: FastAPI request object
+    
+    Returns:
+        Dictionary containing user data
+    
+    Raises:
+        HTTPException: If token is missing or invalid
+    """
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Missing or invalid Authorization header",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    token = auth_header.split(" ")[1]
+    return verify_firebase_token(token)

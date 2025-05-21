@@ -1,12 +1,18 @@
-from sqlalchemy import Column, String, Boolean, DateTime
+from sqlalchemy import Boolean, Column, Integer, String, DateTime
+from sqlalchemy.sql import func
+
 from app.core.database import Base
-from datetime import datetime
 
 class User(Base):
     __tablename__ = "users"
 
-    uid = Column(String, primary_key=True, index=True)  # Firebase UID
-    email = Column(String, unique=True, index=True, nullable=False)
-    name = Column(String, nullable=True)
-    email_verified = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, unique=True, index=True)
+    name = Column(String)
+    firebase_uid = Column(String, unique=True, index=True)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    def __repr__(self):
+        return f"User(id={self.id}, email={self.email})"

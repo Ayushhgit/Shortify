@@ -1,8 +1,10 @@
 from typing import List, Optional
-from pydantic import BaseModel, HttpUrl, field_validator
+from pydantic import BaseModel, EmailStr, HttpUrl, field_validator
 from enum import Enum
 from datetime import datetime
-import re
+import re 
+
+
 
 class TaskStatusEnum(str, Enum):
     pending = "pending"
@@ -51,3 +53,20 @@ class TaskStatusResponse(BaseModel):
     status: TaskStatusEnum
     progress: Optional[float] = None
     result: Optional[VideoClipsResponse] = None
+
+class UserBase(BaseModel):
+    email: EmailStr
+    name: Optional[str] = None
+
+class UserCreate(UserBase):
+    firebase_uid: str
+
+class UserUpdate(UserBase):
+    is_active: Optional[bool] = None
+
+class UserResponse(UserBase):
+    id: int
+    is_active: bool
+    
+    class Config:
+        orm_mode = True
