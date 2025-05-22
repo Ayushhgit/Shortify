@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "psql": "^0.0.1",
     "react-firebase-hooks": "^5.1.1"
   }
 }

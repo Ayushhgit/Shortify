@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     CELERY_RESULT_BACKEND: Optional[str] = None
 
     #DataBase
-    DATABASE_URL: str = 
+    # DATABASE_URL: str 
 
     def str_to_bool(value: str) -> bool:
         return value.lower() in ("1", "true", "yes") if value else False

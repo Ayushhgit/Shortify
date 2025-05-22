@@ -64,6 +64,11 @@ class UserCreate(UserBase):
 class UserUpdate(UserBase):
     is_active: Optional[bool] = None
 
+class UserOut(UserBase):
+    name: Optional[str] = None
+    profile_picture: Optional[str] = None
+    created_at: datetime
+
 class UserResponse(UserBase):
     id: int
     is_active: bool

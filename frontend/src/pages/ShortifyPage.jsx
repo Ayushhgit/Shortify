@@ -14,21 +14,27 @@ export default function ShortifyPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [user, setUser] = useState(null);
 
- useEffect(() => {
-  const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-    if (currentUser && !currentUser.emailVerified) {
-      signOut(auth); // force logout if not verified
-      setUser(null);
-    } else {
-      setUser(currentUser);
-    }
-  });
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser && !currentUser.emailVerified) {
+        signOut(auth); // force logout if not verified
+        setUser(null);
+      } else {
+        setUser(currentUser);
+      }
+    });
 
-  return () => unsubscribe();
-}, []);
+    return () => unsubscribe();
+  }, []);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+
+  // Add this callback to handle successful authentication
+  const handleAuthSuccess = (user, userData) => {
+    setUser(user); // Update the user state immediately
+    closeModal(); // Close the modal
+  };
 
   const getTitle = () => {
     switch (activeTab) {
@@ -149,7 +155,11 @@ export default function ShortifyPage() {
             )}
 
             {isModalOpen && (
-              <AuthModalSystem onClose={closeModal} initialMode="login" />
+              <AuthModalSystem 
+                onClose={closeModal} 
+                initialMode="login" 
+                onAuthSuccess={handleAuthSuccess}
+              />
             )}
           </div>
         </div>

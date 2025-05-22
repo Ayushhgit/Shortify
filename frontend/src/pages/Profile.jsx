@@ -12,63 +12,71 @@ import {
   Loader,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { getAuth, signOut, updateProfile } from "firebase/auth";
+import { getAuth, signOut, updateProfile, onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../firebase";
-import { useAuthState } from "react-firebase-hooks/auth";
 
 export default function Profile() {
   const [name, setName] = useState("");
   const [bio, setBio] = useState("");
   const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [user, setUser] = useState(null);
 
   const auth = getAuth();
   const navigate = useNavigate();
 
-  // Fetch user data on component mount
+  // Handle authentication state changes
   useEffect(() => {
-    const fetchUserData = async () => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       try {
-        const [user, loading, error] = useAuthState(auth);
-        
-        if (!user) {
+        if (!currentUser) {
           // No user is signed in, redirect to home
           navigate("/");
           return;
         }
 
+        setUser(currentUser);
+        
         // Set email from auth
-        setEmail(user.email || "");
+        setEmail(currentUser.email || "");
         
         // Set display name from auth
-        if (user.displayName) {
-          setName(user.displayName);
+        if (currentUser.displayName) {
+          setName(currentUser.displayName);
         }
 
         // Try to fetch additional user data from Firestore
-        const userDocRef = doc(db, "users", user.uid);
-        const userDoc = await getDoc(userDocRef);
-        
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          // Only set bio from Firestore
-          if (userData.bio) setBio(userData.bio);
-          // If name wasn't set from auth, try to get it from Firestore
-          if (!user.displayName && userData.name) setName(userData.name);
+        try {
+          const userDocRef = doc(db, "users", currentUser.uid);
+          const userDoc = await getDoc(userDocRef);
+          
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            // Only set bio from Firestore
+            if (userData.bio) setBio(userData.bio);
+            // If name wasn't set from auth, try to get it from Firestore
+            if (!currentUser.displayName && userData.name) setName(userData.name);
+          }
+        } catch (firestoreError) {
+          console.error("Error fetching user data from Firestore:", firestoreError);
+          // Don't set error state for Firestore issues - auth data is still available
+          console.log("Continuing with auth data only");
         }
+        
+        setLoading(false);
       } catch (err) {
-        console.error("Error fetching user data:", err);
+        console.error("Error in auth state change:", err);
         setError("Failed to load profile information");
-      } finally {
         setLoading(false);
       }
-    };
+    });
 
-    fetchUserData();
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
   }, [auth, navigate]);
 
   const handleLogout = async () => {
@@ -94,8 +102,6 @@ export default function Profile() {
     setSuccess("");
     
     try {
-      const [user, loading, error] = useAuthState(auth);
-      
       if (!user) {
         navigate("/");
         return;
@@ -106,16 +112,23 @@ export default function Profile() {
         displayName: name
       });
       
-      // Update additional info in Firestore
-      const userDocRef = doc(db, "users", user.uid);
-      await setDoc(userDocRef, {
-        name,
-        bio,
-        email: user.email,
-        updatedAt: new Date().toISOString()
-      }, { merge: true });
+      // Try to update additional info in Firestore
+      try {
+        const userDocRef = doc(db, "users", user.uid);
+        await setDoc(userDocRef, {
+          name,
+          bio,
+          email: user.email,
+          updatedAt: new Date().toISOString()
+        }, { merge: true });
+        
+        setSuccess("Profile updated successfully!");
+      } catch (firestoreError) {
+        console.error("Error updating Firestore:", firestoreError);
+        // Auth profile was updated successfully, so show partial success
+        setSuccess("Profile updated successfully! (Note: Some data may not sync to cloud storage)");
+      }
       
-      setSuccess("Profile updated successfully!");
     } catch (err) {
       console.error("Error updating profile:", err);
       setError("Failed to update profile");
@@ -124,10 +137,26 @@ export default function Profile() {
     }
   };
 
+  // Show loading spinner while auth state is loading
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <Loader className="h-10 w-10 text-indigo-500 animate-spin" />
+        <div className="text-center">
+          <Loader className="h-10 w-10 text-indigo-500 animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If no user after loading is complete, this should redirect via useEffect
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <Loader className="h-10 w-10 text-indigo-500 animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Redirecting...</p>
+        </div>
       </div>
     );
   }
@@ -226,6 +255,7 @@ export default function Profile() {
                       .split(" ")
                       .map((n) => n[0])
                       .join("")
+                      .toUpperCase()
                   : "U"}
               </div>
               <div>
@@ -248,6 +278,7 @@ export default function Profile() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  required
                 />
               </div>
 
@@ -268,7 +299,7 @@ export default function Profile() {
               <button 
                 type="submit"
                 disabled={updating}
-                className="inline-flex items-center px-6 py-3 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition disabled:opacity-70"
+                className="inline-flex items-center px-6 py-3 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {updating ? (
                   <>

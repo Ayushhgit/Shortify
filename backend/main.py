@@ -6,6 +6,8 @@ from app.core.database import Base, engine
 from app.routers import auth_router
 from pathlib import Path
 import logging
+from app.models import user 
+
 
 from app.routers import shorts
 
@@ -31,7 +33,7 @@ app.add_middleware(
 
 app.mount("/uploads", StaticFiles(directory=Path("uploads")), name="uploads")
 
-app.include_router(auth_router.router, prefix="/api")
+app.include_router(auth_router.router)
 app.include_router(chatbot_router)
 app.include_router(shorts.router, prefix="/api/shorts", tags=["shorts"])
 
@@ -47,3 +49,7 @@ async def root():
 async def health():
     return {"status": "healthy"}
 #hi
+
+
+print("Creating tables...")
+Base.metadata.create_all(bind=engine)

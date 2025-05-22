@@ -198,6 +198,7 @@ async def firebase_auth(
         
         db.add(db_user)
         db.commit()
+        print(f"User added to DB: {db_user}")
         db.refresh(db_user)
     else:
         # Update existing user
@@ -206,6 +207,7 @@ async def firebase_auth(
         db_user.is_active = True
         
         db.commit()
+        print(f"User update to DB: {db_user}")
         db.refresh(db_user)
     
     return UserResponse(
