@@ -75,3 +75,8 @@ class UserResponse(UserBase):
     
     class Config:
         orm_mode = True
+
+class CreateOrderRequest(BaseModel):
+    order_id: str
+    amount: int
+    currency: str

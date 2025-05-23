@@ -1,10 +1,14 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 #SQLALCHEMY_DATABASE_URL = "sqlite:///./shortify.db"
 # For PostgreSQL, use the following:
-SQLALCHEMY_DATABASE_URL = "postgresql://postgres:hariom_715@localhost:5432/Shortify"
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 

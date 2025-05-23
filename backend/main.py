@@ -7,8 +7,7 @@ from app.routers import auth_router
 from pathlib import Path
 import logging
 from app.models import user 
-
-
+from app.routers import payment
 from app.routers import shorts
 
 logging.basicConfig(
@@ -33,6 +32,7 @@ app.add_middleware(
 
 app.mount("/uploads", StaticFiles(directory=Path("uploads")), name="uploads")
 
+app.include_router(payment.router)
 app.include_router(auth_router.router)
 app.include_router(chatbot_router)
 app.include_router(shorts.router, prefix="/api/shorts", tags=["shorts"])

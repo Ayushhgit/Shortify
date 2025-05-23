@@ -3,6 +3,7 @@ import pathlib
 from typing import Optional, Dict, Any
 from pydantic import field_validator
 from pydantic_settings import BaseSettings
+import razorpay
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -31,8 +32,13 @@ class Settings(BaseSettings):
     CELERY_BROKER_URL: Optional[str] = None
     CELERY_RESULT_BACKEND: Optional[str] = None
 
-    #DataBase
-    # DATABASE_URL: str 
+    # DataBase
+    DATABASE_URL: str = "postgresql://postgres:admin123@localhost:5432/shortify"
+
+    # RazorPay
+    RAZORPAY_KEY_ID:str = "rzp_test_quVhZvf3j1rhIY"
+    RAZORPAY_KEY_SECRET:str = "zsw9XVjl3VNSVy8ybHa14Rd0"
+    
 
     def str_to_bool(value: str) -> bool:
         return value.lower() in ("1", "true", "yes") if value else False
@@ -96,3 +102,5 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))

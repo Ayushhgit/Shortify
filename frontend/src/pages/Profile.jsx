@@ -45,9 +45,12 @@ export default function Profile() {
         setEmail(currentUser.email || "");
         
         // Set display name from auth
-        if (currentUser.displayName) {
-          setName(currentUser.displayName);
-        }
+         if (currentUser.displayName) {
+        setName(currentUser.displayName);
+      } else if (currentUser.email) {
+        // If displayName not set, fallback to email prefix as default name
+        setName(currentUser.email.split("@")[0]);
+      }
 
         // Try to fetch additional user data from Firestore
         try {

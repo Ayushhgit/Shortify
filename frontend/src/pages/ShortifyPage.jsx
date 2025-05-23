@@ -120,35 +120,14 @@ export default function ShortifyPage() {
             {user ? (
               user.emailVerified ? (
                 <a href="/profile">
-                  <button className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded-lg flex items-center gap-1">
+                  <button className="bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-700 hover:to-blue-700 text-white py-2 px-4 rounded-full flex items-center gap-1">
                     <User size={18} />
-                    <span className="font-medium">Profile</span>
-                  </button>
-                </a>
-              ) : (
-                <div className="text-sm text-red-600 flex items-center gap-2">
-                  <span>Please verify your email</span>
-                  <button
-                    onClick={async () => {
-                      try {
-                        await sendEmailVerification(auth.currentUser);
-                        alert("Verification email sent. Check your inbox!");
-                      } catch (err) {
-                        console.error(err);
-                        alert("Failed to send verification email.");
-                      }
-                    }}
-                    className="bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-3 rounded-lg text-xs"
-                  >
-                    Resend Email
-                  </button>
-                </div>
-              )
+                    <span className="font-medium ">Profile</span>
+                  </button> </a>) : (<div className="text-sm text-red-600 flex items-center gap-2"></div>)
             ) : (
               <button
                 onClick={openModal}
-                className="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded-lg flex items-center gap-1"
-              >
+                className="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded-lg flex items-center gap-1">
                 <span className="font-medium">Login</span>
                 <Zap size={18} />
               </button>
