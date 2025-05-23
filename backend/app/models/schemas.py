@@ -2,9 +2,7 @@ from typing import List, Optional
 from pydantic import BaseModel, EmailStr, HttpUrl, field_validator
 from enum import Enum
 from datetime import datetime
-import re 
-
-
+import re
 
 class TaskStatusEnum(str, Enum):
     pending = "pending"
@@ -12,11 +10,16 @@ class TaskStatusEnum(str, Enum):
     completed = "completed"
     failed = "failed"
 
+class SubscriptionTypeEnum(str, Enum):
+    free = "free"
+    pro = "pro"
+    premium = "premium"
+
 class VideoGenerateRequest(BaseModel):
     url: HttpUrl
     use_whisper: Optional[bool] = False
     use_gpt: Optional[bool] = False
-
+    
     @field_validator('url')
     def validate_youtube_url(cls, v):
         youtube_pattern = re.compile(
@@ -32,7 +35,7 @@ class ClipInfo(BaseModel):
     end: str    # Format: "HH:MM:SS"
     confidence: float
     caption: Optional[str] = None
-
+    
     @field_validator('start', 'end')
     def validate_time_format(cls, v):
         try:
@@ -60,18 +63,22 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     firebase_uid: str
+    subscription_type: Optional[SubscriptionTypeEnum] = SubscriptionTypeEnum.free
 
 class UserUpdate(UserBase):
     is_active: Optional[bool] = None
+    subscription_type: Optional[SubscriptionTypeEnum] = None
 
 class UserOut(UserBase):
     name: Optional[str] = None
     profile_picture: Optional[str] = None
+    subscription_type: SubscriptionTypeEnum
     created_at: datetime
 
 class UserResponse(UserBase):
     id: int
     is_active: bool
+    subscription_type: SubscriptionTypeEnum
     
     class Config:
         orm_mode = True

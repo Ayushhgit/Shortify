@@ -6,7 +6,7 @@ import logging
 
 from app.core.database import get_db
 from app.models.user import User
-from app.models.schemas import UserCreate, UserResponse
+from app.models.schemas import SubscriptionTypeEnum, UserCreate, UserResponse
 from app.auth.firebase_auth import verify_firebase_token
 
 logger = logging.getLogger(__name__)
@@ -79,6 +79,7 @@ async def firebase_auth(
             email=db_user.email,
             name=db_user.name,
             is_active=db_user.is_active,
+            subscription_type=db_user.subscription_type or SubscriptionTypeEnum.free,
         )
     except Exception as e:
         logger.error(f"Error in firebase_auth: {str(e)}")
@@ -119,6 +120,7 @@ async def login(
             email=db_user.email,
             name=db_user.name,
             is_active=db_user.is_active,
+            subscription_type=db_user.subscription_type or SubscriptionTypeEnum.free,
         )
     except Exception as e:
         logger.error(f"Error in login: {str(e)}")
@@ -152,6 +154,7 @@ async def get_current_user_profile(
             email=db_user.email,
             name=db_user.name,
             is_active=db_user.is_active,
+            subscription_type=db_user.subscription_type or SubscriptionTypeEnum.free,
         )
     except Exception as e:
         logger.error(f"Error in get_current_user_profile: {str(e)}")

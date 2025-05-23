@@ -1,32 +1,166 @@
-from fastapi import APIRouter, HTTPException, Request
-from app.services.payment_service import create_order
-from app.services.payment_service import verify_payment_signature
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+from pydantic import BaseModel
+from typing import Optional
+from app.core.database import get_db
+from app.auth.dependencies import get_current_user
+from app.services.payment_service import PaymentService
+from app.models.user import User
+import logging
 
-router = APIRouter(prefix="/payment", tags=["Payment"])
+logger = logging.getLogger(__name__)
+
+router = APIRouter(
+    prefix="/payment",
+    tags=["payment"]
+)
+
+# Pydantic models for request/response
+class CreateOrderRequest(BaseModel):
+    amount: int
+    currency: str = "INR"
+
+class VerifyPaymentRequest(BaseModel):
+    razorpay_order_id: str
+    razorpay_payment_id: str
+    razorpay_signature: str
+    plan_name: str
+    amount: int
+
+class SubscriptionStatusResponse(BaseModel):
+    subscription_type: str
+    is_active: bool
+    subscription_end: Optional[str] = None
+    subscription_start: Optional[str] = None
+
+payment_service = PaymentService()
 
 @router.post("/create-order")
-def create_payment_order(amount: int):
+async def create_order(
+    amount: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Create a payment order"""
     try:
-        order = create_order(amount_in_rupees=amount)
-        return {"order_id": order["id"], "amount": order["amount"], "currency": order["currency"]}
+        if amount <= 0:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Amount must be greater than 0"
+            )
+        
+        order = payment_service.create_order(amount)
+        return order
+        
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
+        logger.error(f"Error creating order: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to create payment order"
+        )
 
 @router.post("/verify")
-async def verify_signature(request: Request):
-    body = await request.json()
+async def verify_payment(
+    payment_data: VerifyPaymentRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Verify payment and update user subscription"""
+    try:
+        # Verify payment signature
+        is_valid = payment_service.verify_payment(
+            payment_data.razorpay_order_id,
+            payment_data.razorpay_payment_id,
+            payment_data.razorpay_signature
+        )
+        
+        if not is_valid:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid payment signature"
+            )
+        
+        # Update user subscription
+        updated_user = payment_service.update_user_subscription(
+            user_email=current_user.email,
+            plan_name=payment_data.plan_name,
+            payment_id=payment_data.razorpay_payment_id,
+            db=db
+        )
+        
+        if not updated_user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found"
+            )
+        
+        return {
+            "success": True,
+            "message": f"Payment verified and subscription updated to {payment_data.plan_name}",
+            "subscription_type": updated_user.subscription_type,
+            "subscription_end": updated_user.subscription_end.isoformat() if updated_user.subscription_end else None
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error verifying payment: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Payment verification failed"
+        )
 
-    order_id = body.get("razorpay_order_id")
-    payment_id = body.get("razorpay_payment_id")
-    signature = body.get("razorpay_signature")
+@router.get("/subscription-status", response_model=SubscriptionStatusResponse)
+async def get_subscription_status(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get current user's subscription status"""
+    try:
+        status = payment_service.get_user_subscription_status(
+            user_email=current_user.email,
+            db=db
+        )
+        return status
+        
+    except Exception as e:
+        logger.error(f"Error getting subscription status: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to get subscription status"
+        )
 
-    if not all([order_id, payment_id, signature]):
-        raise HTTPException(status_code=400, detail="Missing payment verification fields.")
-
-    is_valid = verify_payment_signature(order_id, payment_id, signature)
-
-    if is_valid:
-        return {"success": True, "message": "Payment verified successfully."}
-    else:
-        raise HTTPException(status_code=400, detail="Invalid signature.")
+@router.post("/cancel-subscription")
+async def cancel_subscription(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Cancel user's current subscription"""
+    try:
+        # Find user and update subscription
+        user = db.query(User).filter(User.email == current_user.email).first()
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found"
+            )
+        
+        # Set subscription to free and deactivate
+        user.subscription_type = 'free'
+        user.is_active = True  # Keep account active but downgrade plan
+        user.subscription_end = None
+        
+        db.commit()
+        
+        return {
+            "success": True,
+            "message": "Subscription cancelled successfully. You've been moved to the free plan."
+        }
+        
+    except Exception as e:
+        logger.error(f"Error cancelling subscription: {str(e)}")
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to cancel subscription"
+        )
