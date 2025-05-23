@@ -17,9 +17,11 @@ import {
   ChevronRight,
   Check
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Settings() {
+
+  const navigate = useNavigate();
   // State for settings
   const [darkMode, setDarkMode] = useState(false);
   const [emailNotifications, setEmailNotifications] = useState(true);
@@ -122,15 +124,11 @@ export default function Settings() {
               </button>
               <button
                 className="flex items-center w-full gap-3 text-sm text-gray-700 hover:text-green-600 transition"
-                onClick={() => scrollToSection(privacyRef)}
-              >
-                <Shield size={18} />
-                Privacy
+                onClick={() => navigate('/profile')}>
+                <User size={18} />
+                Profile
               </button>
-              <button className="flex items-center w-full gap-3 text-sm text-gray-700 hover:text-green-600 transition">
-                <Lock size={18} />
-                Security
-              </button>
+              
               <div className="border-t border-gray-200 pt-3 mt-3">
                 <button className="flex items-center w-full gap-3 text-sm text-red-500 hover:text-red-600 transition">
                   <LogOut size={18} />
