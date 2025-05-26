@@ -2,6 +2,7 @@ from sqlalchemy import Boolean, Column, Integer, String, DateTime, Enum
 from sqlalchemy.sql import func
 from app.core.database import Base
 from app.models.schemas import SubscriptionTypeEnum
+from datetime import datetime
 
 class User(Base):
     __tablename__ = "users"
@@ -14,8 +15,10 @@ class User(Base):
     subscription_type = Column(
     Enum(SubscriptionTypeEnum, name="subscription_type"),
     default=SubscriptionTypeEnum.free,
-    nullable=False  # ✅ this ensures the column can't be NULL
-)
+    server_default=SubscriptionTypeEnum.free.value,
+    nullable=False)
+    video_generation_count = Column(Integer, default=0)
+    last_video_reset = Column(DateTime, default=datetime.utcnow)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
