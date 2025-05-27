@@ -1,28 +1,25 @@
-from datetime import datetime, timedelta
-from typing import Optional
-#import jwt
+from firebase_admin import auth, credentials
 from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+import firebase_admin
 
-from app.core.config import settings
+# Initialize Firebase Admin SDK only once
+cred = credentials.Certificate(r"C:\Hari om\Shortify\backend\shortify-876e7-firebase-adminsdk-fbsvc-9193bebcff.json")
+if not firebase_admin._apps:
+    firebase_admin.initialize_app(cred)
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+security = HTTPBearer()
 
-# Optional: Implement if you want to use Google OAuth2
-def verify_google_token(token: str) -> dict:
-    """
-    Verify the Google OAuth2 token and return user info if valid
-    """
-    # Implement Google token verification logic here
-    pass
-
-# Optional: Implement if you need authentication
-async def get_current_user(token: str = Depends(oauth2_scheme)):
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    token = credentials.credentials  # Extracts the Bearer token
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
+        detail="Could not validate Firebase credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
-    
-    # Implement token validation logic here
-    pass
+
+    try:
+        decoded_token = auth.verify_id_token(token)
+        return decoded_token  # You get uid, email, etc.
+    except Exception:
+        raise credentials_exception

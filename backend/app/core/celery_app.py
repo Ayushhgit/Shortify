@@ -1,5 +1,6 @@
 from celery import Celery
-from app.core.config import settings
+import app
+from app.core.config import CELERY_BEAT_SCHEDULE, settings
 
 celery_app = Celery(
     "shortify_worker",
@@ -21,3 +22,5 @@ celery_app.conf.update(
     worker_prefetch_multiplier=1,
     worker_max_tasks_per_child=100,
 )
+
+app.core.config = CELERY_BEAT_SCHEDULE

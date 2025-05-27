@@ -1,13 +1,20 @@
 import React, { useState, useRef, useEffect } from "react";
 import {
-  Home,Settings,User,Video,Check,
+  Home,
+  Settings,
+  User,
+  Video,
+  Check,
   Download,
-  Share,Link as LinkIcon,X,Loader2,PlayCircle,} from "lucide-react";
+  Share,
+  Link as LinkIcon,
+  X,
+  Loader2,
+  PlayCircle,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import Toast from "../components/Toast";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
-import AuthModalSystem from "../components/AuthModalSystem";
+import { getToken } from '../firebase';
 
 export default function ShortsGenerator() {
   const [url, setUrl] = useState("");
@@ -22,17 +29,6 @@ export default function ShortsGenerator() {
   const [clips, setClips] = useState([]);
   const [processingProgress, setProcessingProgress] = useState(0);
   const [processingMessage, setProcessingMessage] = useState("");
-  const [currentUser, setCurrentUser] = useState(null);
-  const [showAuthModal, setShowAuthModal] = useState(false);
-
-  const navigate = useNavigate();
-  useEffect(() => {
-    const auth = getAuth();
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
-    });
-    return () => unsubscribe();
-  }, []);
 
   const displayToast = (message, type = "success") => {
     setToastMessage(message);
@@ -41,8 +37,7 @@ export default function ShortsGenerator() {
   };
 
   const isValidYouTubeUrl = (url) => {
-    const youtubeRegex =
-      /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[\w-]{11}.*$/;
+    const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[\w-]{11}.*$/;
     return youtubeRegex.test(url);
   };
 
@@ -53,10 +48,9 @@ export default function ShortsGenerator() {
 
   // Extract YouTube video ID from URL
   const extractVideoId = (url) => {
-    const regExp =
-      /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     const match = url.match(regExp);
-    return match && match[2].length === 11 ? match[2] : null;
+    return (match && match[2].length === 11) ? match[2] : null;
   };
 
   // Fetch YouTube video metadata using oEmbed
@@ -89,7 +83,7 @@ export default function ShortsGenerator() {
         channelName: "YouTube Channel",
         duration: "N/A",
         publishDate: new Date().toLocaleDateString(),
-        thumbnailUrl: "/assets/yt.webp",
+        thumbnailUrl: "/assets/yt.webp"
       };
     }
   };
@@ -109,7 +103,7 @@ export default function ShortsGenerator() {
       80: "Creating short clips...",
       90: "Finalizing output...",
       95: "Almost there...",
-      100: "Processing complete!",
+      100: "Processing complete!"
     };
 
     // Find the closest message
@@ -124,27 +118,26 @@ export default function ShortsGenerator() {
   };
 
   const handleSubmit = async (event) => {
-    if (event) event.preventDefault();
-
-    if (!url.trim()) {
-      setInputError("Please enter a YouTube URL");
-      return;
-    }
-
-    if (!isValidYouTubeUrl(url)) {
-      setInputError("Please enter a valid YouTube URL");
-      return;
-    }
-
-    const auth = getAuth();
-    const user = auth.currentUser;
-
-    if (!user) {
-      displayToast("Please sign in to generate shorts.", "error");
-      return;
-    }
-
     try {
+      const idToken = await getToken();
+      if (!idToken) {
+        console.error("User not authenticated");
+        displayToast("Authentication failed. Please try logging in again.", "error");
+        return;
+      }
+
+      if (event) event.preventDefault();
+
+      if (!url.trim()) {
+        setInputError("Please enter a YouTube URL");
+        return;
+      }
+
+      if (!isValidYouTubeUrl(url)) {
+        setInputError("Please enter a valid YouTube URL");
+        return;
+      }
+
       setIsProcessing(true);
       setSubmitted(false);
       setVideoDetails(null);
@@ -153,47 +146,40 @@ export default function ShortsGenerator() {
 
       // Ensure URL has protocol
       let formattedUrl = url.trim();
-      if (
-        !formattedUrl.startsWith("http://") &&
-        !formattedUrl.startsWith("https://")
-      ) {
-        formattedUrl = "https://" + formattedUrl;
+      if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
+        formattedUrl = 'https://' + formattedUrl;
       }
 
       // Fetch video metadata in parallel with processing
       const metadataPromise = fetchVideoMetadata(formattedUrl);
 
       // Debug logging
-      console.log("Original URL:", url);
-      console.log("Formatted URL:", formattedUrl);
-      console.log("Is valid YouTube URL:", isValidYouTubeUrl(formattedUrl));
+      console.log('Original URL:', url);
+      console.log('Formatted URL:', formattedUrl);
+      console.log('Is valid YouTube URL:', isValidYouTubeUrl(formattedUrl));
 
-      // Request body structure
+      // Request body structure - simplified to match what server expects
       const requestBody = {
-        request: {
-          url: formattedUrl,
-          use_whisper: true,
-          use_gpt: true,
-        },
+        url: formattedUrl,
+        use_whisper: true,
+        use_gpt: true
       };
 
-      console.log("Request body:", JSON.stringify(requestBody, null, 2));
+      console.log('Request body:', JSON.stringify(requestBody, null, 2));
 
       // Initial progress
       setProcessingProgress(5);
       setProcessingMessage(getProgressMessage(5));
 
       // Step 1: Send URL to backend
-      const response = await fetch(
-        "http://localhost:8000/api/shorts/generate",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestBody),
-        }
-      );
+      const response = await fetch("http://localhost:8000/api/shorts/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${idToken}`,
+        },
+        body: JSON.stringify(requestBody)
+      });
 
       setProcessingProgress(10);
       setProcessingMessage(getProgressMessage(10));
@@ -202,18 +188,20 @@ export default function ShortsGenerator() {
         let errorMessage = `HTTP error! status: ${response.status}`;
         try {
           const errorData = await response.json();
-          console.log("Error data:", errorData); // Log full error for debugging
+          console.log('Error data:', errorData);  // Log full error for debugging
 
           // Handle Pydantic validation errors
           if (errorData.detail) {
             if (Array.isArray(errorData.detail)) {
-              errorMessage = errorData.detail.map((err) => err.msg).join(", ");
-            } else {
+              errorMessage = errorData.detail.map(err => `${err.loc?.join('.')} ${err.msg}`).join(', ');
+            } else if (typeof errorData.detail === 'string') {
               errorMessage = errorData.detail;
+            } else {
+              errorMessage = JSON.stringify(errorData.detail);
             }
           }
         } catch (e) {
-          console.error("Failed to parse error response");
+          console.error('Failed to parse error response');
         }
         throw new Error(errorMessage);
       }
@@ -229,9 +217,7 @@ export default function ShortsGenerator() {
       let pollCount = 0;
 
       while (status !== "completed") {
-        const pollRes = await fetch(
-          `http://localhost:8000/api/shorts/status/${task_id}`
-        );
+        const pollRes = await fetch(`http://localhost:8000/api/shorts/status/${task_id}`);
 
         if (!pollRes.ok) {
           throw new Error(`HTTP error! status: ${pollRes.status}`);
@@ -246,7 +232,7 @@ export default function ShortsGenerator() {
           setProcessingMessage(getProgressMessage(statusData.progress));
         } else {
           // Estimate progress based on time elapsed
-          const estimatedProgress = Math.min(15 + pollCount * 5, 90);
+          const estimatedProgress = Math.min(15 + (pollCount * 5), 90);
           setProcessingProgress(estimatedProgress);
           setProcessingMessage(getProgressMessage(estimatedProgress));
         }
@@ -329,6 +315,26 @@ export default function ShortsGenerator() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
+      {/* Add CSS animations */}
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+          @keyframes slide-up {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          .animate-fade-in {
+            animation: fade-in 0.5s ease-out;
+          }
+          .animate-slide-up {
+            animation: slide-up 0.5s ease-out forwards;
+          }
+        `
+      }} />
+
       {/* Header */}
       <header className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] max-w-7xl rounded-full bg-white/70 backdrop-blur-lg shadow-xl border border-gray-200 px-6">
         <div className="flex justify-between items-center h-16">
@@ -344,18 +350,11 @@ export default function ShortsGenerator() {
                 <Home className="h-5 w-5 text-gray-600" />
               </button>
             </a>
-            <button
-              onClick={() => {
-                if (currentUser) {
-                  navigate("/profile");
-                } else {
-                  setShowAuthModal(true); 
-                }
-              }}
-              className="p-2 rounded-full hover:bg-indigo-100 hover:border-2 border-bold transition">
-              <User className="h-5 w-5 text-gray-600" />
-            </button>
-
+            <Link to="/Profile">
+              <button className="p-2 rounded-full hover:bg-indigo-100 hover:border-2 border-bold transition">
+                <User className="h-5 w-5 text-gray-600" />
+              </button>
+            </Link>
             <Link to="/Settings">
               <button className="p-2 rounded-full hover:bg-indigo-100 hover:border-2 border-bold transition">
                 <Settings className="h-5 w-5 text-gray-600" />
@@ -365,16 +364,8 @@ export default function ShortsGenerator() {
         </div>
       </header>
 
-               {showAuthModal && (
-        <AuthModalSystem onClose={() => setShowAuthModal(false)} />
-      )}
-
       {/* Main Content */}
-      <main
-        className={`flex-1 flex ${
-          submitted ? "flex-col pt-24" : "items-center justify-center"
-        } px-4 sm:px-6 lg:px-8`}
-      >
+      <main className={`flex-1 flex ${submitted ? "flex-col pt-24" : "items-center justify-center"} px-4 sm:px-6 lg:px-8`}>
         <div className={`max-w-7xl mx-auto w-full ${submitted ? "" : "py-30"}`}>
           <div className="w-full">
             {/* Heading */}
@@ -389,42 +380,22 @@ export default function ShortsGenerator() {
 
             {/* Step Indicator */}
             <div className="flex justify-center items-center mb-10">
-              <div
-                className={`flex items-center ${
-                  url ? "text-indigo-500" : "text-gray-500"
-                }`}
-              >
-                <div
-                  className={`rounded-full h-8 w-8 flex items-center justify-center border-2 ${
-                    url ? "border-indigo-500 bg-indigo-100" : "border-gray-300"
-                  }`}
-                >
+              <div className={`flex items-center ${url ? "text-indigo-500" : "text-gray-500"}`}>
+                <div className={`rounded-full h-8 w-8 flex items-center justify-center border-2 ${url ? "border-indigo-500 bg-indigo-100" : "border-gray-300"}`}>
                   {url ? <Check className="h-5 w-5" /> : "1"}
                 </div>
                 <span className="ml-2 font-medium">Paste URL</span>
               </div>
               <div className="h-1 w-12 mx-4 bg-gray-200"></div>
-              <div
-                className={`flex items-center ${
-                  submitted ? "text-indigo-500" : "text-gray-500"
-                }`}
-              >
-                <div
-                  className={`rounded-full h-8 w-8 flex items-center justify-center border-2 ${
-                    submitted
-                      ? "border-indigo-500 bg-indigo-100"
-                      : "border-gray-300"
-                  }`}
-                >
+              <div className={`flex items-center ${submitted ? "text-indigo-500" : "text-gray-500"}`}>
+                <div className={`rounded-full h-8 w-8 flex items-center justify-center border-2 ${submitted ? "border-indigo-500 bg-indigo-100" : "border-gray-300"}`}>
                   {submitted ? <Check className="h-5 w-5" /> : "2"}
                 </div>
                 <span className="ml-2 font-medium">Generate</span>
               </div>
               <div className="h-1 w-12 mx-4 bg-gray-200"></div>
               <div className="flex items-center text-gray-500">
-                <div className="rounded-full h-8 w-8 flex items-center justify-center border-2 border-gray-300">
-                  3
-                </div>
+                <div className="rounded-full h-8 w-8 flex items-center justify-center border-2 border-gray-300">3</div>
                 <span className="ml-2 font-medium">Download</span>
               </div>
             </div>
@@ -442,9 +413,8 @@ export default function ShortsGenerator() {
                     onChange={handleUrlChange}
                     onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
                     placeholder="Paste YouTube URL here..."
-                    className={`block w-full pl-10 pr-10 py-3 border ${
-                      inputError ? "border-red-300" : "border-gray-300"
-                    } rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 bg-white`}
+                    className={`block w-full pl-10 pr-10 py-3 border ${inputError ? "border-red-300" : "border-gray-300"
+                      } rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 bg-white`}
                   />
                   {url && (
                     <button
@@ -465,11 +435,10 @@ export default function ShortsGenerator() {
                   <button
                     type="submit"
                     disabled={isProcessing}
-                    className={`flex items-center justify-center px-5 py-3 rounded-xl font-medium transition ${
-                      isProcessing
+                    className={`flex items-center justify-center px-5 py-3 rounded-xl font-medium transition ${isProcessing
                         ? "bg-gray-300 cursor-not-allowed"
                         : "bg-indigo-500 hover:bg-indigo-600 text-white"
-                    }`}
+                      }`}
                   >
                     {isProcessing ? (
                       <>
@@ -493,10 +462,7 @@ export default function ShortsGenerator() {
 
                 {/* Progress Bar */}
                 {isProcessing && (
-                  <ProgressBar
-                    progress={processingProgress}
-                    message={processingMessage}
-                  />
+                  <ProgressBar progress={processingProgress} message={processingMessage} />
                 )}
               </form>
             </div>
@@ -579,12 +545,8 @@ export default function ShortsGenerator() {
                         src={`http://localhost:8000${clip.url}`}
                       />
                       <div className="mt-3 text-sm text-gray-700">
-                        <div>
-                          ⏱ {clip.start} - {clip.end}
-                        </div>
-                        <div>
-                          🎯 Confidence: {(clip.confidence * 100).toFixed(1)}%
-                        </div>
+                        <div>⏱ {clip.start} - {clip.end}</div>
+                        <div>🎯 Confidence: {(clip.confidence * 100).toFixed(1)}%</div>
                       </div>
                       <div className="flex justify-between mt-2 text-xs text-gray-500">
                         <a
@@ -596,13 +558,8 @@ export default function ShortsGenerator() {
                         </a>
                         <button
                           onClick={() => {
-                            navigator.clipboard.writeText(
-                              `http://localhost:8000${clip.url}`
-                            );
-                            displayToast(
-                              "Link copied to clipboard!",
-                              "success"
-                            );
+                            navigator.clipboard.writeText(`http://localhost:8000${clip.url}`);
+                            displayToast("Link copied to clipboard!", "success");
                           }}
                           className="hover:text-indigo-600"
                         >
@@ -636,9 +593,7 @@ export default function ShortsGenerator() {
                     <div className="bg-indigo-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">
                       <Loader2 className="h-6 w-6 text-indigo-600" />
                     </div>
-                    <h3 className="font-semibold text-lg mb-2">
-                      AI Processing
-                    </h3>
+                    <h3 className="font-semibold text-lg mb-2">AI Processing</h3>
                     <p className="text-gray-600">
                       Our AI analyzes the video and creates engaging short clips
                     </p>
@@ -711,16 +666,14 @@ export default function ShortsGenerator() {
         }
 
         @keyframes pulse {
-          0%,
-          100% {
+          0%, 100% {
             opacity: 1;
           }
           50% {
-            opacity: 0.5;
+            opacity: .5;
           }
         }
       `}</style>
     </div>
-    
   );
 }

@@ -5,6 +5,7 @@ from pydantic import field_validator
 from pydantic_settings import BaseSettings
 import razorpay
 from dotenv import load_dotenv
+from celery.schedules import crontab
 
 load_dotenv()
 
@@ -33,7 +34,7 @@ class Settings(BaseSettings):
     CELERY_RESULT_BACKEND: Optional[str] = None
 
     # DataBase
-    DATABASE_URL: str = "postgresql://postgres:admin123@localhost:5432/shortify"
+    DATABASE_URL: str = "postgresql://postgres:hariom_715@localhost/Shortify"
 
     # RazorPay
     RAZORPAY_KEY_ID:str = "rzp_test_quVhZvf3j1rhIY"
@@ -95,6 +96,8 @@ class Settings(BaseSettings):
     def enable_whisper_if_key_exists(cls, v: Optional[bool], values: Dict[str, Any]) -> bool:
         return bool(values.get("OPENAI_API_KEY")) if v is None else v
 
+    
+    
     class Config:
         case_sensitive = True
         env_file = ".env"
@@ -104,3 +107,10 @@ class Settings(BaseSettings):
 settings = Settings()
 
 client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+CELERY_BEAT_SCHEDULE = {
+        "reset-video-counts-daily": {
+            "task": "app.tasks.reset_video_limits.reset_video_limits",
+            "schedule": crontab(hour=0, minute=0),  # every midnight
+        },
+    }

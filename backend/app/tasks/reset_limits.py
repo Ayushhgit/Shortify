@@ -1,6 +1,6 @@
 from datetime import datetime
 from sqlalchemy.orm import Session
-from app.models import user
+from app.models.user import User
 from app.core.database import SessionLocal
 from app.core.celery_app import celery_app
 
@@ -8,7 +8,7 @@ from app.core.celery_app import celery_app
 def reset_video_limits():
     db: Session = SessionLocal()
     try:
-        users = db.query(user).all()
+        users = db.query(User).all()
         for user in users:
             user.video_generation_count = 0
             user.last_video_reset = datetime.utcnow()

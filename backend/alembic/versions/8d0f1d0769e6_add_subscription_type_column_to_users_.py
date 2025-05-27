@@ -25,15 +25,15 @@ def upgrade() -> None:
     subscription_enum.create(op.get_bind(), checkfirst=True)
 
     # Add the column with a server_default to avoid NULL violations on existing rows
-    op.add_column(
-        'users',
-        sa.Column(
-            'subscription_type',
-            subscription_enum,
-            nullable=False,
-            server_default=sa.text("'free'")
-        )
-    )
+    #op.add_column(
+     #   'users',
+      #  sa.Column(
+       #     'subscription_type',
+        #    subscription_enum,
+         #   nullable=False,
+          #  server_default=sa.text("'free'")
+        #)
+    #)
 
     # Optional: Remove the default after it's applied (if you don't want it permanently)
     # op.alter_column('users', 'subscription_type', server_default=None)

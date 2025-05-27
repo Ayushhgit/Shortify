@@ -19,4 +19,12 @@ export const googleProvider = new GoogleAuthProvider();
 export const analytics = getAnalytics(app);
 export const db = getFirestore(app);
 
+export const getToken = async () => {
+  const user = auth.currentUser;
+  if (user) {
+    return await user.getIdToken();
+  }
+  return null;
+};
+
 export default app;
