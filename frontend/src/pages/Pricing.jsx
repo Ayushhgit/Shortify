@@ -29,6 +29,14 @@ export default function Pricing() {
       setLoading(false);
       if (currentUser) {
         fetchSubscriptionStatus(currentUser);
+      } else {
+        // Reset subscription status when user logs out
+        setSubscriptionStatus({
+          subscription_type: 'free',
+          is_active: false,
+          subscription_end: null,
+          subscription_start: null
+        });
       }
     });
 
@@ -47,10 +55,27 @@ export default function Pricing() {
       
       if (response.ok) {
         const status = await response.json();
+        console.log("Fetched subscription status:", status); // Debug log
         setSubscriptionStatus(status);
+      } else {
+        console.error("Failed to fetch subscription status:", response.status);
+        // Set default free status if API fails
+        setSubscriptionStatus({
+          subscription_type: 'free',
+          is_active: false,
+          subscription_end: null,
+          subscription_start: null
+        });
       }
     } catch (error) {
       console.error("Error fetching subscription status:", error);
+      // Set default free status if there's an error
+      setSubscriptionStatus({
+        subscription_type: 'free',
+        is_active: false,
+        subscription_end: null,
+        subscription_start: null
+      });
     }
   };
 
@@ -215,6 +240,21 @@ export default function Pricing() {
     return subscriptionStatus.subscription_type === planName.toLowerCase() && subscriptionStatus.is_active;
   };
 
+  // Helper function to get display name for subscription type
+  const getSubscriptionDisplayName = () => {
+    if (!subscriptionStatus.subscription_type || subscriptionStatus.subscription_type === 'free') {
+      return 'Free Plan';
+    }
+    
+    const type = subscriptionStatus.subscription_type.toLowerCase();
+    if (type === 'pro') return 'Pro Plan';
+    if (type === 'premium') return 'Premium Plan';
+    
+    // Fallback - capitalize first letter
+    return subscriptionStatus.subscription_type.charAt(0).toUpperCase() + 
+           subscriptionStatus.subscription_type.slice(1) + ' Plan';
+  };
+
   if (loading) {
     return (
       <section className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-16 px-6 flex items-center justify-center">
@@ -261,7 +301,7 @@ export default function Pricing() {
         )}
 
         {/* Current Subscription Status */}
-        {user && subscriptionStatus.subscription_type !== 'free' && (
+        {user && subscriptionStatus.subscription_type !== 'free' && subscriptionStatus.is_active && (
           <div className="mb-8 bg-blue-50 border border-blue-200 rounded-lg p-6 max-w-2xl mx-auto">
             <div className="flex items-center justify-between">
               <div className="flex items-center text-blue-700">
@@ -395,7 +435,7 @@ export default function Pricing() {
           </div>
 
           {/* Premium Plan */}
-          <div className={`bg-white rounded-3xl border p-8 shadow-lg transition-all duration-300 ${
+          <div className={`relative bg-white rounded-3xl border p-8 shadow-lg transition-all duration-300 ${
             isCurrentPlan('premium')
               ? 'border-green-500 border-2 bg-green-50'
               : 'border-gray-200 hover:shadow-xl hover:border-indigo-600'
@@ -452,13 +492,25 @@ export default function Pricing() {
           </div>
         </div>
 
-        {/* Auth Status Indicator */}
-        {user && subscriptionStatus.subscription_type === 'free' && (
-          <div className="mt-12 bg-green-50 border border-green-200 rounded-lg p-4 max-w-md mx-auto">
-            <div className="flex items-center text-green-700">
+        {/* Auth Status Indicator - Updated Logic */}
+        {user && (
+          <div className={`mt-12 border rounded-lg p-4 max-w-md mx-auto ${
+            subscriptionStatus.subscription_type === 'free' || !subscriptionStatus.is_active
+              ? 'bg-green-50 border-green-200'
+              : subscriptionStatus.subscription_type === 'pro'
+              ? 'bg-indigo-50 border-indigo-200'
+              : 'bg-yellow-50 border-yellow-200'
+          }`}>
+            <div className={`flex items-center ${
+              subscriptionStatus.subscription_type === 'free' || !subscriptionStatus.is_active
+                ? 'text-green-700'
+                : subscriptionStatus.subscription_type === 'pro'
+                ? 'text-indigo-700'
+                : 'text-yellow-700'
+            }`}>
               <User className="w-5 h-5 mr-2" />
               <span className="text-sm">
-                Logged in as <strong>{user.email}</strong> - Free Plan
+                Logged in as <strong>{user.email}</strong> - {getSubscriptionDisplayName()}
               </span>
             </div>
           </div>

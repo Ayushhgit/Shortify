@@ -117,18 +117,26 @@ async def get_subscription_status(
 ):
     """Get current user's subscription status"""
     try:
-        status = payment_service.get_user_subscription_status(
+        # Add error handling and logging for debugging
+        logger.info(f"Getting subscription status for user: {current_user.email}")
+        
+        status_data = payment_service.get_user_subscription_status(
             user_email=current_user.email,
             db=db
         )
-        return status
+        
+        logger.info(f"Subscription status retrieved: {status_data}")
+        return status_data
         
     except Exception as e:
-        logger.error(f"Error getting subscription status: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to get subscription status"
-        )
+        logger.error(f"Error getting subscription status for user {current_user.email if current_user else 'Unknown'}: {str(e)}")
+        # Return default status instead of raising exception for debugging
+        return {
+            "subscription_type": "free",
+            "is_active": False,
+            "subscription_end": None,
+            "subscription_start": None
+        }
 
 @router.post("/cancel-subscription")
 async def cancel_subscription(
@@ -164,3 +172,36 @@ async def cancel_subscription(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to cancel subscription"
         )
+
+# Add a debug endpoint to test without authentication
+@router.get("/test-subscription")
+async def test_subscription_status(
+    email: str,
+    db: Session = Depends(get_db)
+):
+    """Test endpoint to check subscription status without auth (remove in production)"""
+    try:
+        logger.info(f"Testing subscription status for email: {email}")
+        
+        status_data = payment_service.get_user_subscription_status(
+            user_email=email,
+            db=db
+        )
+        
+        return {
+            "success": True,
+            "data": status_data
+        }
+        
+    except Exception as e:
+        logger.error(f"Error in test endpoint: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e),
+            "data": {
+                "subscription_type": "free",
+                "is_active": False,
+                "subscription_end": None,
+                "subscription_start": None
+            }
+        }
