@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import text
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 import razorpay
 from app.core.config import settings
@@ -71,11 +71,12 @@ class PaymentService:
             # Calculate subscription end date based on plan
             subscription_end = None
             if plan_name.lower() in ['pro', 'premium']:
-                subscription_end = datetime.utcnow() + timedelta(days=30)  # 30 days subscription
+                # Fixed: Use datetime.now(timezone.utc) instead of datetime.timezone.utc()
+                subscription_end = datetime.now(timezone.utc) + timedelta(days=30)  # 30 days subscription
             
             # Update user subscription
             user.subscription_type = plan_name.lower()
-            user.subscription_start = datetime.utcnow()
+            user.subscription_start = datetime.now(timezone.utc)  # Fixed: Use datetime.now(timezone.utc)
             user.subscription_end = subscription_end
             user.payment_id = payment_id
             user.is_active = True
@@ -104,7 +105,9 @@ class PaymentService:
             
             # Check if subscription is still active
             is_active = True
-            if user.subscription_end and user.subscription_end < datetime.utcnow():
+            current_time = datetime.now(timezone.utc)  # Fixed: Use datetime.now(timezone.utc)
+            
+            if user.subscription_end and user.subscription_end < current_time:
                 is_active = False
                 # Auto-downgrade to free if subscription expired
                 user.subscription_type = 'free'
