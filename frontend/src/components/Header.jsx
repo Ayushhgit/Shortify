@@ -16,6 +16,7 @@ export default function Header() {
         { label: "YouTube Shorts Generator", path: "/features/shorts-generator" },
         { label: "PDF Summarizer", path: "/features/pdf-summarizer" },
         { label: "Video Summarizer", path: "/features/summarizer" },
+        { label: "Resume Analyzer", path: "/features/ResumeAnalyzer"},
       ],
     },
     {

@@ -74,6 +74,7 @@ class UserOut(UserBase):
     profile_picture: Optional[str] = None
     subscription_type: SubscriptionTypeEnum
     created_at: datetime
+    email: str
 
 class UserResponse(UserBase):
     id: int

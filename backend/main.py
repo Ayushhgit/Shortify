@@ -3,12 +3,12 @@ from chatbot.routes import chatbot_router
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from app.core.database import Base, engine
-from app.routers import auth_router
 from pathlib import Path
 import logging
 from app.models import user 
 from app.routers import payment
 from app.routers import shorts
+from app.routers import auth_router
 
 logging.basicConfig(
     level=logging.INFO,

@@ -7,7 +7,7 @@ from typing import Dict, Any, Optional
 # You'll need to provide a path to your service account JSON file
 # Generate this from Firebase Console > Project Settings > Service accounts
 try:
-    cred = credentials.Certificate(r"C:\Hari om\Shortify\backend\shortify-876e7-firebase-adminsdk-fbsvc-9193bebcff.json")
+    cred = credentials.Certificate(r"A:\ML-Project\short-ify\backend\shortify-876e7-firebase-adminsdk-fbsvc-9193bebcff.json")
     firebase_app = firebase_admin.initialize_app(cred)
 except ValueError:
     # App already initialized
@@ -15,16 +15,10 @@ except ValueError:
 
 async def verify_firebase_token(token: str) -> Dict[str, Any]:
     """
-    Verify Firebase ID token and return user data
-    
-    Args:
-        token: Firebase ID token
-    
-    Returns:
-        Dictionary containing user data
-    
-    Raises:
-        HTTPException: If token is invalid or expired
+    Verify Firebase ID token and return user data 
+    Args:token: Firebase ID token
+    Returns:Dictionary containing user data
+    Raises: HTTPException: If token is invalid or expired
     """
     try:
         decoded_token = auth.verify_id_token(token)
@@ -37,18 +31,10 @@ async def verify_firebase_token(token: str) -> Dict[str, Any]:
         )
 
 def get_current_firebase_user(request: Request) -> Dict[str, Any]:
-    """
-    Get current user from Firebase token in Authorization header
-    
-    Args:
-        request: FastAPI request object
-    
-    Returns:
-        Dictionary containing user data
-    
-    Raises:
-        HTTPException: If token is missing or invalid
-    """
+    """ Get current user from Firebase token in Authorization header
+    Args: request: FastAPI request object
+    Returns: Dictionary containing user data
+    Raises: HTTPException: If token is missing or invalid"""
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
         raise HTTPException(
