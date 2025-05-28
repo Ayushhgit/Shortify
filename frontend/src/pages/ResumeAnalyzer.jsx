@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import {Search,Home,User,Settings,Upload,Zap,Target,TrendingUp,CheckCircle,AlertCircle,FileText,Sparkles,Award,Brain,Rocket,} from "lucide-react";
+import { Search, Home, User, Settings, Upload, Zap, Target, TrendingUp, CheckCircle, AlertCircle, FileText, Sparkles, Award, Brain, Rocket, } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { getToken } from '../firebase';
 const roles = [
   {
     id: "frontend",
@@ -58,27 +59,54 @@ const ResumeAnalyzer = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
-    if (!resumeFile || !selectedRole) {
-      alert("Please upload a resume and select a role.");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("file", resumeFile);
-    formData.append("role", selectedRole.name);
-
     try {
+      const idToken = await getToken();
+      if (!idToken) {
+        console.error("User not authenticated");
+        alert("Authentication failed. Please login and try again.");
+        return;
+      }
+
+      if (!resumeFile || !selectedRole) {
+        alert("Please upload a resume and select a role.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", resumeFile);
+      formData.append("role", selectedRole.name);
+
       setLoading(true);
       setStep(3);
 
-      // TODO: Replace with actual API endpoint
       const response = await fetch("http://localhost:8000/analyze", {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+        },
         body: formData,
       });
 
       if (!response.ok) {
-        throw new Error("Analysis failed");
+        let errorMessage = `HTTP error! status: ${response.status}`;
+        try {
+          const errorData = await response.json();
+          console.error("Error data:", errorData);
+          if (errorData.detail) {
+            if (Array.isArray(errorData.detail)) {
+              errorMessage = errorData.detail.map(
+                (err) => `${err.loc?.join('.')} ${err.msg}`
+              ).join(', ');
+            } else {
+              errorMessage = typeof errorData.detail === 'string'
+                ? errorData.detail
+                : JSON.stringify(errorData.detail);
+            }
+          }
+        } catch (e) {
+          console.error("Failed to parse error response");
+        }
+        throw new Error(errorMessage);
       }
 
       const result = await response.json();
@@ -87,7 +115,7 @@ const ResumeAnalyzer = () => {
       setStep(4);
     } catch (error) {
       console.error("Error analyzing resume:", error);
-      alert("Something went wrong. Please try again.");
+      alert(`Failed to analyze resume: ${error.message}`);
       setStep(2); // Go back to previous step on error
     } finally {
       setLoading(false);
@@ -150,13 +178,12 @@ const ResumeAnalyzer = () => {
             fill="transparent"
             strokeDasharray={strokeDasharray}
             strokeDashoffset={strokeDashoffset}
-            className={`transition-all duration-2000 ease-out ${
-              validScore >= 80
+            className={`transition-all duration-2000 ease-out ${validScore >= 80
                 ? "text-green-500"
                 : validScore >= 60
-                ? "text-yellow-500"
-                : "text-red-500"
-            }`}
+                  ? "text-yellow-500"
+                  : "text-red-500"
+              }`}
             strokeLinecap="round"
           />
         </svg>
@@ -201,7 +228,7 @@ const ResumeAnalyzer = () => {
                 className="p-3 rounded-xl hover:bg-white/20 transition-all duration-300 hover:scale-110 backdrop-blur-sm border border-white/10"
                 onClick={() => navigate(item.href)}
               >
-                <item.icon className="h-5 w-5 text-white/80 hover:text-white"  />
+                <item.icon className="h-5 w-5 text-white/80 hover:text-white" />
               </button>
             ))}
           </div>
@@ -308,13 +335,12 @@ const ResumeAnalyzer = () => {
                   </h2>
                 </div>
                 <div
-                  className={`relative border-2 border-dashed rounded-3xl p-12 text-center transition-all duration-300 max-w-lg mx-auto ${
-                    dragActive
+                  className={`relative border-2 border-dashed rounded-3xl p-12 text-center transition-all duration-300 max-w-lg mx-auto ${dragActive
                       ? "border-emerald-400 bg-emerald-500/20"
                       : resumeFile
-                      ? "border-green-400 bg-green-500/20"
-                      : "border-white/30 bg-white/10 hover:border-emerald-400/50 hover:bg-white/20"
-                  }`}
+                        ? "border-green-400 bg-green-500/20"
+                        : "border-white/30 bg-white/10 hover:border-emerald-400/50 hover:bg-white/20"
+                    }`}
                   onDragEnter={handleDrag}
                   onDragLeave={handleDrag}
                   onDragOver={handleDrag}
@@ -447,13 +473,12 @@ const ResumeAnalyzer = () => {
                     ].map((text, index) => (
                       <div key={index} className="flex items-center space-x-3">
                         <div
-                          className={`w-4 h-4 rounded-full ${
-                            index < 2
+                          className={`w-4 h-4 rounded-full ${index < 2
                               ? "bg-emerald-400"
                               : index === 2
-                              ? "bg-emerald-400 animate-pulse"
-                              : "bg-gray-600"
-                          }`}
+                                ? "bg-emerald-400 animate-pulse"
+                                : "bg-gray-600"
+                            }`}
                         ></div>
                         <span className="text-gray-300">{text}</span>
                       </div>
@@ -466,11 +491,10 @@ const ResumeAnalyzer = () => {
 
           {step === 4 && result && (
             <div
-              className={`space-y-8 transition-all duration-1000 ${
-                animateResult
+              className={`space-y-8 transition-all duration-1000 ${animateResult
                   ? "opacity-100 transform translate-y-0"
                   : "opacity-0 transform translate-y-10"
-              }`}
+                }`}
             >
               {/* Score Overview */}
               <div className="text-center space-y-6">
@@ -482,20 +506,19 @@ const ResumeAnalyzer = () => {
                 </div>
                 <div className="max-w-2xl mx-auto">
                   <div
-                    className={`inline-flex items-center px-6 py-3 rounded-full font-semibold text-lg ${
-                      result.score >= 80
+                    className={`inline-flex items-center px-6 py-3 rounded-full font-semibold text-lg ${result.score >= 80
                         ? "bg-green-500/20 text-green-300 border border-green-500/30"
                         : result.score >= 60
-                        ? "bg-yellow-500/20 text-yellow-300 border border-yellow-500/30"
-                        : "bg-red-500/20 text-red-300 border border-red-500/30"
-                    }`}
+                          ? "bg-yellow-500/20 text-yellow-300 border border-yellow-500/30"
+                          : "bg-red-500/20 text-red-300 border border-red-500/30"
+                      }`}
                   >
                     <Award className="w-5 h-5 mr-2" />
                     {result.score >= 80
                       ? "Excellent Match!"
                       : result.score >= 60
-                      ? "Good Match"
-                      : "Needs Improvement"}
+                        ? "Good Match"
+                        : "Needs Improvement"}
                   </div>
                 </div>
               </div>
@@ -612,14 +635,14 @@ const ResumeAnalyzer = () => {
               {/* Action Buttons */}
               <div className="flex justify-center space-x-4">
                 <button
-                onClick={() => {
+                  onClick={() => {
                     setStep(1);
                     setResult(null);
                     setResumeFile(null);
                     setSelectedRole(null);
                     setAnimateResult(false);
                   }}
-                 className="px-8 py-3 bg-gradient-to-r from-emerald-500 to-blue-500 text-white rounded-xl font-semibold hover:scale-105 transition-all duration-300">
+                  className="px-8 py-3 bg-gradient-to-r from-emerald-500 to-blue-500 text-white rounded-xl font-semibold hover:scale-105 transition-all duration-300">
                   <div className="flex items-center space-x-2">
                     <Rocket className="w-5 h-5" />
                     <span>Analyze Another Resume</span>

@@ -11,8 +11,6 @@ from app.models.user import User
 from app.core.database import get_db
 from sqlalchemy.orm import Session
 
-#Authorization: Bearer <FIREBASE_ID_TOKEN>
-
 
 router = APIRouter()
 
