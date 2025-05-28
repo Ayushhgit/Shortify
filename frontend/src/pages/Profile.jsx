@@ -184,7 +184,7 @@ export default function Profile() {
             </Link>
 
             {/* Profile Button */}
-            <Link to="/profile">
+            <Link to="/Profile">
               <button className="p-2 rounded-full bg-indigo-100 border-2 border-indigo-500 transition">
                 <User className="h-5 w-5 text-indigo-600" />
               </button>
@@ -207,7 +207,7 @@ export default function Profile() {
           <aside className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm h-fit">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">Account</h3>
             <nav className="space-y-3">
-              <Link to="/profile" className="block">
+              <Link to="/Profile" className="block">
                 <button className="flex items-center w-full gap-3 text-sm text-indigo-600 font-medium transition">
                   <User size={18} />
                   Profile

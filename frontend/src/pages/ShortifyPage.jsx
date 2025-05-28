@@ -119,7 +119,7 @@ export default function ShortifyPage() {
 
             {user ? (
               user.emailVerified ? (
-                <a href="/profile">
+                <a href="/Profile">
                   <button className="bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-700 hover:to-blue-700 text-white py-2 px-4 rounded-full flex items-center gap-1">
                     <User size={18} />
                     <span className="font-medium ">Profile</span>

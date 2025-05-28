@@ -87,7 +87,7 @@ export default function Settings() {
             </Link>
 
             {/* Profile Button */}
-            <Link to="/profile">
+            <Link to="/Profile">
               <button className="p-2 rounded-full hover:bg-green-100 hover:border-2 border-bold transition">
                 <User className="h-5 w-5 text-gray-600" />
               </button>
@@ -242,7 +242,7 @@ export default function Settings() {
                   Save Changes
                 </button>
                 
-                <Link to="/profile" className="ml-4 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition">
+                <Link to="/Profile" className="ml-4 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition">
                   Cancel
                 </Link>
               </div>

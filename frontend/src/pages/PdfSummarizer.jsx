@@ -269,8 +269,8 @@ Critical points highlight areas of particular importance, while supporting data 
             <div className="flex items-center gap-2">
               {[
                 { icon: Home, label: "Home", href: "/shortify" },
-                { icon: User, label: "Profile", href: "/profile" },
-                { icon: Settings, label: "Settings", href: "/settings" }
+                { icon: User, label: "Profile", href: "/Profile" },
+                { icon: Settings, label: "Settings", href: "/Settings" }
               ].map(({ icon: Icon, label, href }) => (
                 <button key={label} className="group p-3 rounded-xl hover:bg-gray-800/60 transition-all duration-300 hover:shadow-lg">
                   <Icon className="h-5 w-5 text-gray-400 group-hover:text-emerald-400 transition-colors" onClick={() => navigate(href)}/>
