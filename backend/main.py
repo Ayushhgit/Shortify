@@ -9,6 +9,7 @@ from app.models import user
 from app.routers import payment
 from app.routers import shorts
 from app.routers import auth_router
+from app.routers import RA_router
 
 logging.basicConfig(
     level=logging.INFO,
@@ -23,7 +24,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -36,6 +37,7 @@ app.include_router(payment.router)
 app.include_router(auth_router.router)
 app.include_router(chatbot_router)
 app.include_router(shorts.router, prefix="/api/shorts", tags=["shorts"])
+app.include_router(RA_router.router)
 
 @app.get("/", tags=["status"])
 async def root():

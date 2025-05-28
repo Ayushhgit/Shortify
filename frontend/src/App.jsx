@@ -28,9 +28,8 @@ const LayoutWrapper = ({ children }) => {
     "/features/shorts-generator",
     "/features/summarizer",
     "/features/ResumeAnalyzer",
-    "/profile",
     "/Profile",
-    "/Settings"
+    "/Settings",
     
   ];
   
