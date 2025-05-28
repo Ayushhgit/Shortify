@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Search, Home, User, Settings, Upload, Zap, Target, TrendingUp, CheckCircle, AlertCircle, FileText, Sparkles, Award, Brain, Rocket, } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import Toast from "../components/Toast";
 import { getToken } from '../firebase';
 const roles = [
   {
@@ -53,19 +54,35 @@ const ResumeAnalyzer = () => {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState("success");
   const [step, setStep] = useState(1);
   const [animateResult, setAnimateResult] = useState(false);
 
+  const displayToast = (message, type = "success") => {
+    setToastMessage(message);
+    setToastType(type);
+    setShowToast(true);
+  };
+
+  const handleUrlChange = (event) => {
+    setUrl(event.target.value);
+    setInputError("");
+  };
+
   const navigate = useNavigate();
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (event) => {
     try {
       const idToken = await getToken();
       if (!idToken) {
         console.error("User not authenticated");
-        alert("Authentication failed. Please login and try again.");
+        displayToast("Authentication failed. Please try logging in again.", "error");
         return;
       }
+
+      if (event) event.preventDefault();
 
       if (!resumeFile || !selectedRole) {
         alert("Please upload a resume and select a role.");
@@ -179,10 +196,10 @@ const ResumeAnalyzer = () => {
             strokeDasharray={strokeDasharray}
             strokeDashoffset={strokeDashoffset}
             className={`transition-all duration-2000 ease-out ${validScore >= 80
-                ? "text-green-500"
-                : validScore >= 60
-                  ? "text-yellow-500"
-                  : "text-red-500"
+              ? "text-green-500"
+              : validScore >= 60
+                ? "text-yellow-500"
+                : "text-red-500"
               }`}
             strokeLinecap="round"
           />
@@ -336,10 +353,10 @@ const ResumeAnalyzer = () => {
                 </div>
                 <div
                   className={`relative border-2 border-dashed rounded-3xl p-12 text-center transition-all duration-300 max-w-lg mx-auto ${dragActive
-                      ? "border-emerald-400 bg-emerald-500/20"
-                      : resumeFile
-                        ? "border-green-400 bg-green-500/20"
-                        : "border-white/30 bg-white/10 hover:border-emerald-400/50 hover:bg-white/20"
+                    ? "border-emerald-400 bg-emerald-500/20"
+                    : resumeFile
+                      ? "border-green-400 bg-green-500/20"
+                      : "border-white/30 bg-white/10 hover:border-emerald-400/50 hover:bg-white/20"
                     }`}
                   onDragEnter={handleDrag}
                   onDragLeave={handleDrag}
@@ -474,10 +491,10 @@ const ResumeAnalyzer = () => {
                       <div key={index} className="flex items-center space-x-3">
                         <div
                           className={`w-4 h-4 rounded-full ${index < 2
-                              ? "bg-emerald-400"
-                              : index === 2
-                                ? "bg-emerald-400 animate-pulse"
-                                : "bg-gray-600"
+                            ? "bg-emerald-400"
+                            : index === 2
+                              ? "bg-emerald-400 animate-pulse"
+                              : "bg-gray-600"
                             }`}
                         ></div>
                         <span className="text-gray-300">{text}</span>
@@ -492,8 +509,8 @@ const ResumeAnalyzer = () => {
           {step === 4 && result && (
             <div
               className={`space-y-8 transition-all duration-1000 ${animateResult
-                  ? "opacity-100 transform translate-y-0"
-                  : "opacity-0 transform translate-y-10"
+                ? "opacity-100 transform translate-y-0"
+                : "opacity-0 transform translate-y-10"
                 }`}
             >
               {/* Score Overview */}
@@ -507,10 +524,10 @@ const ResumeAnalyzer = () => {
                 <div className="max-w-2xl mx-auto">
                   <div
                     className={`inline-flex items-center px-6 py-3 rounded-full font-semibold text-lg ${result.score >= 80
-                        ? "bg-green-500/20 text-green-300 border border-green-500/30"
-                        : result.score >= 60
-                          ? "bg-yellow-500/20 text-yellow-300 border border-yellow-500/30"
-                          : "bg-red-500/20 text-red-300 border border-red-500/30"
+                      ? "bg-green-500/20 text-green-300 border border-green-500/30"
+                      : result.score >= 60
+                        ? "bg-yellow-500/20 text-yellow-300 border border-yellow-500/30"
+                        : "bg-red-500/20 text-red-300 border border-red-500/30"
                       }`}
                   >
                     <Award className="w-5 h-5 mr-2" />
@@ -653,6 +670,13 @@ const ResumeAnalyzer = () => {
           )}
         </div>
       </div>
+      {/* Toast */}
+      <Toast
+        show={showToast}
+        message={toastMessage}
+        type={toastType}
+        onClose={() => setShowToast(false)}
+      />
     </div>
   );
 };
