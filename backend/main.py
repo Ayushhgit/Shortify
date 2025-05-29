@@ -10,6 +10,7 @@ from app.routers import payment
 from app.routers import shorts
 from app.routers import auth_router
 from app.routers import RA_router
+from app.routers import pdf_router
 
 logging.basicConfig(
     level=logging.INFO,
@@ -38,6 +39,7 @@ app.include_router(auth_router.router)
 app.include_router(chatbot_router)
 app.include_router(shorts.router, prefix="/api/shorts", tags=["shorts"])
 app.include_router(RA_router.router)
+app.include_router(pdf_router.router)
 
 @app.get("/", tags=["status"])
 async def root():

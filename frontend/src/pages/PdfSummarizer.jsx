@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Home, Settings, User, Upload, FileText, X, Check, Loader2, Download, Sparkles, Zap, Clock, BarChart3, Eye, Copy, Share2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { getToken } from '../firebase';
 
 // Premium Toast Component
 const Toast = ({ show, message, type, onClose }) => {
@@ -17,11 +18,10 @@ const Toast = ({ show, message, type, onClose }) => {
 
   return (
     <div className="fixed top-24 right-6 z-50 animate-in slide-in-from-right duration-300">
-      <div className={`rounded-xl px-6 py-4 shadow-2xl backdrop-blur-xl border max-w-sm ${
-        type === "success" 
-          ? "bg-emerald-50/90 border-emerald-200 text-emerald-800" 
-          : "bg-red-50/90 border-red-200 text-red-800"
-      }`}>
+      <div className={`rounded-xl px-6 py-4 shadow-2xl backdrop-blur-xl border max-w-sm ${type === "success"
+        ? "bg-emerald-50/90 border-emerald-200 text-emerald-800"
+        : "bg-red-50/90 border-red-200 text-red-800"
+        }`}>
         <div className="flex items-center gap-3">
           {type === "success" ? (
             <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
@@ -46,8 +46,13 @@ export default function PremiumPdfSummarizer() {
   const [activeTab, setActiveTab] = useState("summary");
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef(null);
+  const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState(1);
+  const [analysisType, setAnalysisType] = useState("general");
+  const [animateResult, setAnimateResult] = useState(false);
+  const [result, setResult] = useState(null);
 
-  const navigate =  useNavigate();
+  const navigate = useNavigate();
 
   const displayToast = (message, type = "success") => {
     setToastMessage(message);
@@ -76,7 +81,7 @@ export default function PremiumPdfSummarizer() {
     event.preventDefault();
     event.stopPropagation();
     setIsDragOver(false);
-    
+
     if (event.dataTransfer.files && event.dataTransfer.files[0]) {
       const droppedFile = event.dataTransfer.files[0];
       if (!droppedFile.type.includes("pdf")) {
@@ -104,71 +109,105 @@ export default function PremiumPdfSummarizer() {
     setIsDragOver(false);
   };
 
-  const handleSubmit = async () => {
-    if (!file) {
-      displayToast("Please select a PDF file first", "error");
-      return;
-    }
-
+  const handleSubmit = async (event) => {
     try {
+      if (event) event.preventDefault();
+
+      const idToken = await getToken();
+      if (!idToken) {
+        console.error("User not authenticated");
+        displayToast("Authentication failed. Please try logging in again.", "error");
+        return;
+      }
+
+      if (!file) {
+        displayToast("Please select a PDF or Resume file first", "error");
+        return;
+      }
+
       setIsProcessing(true);
-      
-      // TODO: BACKEND INTEGRATION - Replace this section with actual API call
-      // Example implementation:
-      // const formData = new FormData();
-      // formData.append('pdf', file);
-      // 
-      // const response = await fetch('/api/summarize', {
-      //   method: 'POST',
-      //   body: formData,
-      //   headers: {
-      //     // Add any required headers (auth tokens, etc.)
-      //   }
-      // });
-      // 
-      // if (!response.ok) {
-      //   throw new Error(`HTTP error! status: ${response.status}`);
-      // }
-      // 
-      // const data = await response.json();
-      // setSummary(data.summary);
-      // setAnalysisData(data.analysis);
-      
-      // MOCK DATA - Remove this section when backend is ready
-      await new Promise((resolve) => setTimeout(resolve, 3000)); // Simulate processing time
-      
-      const mockSummary = `This comprehensive document analysis reveals key insights across multiple dimensions. The document contains substantial information that has been distilled into actionable takeaways.
+      setLoading(true);
+      setStep && setStep(3); // optional if you use step navigation
 
-Key findings include strategic recommendations, detailed analysis of core concepts, and practical implementation guidelines. The content demonstrates thorough research and presents well-structured arguments supporting the main thesis.
+      const formData = new FormData();
+      formData.append("file", file); // could be resume or general PDF
 
-Critical points highlight areas of particular importance, while supporting data provides evidence for the conclusions drawn. The document serves as a valuable resource for understanding complex topics and making informed decisions.`;
+      // Map analysisType to what your backend expects
+      let backendAnalysisType = "summary"; // default
+      if (analysisType === "resume") {
+        backendAnalysisType = "detailed"; // or whatever your backend uses for resume analysis
+      } else if (analysisType === "general") {
+        backendAnalysisType = "summary";
+      }
 
-      const mockAnalysis = {
-        wordCount: 12547,
-        pageCount: 23,
-        readingTime: 45,
-        complexity: "Advanced",
-        topics: ["Strategy", "Analysis", "Implementation", "Research"],
-        sentiment: "Neutral",
-        keyMetrics: {
-          technical: 75,
-          business: 60,
-          academic: 85
+      formData.append("analysis_type", backendAnalysisType);
+
+      // Updated endpoint to match your router
+      const response = await fetch('http://localhost:8000/api/pdf/upload-analyze', {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        let errorMessage = `HTTP error! status: ${response.status}`;
+        try {
+          const errorData = await response.json();
+          console.error("Error data:", errorData);
+          if (errorData.detail) {
+            if (Array.isArray(errorData.detail)) {
+              errorMessage = errorData.detail.map(
+                (err) => `${err.loc?.join('.')} ${err.msg}`
+              ).join(', ');
+            } else {
+              errorMessage = typeof errorData.detail === 'string'
+                ? errorData.detail
+                : JSON.stringify(errorData.detail);
+            }
+          }
+        } catch (e) {
+          console.error("Failed to parse error response");
         }
-      };
+        throw new Error(errorMessage);
+      }
 
-      setSummary(mockSummary);
-      setAnalysisData(mockAnalysis);
-      // END MOCK DATA SECTION
-      
+      const data = await response.json();
+
+      // Optional step transition
+      setStep && setStep(4);
+      setAnimateResult && setAnimateResult(true);
+      setResult && setResult(data);
+
+      // Handle PDF analysis-specific UI updates
+      // Adapt to your backend response structure
+      setSummary?.(data.summary || data.analysis_summary || "No summary available");
+      setAnalysisData?.({
+        wordCount: data.word_count || data.metrics?.word_count || 0,
+        pageCount: data.page_count || data.metrics?.page_count || 0,
+        readingTime: data.reading_time || data.metrics?.reading_time || 0,
+        complexity: data.complexity || "Unknown",
+        topics: data.topics || data.key_topics || [],
+        sentiment: data.sentiment || "Neutral",
+        keyMetrics: {
+          technical: data.technical_score || 0,
+          business: data.business_score || 0,
+          academic: data.academic_score || 0,
+        },
+      });
+
       displayToast("PDF analyzed successfully! 🎉");
-      setIsProcessing(false);
     } catch (error) {
+      console.error("Error analyzing PDF/resume:", error);
+      displayToast(`Failed to analyze: ${error.message}`, "error");
+      setStep && setStep(2); // go back a step if needed
+    } finally {
       setIsProcessing(false);
-      displayToast("Error processing PDF. Please try again.", "error");
-      console.error("Error:", error);
+      setLoading(false);
     }
   };
+
 
   const handleClear = () => {
     setFile(null);
@@ -185,67 +224,72 @@ Critical points highlight areas of particular importance, while supporting data 
     displayToast("Summary copied to clipboard! 📋");
   };
 
-  // TODO: BACKEND INTEGRATION - Add these functions when backend is ready
-  // 
-  // const exportToPDF = async () => {
-  //   try {
-  //     const response = await fetch('/api/export/pdf', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({
-  //         summary: summary,
-  //         analysisData: analysisData,
-  //         fileName: file.name
-  //       })
-  //     });
-  //     
-  //     if (response.ok) {
-  //       const blob = await response.blob();
-  //       const url = window.URL.createObjectURL(blob);
-  //       const a = document.createElement('a');
-  //       a.href = url;
-  //       a.download = `${file.name}_analysis.pdf`;
-  //       a.click();
-  //       displayToast("Report exported successfully! 📄");
-  //     }
-  //   } catch (error) {
-  //     displayToast("Export failed. Please try again.", "error");
-  //   }
-  // };
-  // 
-  // const shareReport = async () => {
-  //   try {
-  //     const response = await fetch('/api/share', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({
-  //         summary: summary,
-  //         analysisData: analysisData,
-  //         fileName: file.name
-  //       })
-  //     });
-  //     
-  //     const data = await response.json();
-  //     if (response.ok) {
-  //       navigator.clipboard.writeText(data.shareUrl);
-  //       displayToast("Share link copied to clipboard! 🔗");
-  //     }
-  //   } catch (error) {
-  //     displayToast("Share failed. Please try again.", "error");
-  //   }
-  // };
+  const exportToPDF = async () => {
+    try {
+      const response = await fetch('/api/export/pdf', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          summary: summary,
+          analysisData: analysisData,
+          fileName: file.name
+        })
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${file.name}_analysis.pdf`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+        displayToast("Report exported successfully! 📄");
+      } else {
+        throw new Error('Export failed');
+      }
+    } catch (error) {
+      displayToast("Export failed. Please try again.", "error");
+      console.error("Export error:", error);
+    }
+  };
+
+  const shareReport = async () => {
+    try {
+      const response = await fetch('/api/share', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          summary: summary,
+          analysisData: analysisData,
+          fileName: file.name
+        })
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        await navigator.clipboard.writeText(data.shareUrl);
+        displayToast("Share link copied to clipboard! 🔗");
+      } else {
+        throw new Error('Share failed');
+      }
+    } catch (error) {
+      displayToast("Share failed. Please try again.", "error");
+      console.error("Share error:", error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-black">
       {/* Animated Background Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-emerald-500/20 to-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-violet-500/20 to-purple-500/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-500/15 to-pink-500/15 rounded-full blur-3xl animate-pulse" style={{animationDelay: '4s'}}></div>
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-violet-500/20 to-purple-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-500/15 to-pink-500/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '4s' }}></div>
       </div>
 
       {/* Premium Glassmorphic Header */}
@@ -273,7 +317,7 @@ Critical points highlight areas of particular importance, while supporting data 
                 { icon: Settings, label: "Settings", href: "/Settings" }
               ].map(({ icon: Icon, label, href }) => (
                 <button key={label} className="group p-3 rounded-xl hover:bg-gray-800/60 transition-all duration-300 hover:shadow-lg">
-                  <Icon className="h-5 w-5 text-gray-400 group-hover:text-emerald-400 transition-colors" onClick={() => navigate(href)}/>
+                  <Icon className="h-5 w-5 text-gray-400 group-hover:text-emerald-400 transition-colors" onClick={() => navigate(href)} />
                 </button>
               ))}
             </div>
@@ -299,7 +343,7 @@ Critical points highlight areas of particular importance, while supporting data 
               </span>
             </h1>
             <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
-              Experience the future of document analysis with AI-powered summaries, 
+              Experience the future of document analysis with AI-powered summaries,
               insights, and intelligent processing.
             </p>
           </div>
@@ -312,14 +356,12 @@ Critical points highlight areas of particular importance, while supporting data 
               { step: 3, label: "Insights", completed: !!summary, icon: Eye }
             ].map(({ step, label, completed, icon: Icon }, index) => (
               <React.Fragment key={step}>
-                <div className={`flex flex-col items-center transition-all duration-500 ${
-                  completed ? "text-emerald-400" : "text-gray-500"
-                }`}>
-                  <div className={`relative rounded-2xl p-4 border-2 transition-all duration-500 ${
-                    completed 
-                      ? "border-emerald-500 bg-gradient-to-r from-emerald-900/50 to-emerald-800/50 shadow-lg shadow-emerald-500/25" 
-                      : "border-gray-600 bg-gray-800/50"
+                <div className={`flex flex-col items-center transition-all duration-500 ${completed ? "text-emerald-400" : "text-gray-500"
                   }`}>
+                  <div className={`relative rounded-2xl p-4 border-2 transition-all duration-500 ${completed
+                    ? "border-emerald-500 bg-gradient-to-r from-emerald-900/50 to-emerald-800/50 shadow-lg shadow-emerald-500/25"
+                    : "border-gray-600 bg-gray-800/50"
+                    }`}>
                     {completed ? (
                       <div className="relative">
                         <Check className="h-6 w-6 text-emerald-400" />
@@ -330,14 +372,12 @@ Critical points highlight areas of particular importance, while supporting data 
                     )}
                   </div>
                   <span className="mt-3 font-semibold text-sm">{label}</span>
-                  <div className={`mt-1 w-2 h-2 rounded-full transition-all duration-500 ${
-                    completed ? "bg-emerald-400 shadow-lg shadow-emerald-500/50" : "bg-gray-600"
-                  }`}></div>
+                  <div className={`mt-1 w-2 h-2 rounded-full transition-all duration-500 ${completed ? "bg-emerald-400 shadow-lg shadow-emerald-500/50" : "bg-gray-600"
+                    }`}></div>
                 </div>
                 {index < 2 && (
-                  <div className={`h-1 w-24 mx-6 rounded-full transition-all duration-500 ${
-                    completed ? "bg-gradient-to-r from-emerald-500 to-blue-500" : "bg-gray-600"
-                  }`}></div>
+                  <div className={`h-1 w-24 mx-6 rounded-full transition-all duration-500 ${completed ? "bg-gradient-to-r from-emerald-500 to-blue-500" : "bg-gray-600"
+                    }`}></div>
                 )}
               </React.Fragment>
             ))}
@@ -346,13 +386,12 @@ Critical points highlight areas of particular importance, while supporting data 
           {/* Premium File Upload Zone */}
           <div className="max-w-2xl mx-auto mb-12">
             <div
-              className={`relative rounded-3xl border-2 border-dashed transition-all duration-500 ${
-                isDragOver 
-                  ? "border-emerald-400 bg-gradient-to-r from-emerald-900/30 to-blue-900/30 scale-105" 
-                  : file 
-                    ? "border-emerald-500 bg-gradient-to-r from-emerald-900/20 to-emerald-800/20" 
-                    : "border-gray-600 bg-gray-800/30 hover:border-emerald-500 hover:bg-emerald-900/20"
-              } backdrop-blur-sm shadow-xl`}
+              className={`relative rounded-3xl border-2 border-dashed transition-all duration-500 ${isDragOver
+                ? "border-emerald-400 bg-gradient-to-r from-emerald-900/30 to-blue-900/30 scale-105"
+                : file
+                  ? "border-emerald-500 bg-gradient-to-r from-emerald-900/20 to-emerald-800/20"
+                  : "border-gray-600 bg-gray-800/30 hover:border-emerald-500 hover:bg-emerald-900/20"
+                } backdrop-blur-sm shadow-xl`}
               onDrop={handleDrop}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
@@ -420,11 +459,10 @@ Critical points highlight areas of particular importance, while supporting data 
             <button
               onClick={handleSubmit}
               disabled={!file || isProcessing}
-              className={`group relative overflow-hidden px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 ${
-                !file || isProcessing 
-                  ? "bg-gray-700 text-gray-500 cursor-not-allowed" 
-                  : "bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-500 hover:to-blue-500 text-white shadow-xl hover:shadow-2xl hover:scale-105 hover:-translate-y-1"
-              }`}
+              className={`group relative overflow-hidden px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 ${!file || isProcessing
+                ? "bg-gray-700 text-gray-500 cursor-not-allowed"
+                : "bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-500 hover:to-blue-500 text-white shadow-xl hover:shadow-2xl hover:scale-105 hover:-translate-y-1"
+                }`}
             >
               {!file || isProcessing ? null : (
                 <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
@@ -443,7 +481,7 @@ Critical points highlight areas of particular importance, while supporting data 
                 )}
               </div>
             </button>
-            
+
             {file && (
               <button
                 onClick={handleClear}
@@ -472,10 +510,16 @@ Critical points highlight areas of particular importance, while supporting data 
                       >
                         <Copy className="h-5 w-5" />
                       </button>
-                      <button className="p-2 rounded-xl bg-white/20 hover:bg-white/30 transition-colors">
+                      <button
+                        onClick={shareReport}
+                        className="p-2 rounded-xl bg-white/20 hover:bg-white/30 transition-colors"
+                      >
                         <Share2 className="h-5 w-5" />
                       </button>
-                      <button className="flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-xl transition-colors">
+                      <button
+                        onClick={exportToPDF}
+                        className="flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-xl transition-colors"
+                      >
                         <Download className="h-4 w-4" />
                         Export
                       </button>
@@ -515,11 +559,10 @@ Critical points highlight areas of particular importance, while supporting data 
                     <button
                       key={id}
                       onClick={() => setActiveTab(id)}
-                      className={`flex items-center gap-2 px-6 py-4 font-medium transition-all ${
-                        activeTab === id 
-                          ? "text-emerald-400 border-b-2 border-emerald-400 bg-emerald-900/30" 
-                          : "text-gray-400 hover:text-gray-200 hover:bg-gray-800/50"
-                      }`}
+                      className={`flex items-center gap-2 px-6 py-4 font-medium transition-all ${activeTab === id
+                        ? "text-emerald-400 border-b-2 border-emerald-400 bg-emerald-900/30"
+                        : "text-gray-400 hover:text-gray-200 hover:bg-gray-800/50"
+                        }`}
                     >
                       <Icon className="h-4 w-4" />
                       {label}
@@ -538,7 +581,7 @@ Critical points highlight areas of particular importance, while supporting data 
                       </div>
                     </div>
                   )}
-                  
+
                   {activeTab === "insights" && analysisData && (
                     <div className="space-y-6">
                       <div>
@@ -560,7 +603,7 @@ Critical points highlight areas of particular importance, while supporting data 
                       </div>
                     </div>
                   )}
-                  
+
                   {activeTab === "metrics" && analysisData && (
                     <div className="grid md:grid-cols-3 gap-6">
                       {Object.entries(analysisData.keyMetrics).map(([category, score]) => (
@@ -568,7 +611,7 @@ Critical points highlight areas of particular importance, while supporting data 
                           <h4 className="font-bold text-white mb-3 capitalize">{category} Score</h4>
                           <div className="relative">
                             <div className="w-full bg-gray-700 rounded-full h-3">
-                              <div 
+                              <div
                                 className="bg-gradient-to-r from-emerald-500 to-blue-500 h-3 rounded-full transition-all duration-1000"
                                 style={{ width: `${score}%` }}
                               ></div>
