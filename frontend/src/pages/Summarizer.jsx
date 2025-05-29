@@ -5,12 +5,11 @@ import {
   Settings,
   User,
   PlayCircle,
-  Link as LinkIcon,
   Loader2,
   Check,
-  X
+  X,
+  Sparkles
 } from "lucide-react";
-import { Link } from "react-router-dom";
 import Toast from "../components/Toast";
 
 export default function YouTubeSummarizer() {
@@ -86,216 +85,225 @@ export default function YouTubeSummarizer() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800 relative overflow-hidden">
+      {/* Animated Background */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -inset-10 opacity-50">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
+          <div className="absolute top-3/4 right-1/4 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse delay-1000"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse delay-500"></div>
+        </div>
+      </div>
+
       {/* Header */}
-      <header className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] max-w-7xl rounded-full bg-white/70 backdrop-blur-lg shadow-xl border border-gray-200 px-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <Link2 className="h-8 w-8 text-green-500 mr-2" />
-              <span className="text-xl font-bold text-gray-900">
-                Summ<span className="text-green-500">lytic</span>
-              </span>
+      <header className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] max-w-7xl rounded-2xl bg-white/20 backdrop-blur-xl shadow-2xl border border-white/30">
+        <div className="flex justify-between items-center h-16 px-6">
+          <div className="flex items-center">
+            <div className="relative">
+              <Link2 className="h-8 w-8 text-purple-400 mr-3" />
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-purple-400 rounded-full animate-pulse"></div>
             </div>
-            <div className="flex items-center space-x-4">
-              <a href="/shortify">
-                <button
-                  className="p-2 rounded-full hover:bg-green-100 hover:border-2 border-bold transition"
-                  aria-label="Home"
-                >
-                  <Home className="h-5 w-5 text-gray-600" />
-                </button>
-              </a>
-              <Link to="/Profile">
-                <button
-                  className="p-2 rounded-full hover:bg-green-100 hover:border-2 border-bold transition"
-                  aria-label="User profile"
-                >
-                  <User className="h-5 w-5 text-gray-600" />
-                </button>
-              </Link>
-              <Link to="/Settings">
-                <button className="p-2 rounded-full hover:bg-indigo-100 hover:border-2 border-bold transition">
-                 <Settings className="h-5 w-5 text-gray-600" />
-                </button>
-               </Link>
-            </div>
+            <span className="text-xl font-bold text-white">
+              Summ<span className="text-purple-400">lytic</span>
+            </span>
+          </div>
+          <div className="flex items-center space-x-2">
+            {[
+              { icon: Home, href: "/shortify" },
+              { icon: User, href: "/Profile" },
+              { icon: Settings, href: "/Settings" },
+            ].map((item, index) => (
+              <button
+                key={index}
+                className="p-3 rounded-xl hover:bg-white/20 transition-all duration-300 hover:scale-110 backdrop-blur-sm border border-white/10"
+              >
+                <item.icon className="h-5 w-5 text-white/80 hover:text-white" />
+              </button>
+            ))}
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 pt-30 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-gray-900">
-            Summ<span className="text-green-500">lytic</span>
-          </h1>
-          <p className="mt-3 text-lg text-gray-600">
-            Transform YouTube videos into concise, actionable summaries.
-          </p>
-        </div>
-
-        {/* YouTube URL Input */}
-        <div className="max-w-2xl mx-auto mb-8">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                <LinkIcon className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                value={youtubeUrl}
-                onChange={handleUrlChange}
-                placeholder="Paste YouTube video URL here"
-                className={`block w-full pl-10 pr-4 py-3 border ${
-                  inputError ? "border-red-300" : "border-gray-300"
-                } rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500 bg-white`}
-              />
-              {youtubeUrl && (
-                <button
-                  type="button"
-                  onClick={() => setYoutubeUrl("")}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3"
-                >
-                  <X className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                </button>
-              )}
+      <main className="relative z-10 pt-32 pb-16 px-6">
+        <div className="max-w-6xl mx-auto">
+          {/* Hero Section */}
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-purple-500/20 border border-purple-500/30 text-purple-300 text-sm font-medium mb-6">
+              <Sparkles className="w-4 h-4 mr-2" />
+              AI-Powered Video Summarization
             </div>
+            <h1 className="text-6xl font-bold text-white mb-6 leading-tight">
+              Transform Videos
+              <span className="block bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                Into Insights
+              </span>
+            </h1>
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+              Get instant, AI-driven summaries from YouTube videos to save time and extract key information
+            </p>
+          </div>
 
-            {inputError && (
-              <p className="text-sm text-red-600 mt-1">{inputError}</p>
-            )}
-
-            <div className="flex justify-center gap-4">
-              <button
-                type="submit"
-                disabled={isProcessing}
-                className={`flex items-center justify-center py-2 px-6 rounded-md font-medium transition 
-                  ${
-                    isProcessing
-                      ? "bg-gray-300 cursor-not-allowed"
-                      : "bg-green-500 hover:bg-green-600 text-white"
-                  }`}
-              >
-                {isProcessing ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  "Summarize Video"
+          {/* YouTube URL Input */}
+          <div className="max-w-2xl mx-auto mb-12">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                  <Link2 className="h-6 w-6 text-purple-400" />
+                </div>
+                <input
+                  type="text"
+                  value={youtubeUrl}
+                  onChange={handleUrlChange}
+                  placeholder="Paste YouTube video URL here..."
+                  className={`block w-full pl-14 pr-12 py-4 border-2 ${
+                    inputError ? "border-red-400/50" : "border-white/30"
+                  } rounded-2xl shadow-xl focus:ring-2 focus:ring-purple-400 focus:border-transparent bg-white/10 backdrop-blur-sm text-white placeholder-gray-300 text-lg font-medium hover:bg-white/20 transition-all duration-300`}
+                />
+                {youtubeUrl && (
+                  <button
+                    type="button"
+                    onClick={() => setYoutubeUrl("")}
+                    className="absolute inset-y-0 right-0 flex items-center pr-4 hover:scale-110 transition-transform"
+                  >
+                    <X className="h-6 w-6 text-gray-400 hover:text-white" />
+                  </button>
                 )}
-              </button>
+              </div>
 
-              {youtubeUrl && !isProcessing && (
-                <button
-                  type="button"
-                  onClick={handleClear}
-                  className="py-2 px-6 border border-gray-300 rounded-md text-gray-700 font-medium hover:bg-gray-100 transition"
-                >
-                  Clear
-                </button>
+              {inputError && (
+                <p className="text-red-400 text-center font-medium">{inputError}</p>
               )}
-            </div>
-          </form>
-        </div>
 
-        {/* Video Summary Section */}
-        {videoDetails && summary && (
-          <div className="max-w-3xl mx-auto">
-            <div className="bg-white rounded-lg shadow overflow-hidden border border-gray-200 mb-6">
-              <div className="flex flex-col md:flex-row">
-                <div className="md:w-2/5">
-                  <div className="relative pb-[56.25%] bg-gray-200">
-                    <img
-                      src={videoDetails.thumbnailUrl}
-                      alt="Video thumbnail"
-                      className="absolute inset-0 w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <PlayCircle className="w-16 h-16 text-white opacity-80" />
+              <div className="flex justify-center gap-4">
+                <button
+                  type="submit"
+                  disabled={isProcessing}
+                  className={`group relative px-8 py-4 rounded-2xl font-bold text-white transition-all duration-300 hover:scale-105 hover:shadow-2xl ${
+                    isProcessing
+                      ? "bg-gray-600/50 cursor-not-allowed"
+                      : "bg-gradient-to-r from-purple-500 to-pink-500"
+                  }`}
+                >
+                  <div className="flex items-center space-x-3">
+                    {isProcessing ? (
+                      <>
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        <span className="text-lg">Processing...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="h-5 w-5" />
+                        <span className="text-lg">Summarize Video</span>
+                      </>
+                    )}
+                  </div>
+                  {!isProcessing && (
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
+                  )}
+                </button>
+
+                {youtubeUrl && !isProcessing && (
+                  <button
+                    type="button"
+                    onClick={handleClear}
+                    className="px-8 py-4 border-2 border-white/30 rounded-2xl text-white font-bold hover:bg-white/20 transition-all duration-300 backdrop-blur-sm"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+            </form>
+          </div>
+
+          {/* Video Summary Section */}
+          {videoDetails && summary && (
+            <div className="max-w-4xl mx-auto animate-fadeIn">
+              <div className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden mb-6">
+                <div className="flex flex-col lg:flex-row">
+                  <div className="lg:w-2/5">
+                    <div className="relative pb-[56.25%] bg-gradient-to-br from-purple-500/20 to-pink-500/20">
+                      <img
+                        src={videoDetails.thumbnailUrl}
+                        alt="Video thumbnail"
+                        className="absolute inset-0 w-full h-full object-cover rounded-tl-3xl lg:rounded-bl-3xl lg:rounded-tr-none"
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-tl-3xl lg:rounded-bl-3xl lg:rounded-tr-none">
+                        <PlayCircle className="w-20 h-20 text-white opacity-80" />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-6 lg:w-3/5">
+                    <h3 className="text-xl font-bold text-white line-clamp-2 mb-2">
+                      {videoDetails.title}
+                    </h3>
+                    <p className="text-purple-300 font-medium mb-3">
+                      {videoDetails.channelName}
+                    </p>
+                    <div className="flex space-x-4 text-sm text-gray-300">
+                      <span className="bg-white/10 px-3 py-1 rounded-full">{videoDetails.duration}</span>
+                      <span className="bg-white/10 px-3 py-1 rounded-full">{videoDetails.publishDate}</span>
                     </div>
                   </div>
                 </div>
-                <div className="p-4 md:w-3/5">
-                  <h3 className="text-lg font-semibold line-clamp-2">
-                    {videoDetails.title}
-                  </h3>
-                  <p className="text-sm text-gray-600 mt-1">
-                    {videoDetails.channelName}
-                  </p>
-                  <div className="flex space-x-4 text-xs text-gray-500 mt-2">
-                    <span>{videoDetails.duration}</span>
-                    <span>{videoDetails.publishDate}</span>
+
+                <div className="p-8 border-t border-white/20">
+                  <div className="flex items-center space-x-3 mb-6">
+                    <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl">
+                      <Sparkles className="w-5 h-5 text-white" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-white">AI Summary</h2>
+                  </div>
+                  <div className="prose max-w-none">
+                    <div className="whitespace-pre-line text-gray-200 leading-relaxed text-lg">{summary}</div>
                   </div>
                 </div>
-              </div>
 
-              <div className="p-6 border-t border-gray-200">
-                <h2 className="text-xl font-semibold mb-4">Summary</h2>
-                <div className="prose max-w-none">
-                  <div className="whitespace-pre-line">{summary}</div>
+                <div className="p-6 bg-white/5 border-t border-white/20 flex justify-end space-x-4">
+                  <button className="px-6 py-3 text-white border-2 border-white/30 hover:bg-white/20 rounded-xl transition-all duration-300 font-medium backdrop-blur-sm">
+                    Copy Summary
+                  </button>
+                  <button className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl transition-all duration-300 font-medium hover:scale-105">
+                    Download as Text
+                  </button>
                 </div>
-              </div>
-
-              <div className="p-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
-                <button className="text-gray-700 border border-gray-300 hover:bg-gray-100 py-2 px-4 rounded transition text-sm">
-                  Copy Summary
-                </button>
-                <button className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded transition text-sm">
-                  Download as Text
-                </button>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* How It Works Section */}
-        {!summary && (
-          <div className="max-w-4xl mx-auto mt-16">
-            <h2 className="text-2xl font-bold text-center mb-8">
-              How It Works
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 text-center">
-                <div className="bg-green-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">
-                  <LinkIcon className="h-6 w-6 text-green-600" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">Paste Link</h3>
-                <p className="text-gray-600">
-                  Simply paste any YouTube video URL to get started
-                </p>
-              </div>
-
-              <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 text-center">
-                <div className="bg-green-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">
-                  <Loader2 className="h-6 w-6 text-green-600" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">AI Processing</h3>
-                <p className="text-gray-600">
-                  Our AI analyzes the video content and extracts key points
-                </p>
-              </div>
-
-              <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 text-center">
-                <div className="bg-green-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">
-                  <Check className="h-6 w-6 text-green-600" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">Get Summary</h3>
-                <p className="text-gray-600">
-                  Receive a concise summary with all the essential information
-                </p>
+          {/* How It Works Section */}
+          {!summary && (
+            <div className="max-w-5xl mx-auto mt-20">
+              <h2 className="text-3xl font-bold text-center mb-12 text-white">
+                How It Works
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {[
+                  { icon: Link2, title: "Paste Link", desc: "Simply paste any YouTube video URL to get started", color: "from-purple-500 to-purple-600" },
+                  { icon: Loader2, title: "AI Processing", desc: "Our AI analyzes the video content and extracts key points", color: "from-pink-500 to-pink-600" },
+                  { icon: Check, title: "Get Summary", desc: "Receive a concise summary with all the essential information", color: "from-blue-500 to-blue-600" }
+                ].map((item, index) => (
+                  <div key={index} className="bg-white/10 backdrop-blur-xl p-8 rounded-3xl shadow-xl border border-white/20 text-center hover:scale-105 transition-all duration-300 hover:bg-white/20">
+                    <div className={`bg-gradient-to-r ${item.color} rounded-2xl w-16 h-16 flex items-center justify-center mx-auto mb-6`}>
+                      <item.icon className="h-8 w-8 text-white" />
+                    </div>
+                    <h3 className="font-bold text-xl mb-3 text-white">{item.title}</h3>
+                    <p className="text-gray-300 leading-relaxed">
+                      {item.desc}
+                    </p>
+                  </div>
+                ))}
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </main>
 
       {/* Footer */}
-      <footer className="bg-white flex items-center border-t border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center">
-          <p className="text-sm text-gray-600">
-            &copy; 2025 Shortify. All rights reserved.
+      <footer className="relative z-10 bg-white/5 backdrop-blur-sm border-t border-white/20">
+        <div className="max-w-7xl mx-auto px-6 py-8 flex justify-between items-center">
+          <p className="text-gray-300">
+            &copy; 2025 Summlytic. All rights reserved.
           </p>
         </div>
       </footer>
