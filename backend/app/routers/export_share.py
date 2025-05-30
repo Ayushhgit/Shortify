@@ -43,6 +43,10 @@ async def export_to_pdf(request: Request):
         # Get JSON data from request body
         request_data = await request.json()
         
+        # Debug logging to see what data we're receiving
+        logger.info(f"Received request data keys: {list(request_data.keys())}")
+        logger.info(f"Analysis data keys: {list(request_data.get('analysisData', {}).keys())}")
+        
         summary = clean_text(request_data.get('summary', ''))
         analysis_data = request_data.get('analysisData', {})
         file_name = clean_text(request_data.get('fileName', 'document'))
@@ -86,29 +90,56 @@ async def export_to_pdf(request: Request):
             story.append(Paragraph("Analysis Details", styles['Heading1']))
             story.append(Spacer(1, 12))
             
-            # Document Metrics
+            # Document Metrics - Enhanced with multiple possible field names
             story.append(Paragraph("Document Metrics", styles['Heading2']))
             story.append(Spacer(1, 8))
             
+            # Helper function to get metric value with fallback field names
+            def get_metric_value(data, *field_names, default='N/A'):
+                for field in field_names:
+                    if field in data and data[field] is not None:
+                        return data[field]
+                return default
+            
+            # Try multiple possible field names for each metric
             metrics = [
-                f"Word Count: {analysis_data.get('word_count', 'N/A')}",
-                f"Character Count: {analysis_data.get('character_count', 'N/A')}",
-                f"Page Count: {analysis_data.get('page_count', 'N/A')}",
-                f"Estimated Reading Time: {analysis_data.get('reading_time_minutes', 'N/A')} minutes",
-                f"Document Complexity: {clean_text(str(analysis_data.get('complexity', 'N/A')))}",
-                f"Document Type: {clean_text(str(analysis_data.get('document_type', 'N/A')))}",
-                f"Sentiment: {clean_text(str(analysis_data.get('sentiment', 'N/A')))}"
+                ("Word Count", get_metric_value(analysis_data, 'word_count', 'wordCount', 'words')),
+                ("Character Count", get_metric_value(analysis_data, 'character_count', 'characterCount', 'chars')),
+                ("Page Count", get_metric_value(analysis_data, 'page_count', 'pageCount', 'pages')),
+                ("Estimated Reading Time", f"{get_metric_value(analysis_data, 'reading_time_minutes', 'readingTime', 'reading_time')} minutes"),
+                ("Document Complexity", clean_text(str(get_metric_value(analysis_data, 'complexity', 'document_complexity')))),
+                ("Document Type", clean_text(str(get_metric_value(analysis_data, 'document_type', 'documentType', 'type')))),
+                ("Sentiment", clean_text(str(get_metric_value(analysis_data, 'sentiment', 'overall_sentiment'))))
             ]
             
-            for metric in metrics:
+            for metric_name, metric_value in metrics:
                 try:
-                    story.append(Paragraph(f"• {metric}", styles['Normal']))
+                    story.append(Paragraph(f"• {metric_name}: {metric_value}", styles['Normal']))
                 except Exception as e:
-                    logger.warning(f"Skipping metric due to encoding issue: {metric}, Error: {e}")
+                    logger.warning(f"Skipping metric due to encoding issue: {metric_name}, Error: {e}")
                     continue
             
             story.append(Spacer(1, 16))
             
+            # Debug section - Add this temporarily to see what data is available
+            story.append(Paragraph("Debug: Available Data Fields", styles['Heading2']))
+            story.append(Spacer(1, 8))
+            
+            available_fields = []
+            for key, value in analysis_data.items():
+                if value is not None and value != '':
+                    available_fields.append(f"{key}: {str(value)[:50]}{'...' if len(str(value)) > 50 else ''}")
+            
+            for field in available_fields[:10]:  # Show first 10 fields
+                try:
+                    story.append(Paragraph(f"• {field}", styles['Normal']))
+                except Exception as e:
+                    logger.warning(f"Skipping debug field: {field}, Error: {e}")
+                    continue
+            
+            story.append(Spacer(1, 16))
+            
+            # Rest of the existing code for scores, topics, etc...
             # Scores Section
             if any(key in analysis_data for key in ['technical_score', 'business_score', 'academic_score']):
                 story.append(Paragraph("Content Scores", styles['Heading2']))
@@ -157,7 +188,7 @@ async def export_to_pdf(request: Request):
                         continue
                 story.append(Spacer(1, 16))
             
-            # Resume-specific sections
+            # Resume-specific sections (keeping original code)
             if 'score' in analysis_data:
                 story.append(Paragraph("Resume Analysis", styles['Heading2']))
                 story.append(Spacer(1, 8))
