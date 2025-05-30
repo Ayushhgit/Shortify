@@ -36,31 +36,61 @@ async def upload_and_analyze_pdf(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error analyzing PDF: {str(e)}")
 
-@router.post("/chat")
-async def chat_with_pdf(
-    file: UploadFile = File(...),
-    message: str = Form(...),
+@router.post("/chat-simple")
+async def chat_with_document_simple(
+    request: dict,  # {"message": "user message", "document_content": "extracted text"}
     current_user: dict = Depends(get_current_user),
 ):
     try:
-        validation = validate_pdf_file(file)
-        if not validation["valid"]:
-            raise HTTPException(status_code=400, detail=validation["error"])
+        message = request.get("message", "").strip()
+        document_content = request.get("document_content", "").strip()
+        
+        if not message:
+            raise HTTPException(status_code=400, detail="Message is required")
+        
+        if not document_content:
+            raise HTTPException(status_code=400, detail="Document content is required")
+        
+        reply = pdf_service.chat_with_document(message, document_content)
+        return {"response": reply, "timestamp": datetime.utcnow().isoformat()}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Chat failed: {str(e)}")
 
-        # Save temp file
-        import uuid, aiofiles, os
-        temp_path = f"temp/{uuid.uuid4()}_{file.filename}"
-        os.makedirs("temp", exist_ok=True)
-        async with aiofiles.open(temp_path, "wb") as f:
-            content = await file.read()
-            await f.write(content)
 
-        # Extract text
-        text_content, _ = pdf_service.extract_text_from_pdf(temp_path)
-        os.remove(temp_path)
+@router.post("/chat")
+async def chat_with_pdf(
+    current_user: dict = Depends(get_current_user),
+    file: UploadFile = File(None),  # Make file optional
+    message: str = Form(...),
+    document_content: str = Form(None),  # Add document_content as form field
+):
+    try:
+        if file:
+            # Original file upload logic
+            validation = validate_pdf_file(file)
+            if not validation["valid"]:
+                raise HTTPException(status_code=400, detail=validation["error"])
+
+            # Save temp file
+            import uuid, aiofiles, os
+            temp_path = f"temp/{uuid.uuid4()}_{file.filename}"
+            os.makedirs("temp", exist_ok=True)
+            async with aiofiles.open(temp_path, "wb") as f:
+                content = await file.read()
+                await f.write(content)
+
+            # Extract text
+            text_content, _ = pdf_service.extract_text_from_pdf(temp_path)
+            os.remove(temp_path)
+        elif document_content:
+            # Use provided document content
+            text_content = document_content
+        else:
+            raise HTTPException(status_code=400, detail="Either file or document_content must be provided")
 
         if not text_content.strip():
-            raise HTTPException(status_code=400, detail="No text content found in PDF")
+            raise HTTPException(status_code=400, detail="No text content found")
 
         reply = pdf_service.chat_with_document(message, text_content)
         return {"response": reply, "timestamp": datetime.utcnow().isoformat()}

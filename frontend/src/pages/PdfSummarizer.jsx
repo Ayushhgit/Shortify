@@ -55,26 +55,21 @@ const ChatWithDocument = ({ documentContent, isVisible, onClose }) => {
 
     const userMessage = inputMessage.trim();
     setInputMessage("");
-
-    // Add user message to chat
     setMessages(prev => [...prev, { type: "user", content: userMessage }]);
     setIsLoading(true);
 
     try {
       const idToken = await getToken();
-      const response = await fetch('http://localhost:8000/api/pdf/chat', {
+
+      const response = await fetch("http://localhost:8000/api/pdf/chat-simple", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${idToken}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           message: userMessage,
-          document_content: documentContent,
-          chat_history: messages.filter(m => m.type !== "loading").map(m => ({
-            user_message: m.type === "user" ? m.content : "",
-            ai_response: m.type === "ai" ? m.content : ""
-          })).filter(m => m.user_message || m.ai_response)
+          document_content: documentContent
         }),
       });
 
@@ -85,11 +80,13 @@ const ChatWithDocument = ({ documentContent, isVisible, onClose }) => {
       const data = await response.json();
       setMessages(prev => [...prev, { type: "ai", content: data.response || "Sorry, I couldn't process that." }]);
     } catch (error) {
+      console.error(error);
       setMessages(prev => [...prev, { type: "ai", content: "Sorry, I encountered an error. Please try again." }]);
     } finally {
       setIsLoading(false);
     }
   };
+
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -134,8 +131,8 @@ const ChatWithDocument = ({ documentContent, isVisible, onClose }) => {
           {messages.map((message, index) => (
             <div key={index} className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}>
               <div className={`max-w-[80%] p-4 rounded-2xl ${message.type === "user"
-                  ? "bg-emerald-600 text-white"
-                  : "bg-gray-800 text-gray-300 border border-gray-700"
+                ? "bg-emerald-600 text-white"
+                : "bg-gray-800 text-gray-300 border border-gray-700"
                 }`}>
                 <p className="text-sm leading-relaxed">{message.content}</p>
               </div>
@@ -323,7 +320,10 @@ export default function PremiumPdfSummarizer() {
       setSummary(data.summary || "Analysis completed successfully.");
 
       // Store document content for chat
-      setDocumentContent(data.document_content || "");
+      //setDocumentContent(data.content || data.text || data.extracted_text || "Document processed successfully");
+
+      // Ensure documentContent is always truthy when summary exists
+      setDocumentContent(data.document_content || data.content || "Document content available for chat");
 
       setAnalysisData({
         wordCount: data.analysis_data?.word_count || 0,
@@ -627,6 +627,20 @@ export default function PremiumPdfSummarizer() {
               </div>
             </button>
 
+            {/* Chat Button - Only show when document is processed and has content */}
+            {summary && documentContent && (
+              <button
+                onClick={() => setShowChat(true)}
+                className="group relative overflow-hidden px-8 py-4 rounded-2xl font-bold text-lg bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white shadow-xl hover:shadow-2xl hover:scale-105 hover:-translate-y-1 transition-all duration-300"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                <div className="relative flex items-center gap-3">
+                  <MessageCircle className="h-5 w-5" />
+                  Chat with Document
+                </div>
+              </button>
+            )}
+
             {file && (
               <button
                 onClick={handleClear}
@@ -636,6 +650,7 @@ export default function PremiumPdfSummarizer() {
               </button>
             )}
           </div>
+
 
           {/* Enhanced Results Section */}
           {summary && (
@@ -773,6 +788,12 @@ export default function PremiumPdfSummarizer() {
           )}
         </div>
       </main>
+      {/* Chat Component */}
+      <ChatWithDocument
+        documentContent={documentContent}
+        isVisible={showChat}
+        onClose={() => setShowChat(false)}
+      />
 
       {/* Premium Toast */}
       <Toast
