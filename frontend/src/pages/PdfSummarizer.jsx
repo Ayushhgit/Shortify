@@ -319,11 +319,25 @@ export default function PremiumPdfSummarizer() {
       // Map backend response to frontend expectations
       setSummary(data.summary || "Analysis completed successfully.");
 
-      // Store document content for chat
-      //setDocumentContent(data.content || data.text || data.extracted_text || "Document processed successfully");
+      // FIXED: Store actual document content for chat
+      // Check multiple possible fields where the extracted text might be
+      const extractedText = data.extracted_text ||
+        data.document_content ||
+        data.content ||
+        data.text ||
+        data.analysis_data?.content ||
+        "";
 
-      // Ensure documentContent is always truthy when summary exists
-      setDocumentContent(data.document_content || data.content || "Document content available for chat");
+      console.log("Extracted text length:", extractedText.length);
+      console.log("Extracted text preview:", extractedText.substring(0, 200));
+
+      if (extractedText && extractedText.trim().length > 0) {
+        setDocumentContent(extractedText);
+      } else {
+        // If no text content found, try to extract it separately
+        console.warn("No extracted text found in response, attempting separate extraction");
+        await extractTextSeparately(file);
+      }
 
       setAnalysisData({
         wordCount: data.analysis_data?.word_count || 0,

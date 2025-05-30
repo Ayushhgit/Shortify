@@ -97,6 +97,7 @@ class PDFService:
                 "success": True,
                 "file_id": file_id,
                 "filename": file.filename,
+                "extracted_text": text_content,
                 "page_count": page_count,
                 "analysis_data": {
                     "word_count": basic_metrics["word_count"],
@@ -318,6 +319,10 @@ Document content:
         """Simple chat with document"""
         if chat_history is None:
             chat_history = []
+
+        user_message = user_message.strip()
+        if not user_message:
+            return "Please provide a valid question."
         
         # Limit document content for context
         if len(document_content) > 4000:
@@ -331,16 +336,22 @@ You have access to this document content:
 
 {document_content}
 
-Answer questions about this document accurately. If information isn't in the document, say so politely."""
+INSTRUCTIONS:
+- Answer questions based ONLY on the provided document content
+- If the answer isn't in the document, clearly state: "I cannot find this information in the provided document"
+- Be specific and cite relevant parts when possible
+- Keep answers concise but complete
+- If asked about topics not in the document, politely redirect to document-related questions"""
             }
         ]
         
         # Add recent chat history (last 3 exchanges)
         for chat in chat_history[-3:]:
-            messages.extend([
-                {"role": "user", "content": chat["user_message"]},
-                {"role": "assistant", "content": chat["ai_response"]}
-            ])
+            if chat.get("user_message") and chat.get("ai_response"):
+                messages.extend([
+                    {"role": "user", "content": chat["user_message"]},
+                    {"role": "assistant", "content": chat["ai_response"]}
+                ])
         
         # Add current question
         messages.append({"role": "user", "content": user_message})
@@ -354,16 +365,30 @@ Answer questions about this document accurately. If information isn't in the doc
             "model": "llama3-70b-8192",
             "messages": messages,
             "max_tokens": 1000,
-            "temperature": 0.3
+            "temperature": 0.3,
+            "top_p": 0.9, 
+            "stream": False
         }
         
         try:
             response = requests.post(self.api_url, headers=headers, json=payload)
             response.raise_for_status()
-            return response.json()["choices"][0]["message"]["content"].strip()
+            ai_response = response.json()["choices"][0]["message"]["content"].strip()
+        
+            if not ai_response or len(ai_response) < 10:
+                return "I apologize, but I couldn't generate a proper response. Please try rephrasing your question."
             
+            return ai_response
+
+        except requests.Timeout:
+            return "The request timed out. Please try again with a shorter question." 
+        except requests.RequestException as e:
+            return f"I'm experiencing technical difficulties. Please try again later. (Error: Connection issue)"
+        except KeyError:
+            return "Received an unexpected response format. Please try again."
         except Exception as e:
-            return f"I'm sorry, I encountered an error: {str(e)}"
+            return "I encountered an unexpected error. Please try rephrasing your question or try again later."
+        
     
     def calculate_basic_metrics(self, text_content: str) -> Dict[str, Any]:
         """Calculate basic document metrics"""
