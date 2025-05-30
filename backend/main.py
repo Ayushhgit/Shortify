@@ -11,6 +11,7 @@ from app.routers import shorts
 from app.routers import auth_router
 from app.routers import RA_router
 from app.routers import pdf_router
+from app.routers.export_share import router as export_share_router
 
 logging.basicConfig(
     level=logging.INFO,
@@ -40,6 +41,7 @@ app.include_router(chatbot_router)
 app.include_router(shorts.router, prefix="/api/shorts", tags=["shorts"])
 app.include_router(RA_router.router)
 app.include_router(pdf_router.router)
+app.include_router(export_share_router)
 
 @app.get("/", tags=["status"])
 async def root():

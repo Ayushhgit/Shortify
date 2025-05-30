@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Home, Settings, User, Upload, FileText, X, Check, Loader2, Download, Sparkles, Zap, Clock, BarChart3, Eye, Copy, Share2 } from "lucide-react";
+import { Home, Settings, User, Upload, FileText, X, Check, Loader2, Download, Sparkles, Zap, Clock, BarChart3, Eye, Copy, Share2, MessageCircle, Send } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getToken } from '../firebase';
 
@@ -35,6 +35,153 @@ const Toast = ({ show, message, type, onClose }) => {
   );
 };
 
+// Chat Component
+const ChatWithDocument = ({ documentContent, isVisible, onClose }) => {
+  const [messages, setMessages] = useState([]);
+  const [inputMessage, setInputMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const sendMessage = async () => {
+    if (!inputMessage.trim() || isLoading) return;
+
+    const userMessage = inputMessage.trim();
+    setInputMessage("");
+
+    // Add user message to chat
+    setMessages(prev => [...prev, { type: "user", content: userMessage }]);
+    setIsLoading(true);
+
+    try {
+      const idToken = await getToken();
+      const response = await fetch('http://localhost:8000/api/pdf/chat', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({
+          message: userMessage,
+          document_content: documentContent,
+          chat_history: messages.filter(m => m.type !== "loading").map(m => ({
+            user_message: m.type === "user" ? m.content : "",
+            ai_response: m.type === "ai" ? m.content : ""
+          })).filter(m => m.user_message || m.ai_response)
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to get response");
+      }
+
+      const data = await response.json();
+      setMessages(prev => [...prev, { type: "ai", content: data.response || "Sorry, I couldn't process that." }]);
+    } catch (error) {
+      setMessages(prev => [...prev, { type: "ai", content: "Sorry, I encountered an error. Please try again." }]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
+
+  if (!isVisible) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-gray-900 rounded-2xl border border-gray-700 shadow-2xl w-full max-w-2xl h-[600px] flex flex-col">
+        {/* Chat Header */}
+        <div className="flex items-center justify-between p-6 border-b border-gray-700">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-emerald-600 rounded-lg">
+              <MessageCircle className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-white">Chat with Document</h3>
+              <p className="text-sm text-gray-400">Ask questions about your PDF</p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+          >
+            <X className="h-5 w-5 text-gray-400" />
+          </button>
+        </div>
+
+        {/* Messages Container */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-4">
+          {messages.length === 0 && (
+            <div className="text-center text-gray-400 py-8">
+              <MessageCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p>Start a conversation about your document!</p>
+            </div>
+          )}
+
+          {messages.map((message, index) => (
+            <div key={index} className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}>
+              <div className={`max-w-[80%] p-4 rounded-2xl ${message.type === "user"
+                  ? "bg-emerald-600 text-white"
+                  : "bg-gray-800 text-gray-300 border border-gray-700"
+                }`}>
+                <p className="text-sm leading-relaxed">{message.content}</p>
+              </div>
+            </div>
+          ))}
+
+          {isLoading && (
+            <div className="flex justify-start">
+              <div className="bg-gray-800 border border-gray-700 p-4 rounded-2xl">
+                <div className="flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin text-emerald-400" />
+                  <span className="text-sm text-gray-400">Thinking...</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Input Area */}
+        <div className="p-6 border-t border-gray-700">
+          <div className="flex gap-3">
+            <input
+              type="text"
+              value={inputMessage}
+              onChange={(e) => setInputMessage(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Ask a question about your document..."
+              className="flex-1 bg-gray-800 border border-gray-600 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+              disabled={isLoading}
+            />
+            <button
+              onClick={sendMessage}
+              disabled={!inputMessage.trim() || isLoading}
+              className="bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-700 disabled:text-gray-500 text-white p-3 rounded-xl transition-colors"
+            >
+              <Send className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function PremiumPdfSummarizer() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -45,6 +192,8 @@ export default function PremiumPdfSummarizer() {
   const [analysisData, setAnalysisData] = useState(null);
   const [activeTab, setActiveTab] = useState("summary");
   const [isDragOver, setIsDragOver] = useState(false);
+  const [showChat, setShowChat] = useState(false);
+  const [documentContent, setDocumentContent] = useState("");
   const fileInputRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
@@ -121,28 +270,18 @@ export default function PremiumPdfSummarizer() {
       }
 
       if (!file) {
-        displayToast("Please select a PDF or Resume file first", "error");
+        displayToast("Please select a PDF file first", "error");
         return;
       }
 
       setIsProcessing(true);
       setLoading(true);
-      setStep && setStep(3); // optional if you use step navigation
+      setStep && setStep(3);
 
       const formData = new FormData();
-      formData.append("file", file); // could be resume or general PDF
+      formData.append("file", file);
+      formData.append("analysis_type", analysisType);
 
-      // Map analysisType to what your backend expects
-      let backendAnalysisType = "summary"; // default
-      if (analysisType === "resume") {
-        backendAnalysisType = "detailed"; // or whatever your backend uses for resume analysis
-      } else if (analysisType === "general") {
-        backendAnalysisType = "summary";
-      }
-
-      formData.append("analysis_type", backendAnalysisType);
-
-      // Updated endpoint to match your router
       const response = await fetch('http://localhost:8000/api/pdf/upload-analyze', {
         method: "POST",
         headers: {
@@ -174,46 +313,52 @@ export default function PremiumPdfSummarizer() {
       }
 
       const data = await response.json();
+      console.log("Analysis response:", data);
 
-      // Optional step transition
       setStep && setStep(4);
       setAnimateResult && setAnimateResult(true);
       setResult && setResult(data);
 
-      // Handle PDF analysis-specific UI updates
-      // Adapt to your backend response structure
-      setSummary?.(data.summary || data.analysis_summary || "No summary available");
-      setAnalysisData?.({
-        wordCount: data.word_count || data.metrics?.word_count || 0,
-        pageCount: data.page_count || data.metrics?.page_count || 0,
-        readingTime: data.reading_time || data.metrics?.reading_time || 0,
-        complexity: data.complexity || "Unknown",
-        topics: data.topics || data.key_topics || [],
-        sentiment: data.sentiment || "Neutral",
+      // Map backend response to frontend expectations
+      setSummary(data.summary || "Analysis completed successfully.");
+
+      // Store document content for chat
+      setDocumentContent(data.document_content || "");
+
+      setAnalysisData({
+        wordCount: data.analysis_data?.word_count || 0,
+        pageCount: data.page_count || 0,
+        readingTime: data.analysis_data?.reading_time_minutes || 0,
+        complexity: data.analysis_data?.complexity || "Unknown",
+        topics: data.analysis_data?.topics || [],
+        sentiment: data.analysis_data?.sentiment || "Neutral",
         keyMetrics: {
-          technical: data.technical_score || 0,
-          business: data.business_score || 0,
-          academic: data.academic_score || 0,
+          technical: data.analysis_data?.technical_score || 0,
+          business: data.analysis_data?.business_score || 0,
+          academic: data.analysis_data?.academic_score || 0,
         },
+        keyPoints: data.analysis_data?.key_points || [],
+        documentType: data.analysis_data?.document_type || "document"
       });
 
       displayToast("PDF analyzed successfully! 🎉");
     } catch (error) {
-      console.error("Error analyzing PDF/resume:", error);
+      console.error("Error analyzing PDF:", error);
       displayToast(`Failed to analyze: ${error.message}`, "error");
-      setStep && setStep(2); // go back a step if needed
+      setStep && setStep(2);
     } finally {
       setIsProcessing(false);
       setLoading(false);
     }
   };
 
-
   const handleClear = () => {
     setFile(null);
     setSummary("");
     setAnalysisData(null);
+    setDocumentContent("");
     setActiveTab("summary");
+    setShowChat(false);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -226,7 +371,7 @@ export default function PremiumPdfSummarizer() {
 
   const exportToPDF = async () => {
     try {
-      const response = await fetch('/api/export/pdf', {
+      const response = await fetch('http://localhost:8000/api/export/pdf', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -258,7 +403,7 @@ export default function PremiumPdfSummarizer() {
 
   const shareReport = async () => {
     try {
-      const response = await fetch('/api/share', {
+      const response = await fetch('http://localhost:8000/api/share', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
