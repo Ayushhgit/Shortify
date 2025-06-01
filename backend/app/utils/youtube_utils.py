@@ -1,6 +1,9 @@
 from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound
 from yt_dlp import YoutubeDL
 from urllib.parse import urlparse, parse_qs
+import whisper
+import os
+import tempfile
 
 def extract_video_id(url: str) -> str:
     parsed_url = urlparse(url)
@@ -79,21 +82,74 @@ def get_transcript(video_id):
         print(f"Transcript error: {e}")
         raise e
 
+def transcribe_audio(video_url: str) -> str:
+    """Fallback transcription using Whisper when subtitles are not available"""
+    try:
+        print("Attempting audio transcription with Whisper...")
+        
+        # Create temporary directory for audio file
+        with tempfile.TemporaryDirectory() as temp_dir:
+            audio_path = os.path.join(temp_dir, "audio.%(ext)s")
+            
+            # Download audio only
+            ydl_opts = {
+                'format': 'bestaudio/best',
+                'outtmpl': audio_path,
+                'quiet': True,
+            }
+            
+            with YoutubeDL(ydl_opts) as ydl:
+                ydl.download([video_url])
+            
+            # Find the downloaded audio file
+            audio_file = None
+            for file in os.listdir(temp_dir):
+                if file.startswith("audio"):
+                    audio_file = os.path.join(temp_dir, file)
+                    break
+            
+            if not audio_file:
+                raise Exception("Failed to download audio")
+            
+            print(f"Audio downloaded: {audio_file}")
+            
+            # Load Whisper model (using base model for balance of speed/accuracy)
+            model = whisper.load_model("base")
+            
+            # Transcribe the audio
+            result = model.transcribe(audio_file)
+            
+            print("Audio transcription completed")
+            return result["text"]
+            
+    except Exception as e:
+        print(f"Audio transcription failed: {e}")
+        raise Exception(f"Could not transcribe audio: {str(e)}")
+
 def get_transcript_and_details(video_url: str):
     video_id = extract_video_id(video_url)
     if not video_id:
         raise ValueError("Invalid YouTube URL")
     
+    transcript = None
+    
+    # First try to get existing subtitles
     try:
-        # get_transcript already returns a joined string, not a list
         transcript = get_transcript(video_id)
-        if not transcript:
-            raise ValueError("No transcript available for this video")
-            
-    except (TranscriptsDisabled, NoTranscriptFound):
-        raise ValueError("Transcript is disabled or not available for this video")
-    except Exception as e:
-        raise ValueError(f"Error retrieving transcript: {str(e)}")
+        if transcript:
+            print("Used existing subtitles")
+    except (TranscriptsDisabled, NoTranscriptFound, ValueError) as e:
+        print(f"Subtitles not available: {e}")
+        
+        # Fallback to audio transcription
+        try:
+            transcript = transcribe_audio(video_url)
+            print("Used audio transcription")
+        except Exception as audio_error:
+            raise ValueError(f"Neither subtitles nor audio transcription available: {str(audio_error)}")
+    
+    if not transcript:
+        raise ValueError("No transcript could be generated")
     
     details = get_video_details(video_url)
     return transcript, details
