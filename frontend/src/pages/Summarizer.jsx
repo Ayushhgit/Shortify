@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import {
-  Link2,Home,
-  Settings,User,
+  Link2, Home,
+  Settings, User,
   PlayCircle,
-  Loader2,Check,X,Sparkles
+  Loader2, Check, X, Sparkles
 } from "lucide-react";
 import Toast from "../components/Toast";
 import { useNavigate } from "react-router-dom";
@@ -59,42 +59,47 @@ export default function YouTubeSummarizer() {
     try {
       setIsProcessing(true);
 
-      const response = await fetch('http://localhost:8000/api/ytSummary', {
+      const response = await fetch('http://localhost:8000/api/ytSummary/summarize', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          url:youtubeUrl
+          url: youtubeUrl
         }),
       });
 
-      if(!response.ok) {
-        displayToast(response.status);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ detail: 'Unknown error' }));
+        console.error('Server error:', errorData);
+        displayToast(`Error: ${errorData.detail || response.status}`, "error");
+        setIsProcessing(false);
+        return;
       }
 
       const data = await response.json();
 
-      setVideoDetails({
-        title: data.videoDetails.title,
-        channelName: data.videoDetails.channelName,
-        duration: data.videoDetails.duration,
-        publishDate: data.videoDetails.publishDate,
-        thumbnailUrl: data.videoDetails.thumbnailUrl
-      });
+      if (data && data.videoDetails) {
+        setVideoDetails({
+          title: data.videoDetails.title,
+          channelName: data.videoDetails.channelName,
+          duration: data.videoDetails.duration,
+          publishDate: data.videoDetails.publishDate,
+          thumbnailUrl: data.videoDetails.thumbnailUrl
+        });
+      }
 
       setSummary(data.summary);
-
       displayToast("Video summarized successfully!");
       setIsProcessing(false);
     } catch (error) {
       setIsProcessing(false);
-      displayToast("Error processing video. Please try again.", "error");
-      console.error("Error:", error);
+      console.error("Network/Parse error:", error);
+      displayToast("Network error. Please try again.", "error");
     }
   };
 
-   const handleCopySummary = async () => {
+  const handleCopySummary = async () => {
     try {
       await navigator.clipboard.writeText(summary);
       displayToast("Summary copied to clipboard!");
@@ -103,7 +108,7 @@ export default function YouTubeSummarizer() {
     }
   };
 
-    const handleDownloadSummary = () => {
+  const handleDownloadSummary = () => {
     const element = document.createElement("a");
     const file = new Blob([summary], { type: 'text/plain' });
     element.href = URL.createObjectURL(file);
@@ -186,9 +191,8 @@ export default function YouTubeSummarizer() {
                   value={youtubeUrl}
                   onChange={handleUrlChange}
                   placeholder="Paste YouTube video URL here..."
-                  className={`block w-full pl-14 pr-12 py-4 border-2 ${
-                    inputError ? "border-red-400/50" : "border-white/30"
-                  } rounded-2xl shadow-xl focus:ring-2 focus:ring-purple-400 focus:border-transparent bg-white/10 backdrop-blur-sm text-white placeholder-gray-300 text-lg font-medium hover:bg-white/20 transition-all duration-300`}
+                  className={`block w-full pl-14 pr-12 py-4 border-2 ${inputError ? "border-red-400/50" : "border-white/30"
+                    } rounded-2xl shadow-xl focus:ring-2 focus:ring-purple-400 focus:border-transparent bg-white/10 backdrop-blur-sm text-white placeholder-gray-300 text-lg font-medium hover:bg-white/20 transition-all duration-300`}
                 />
                 {youtubeUrl && (
                   <button
@@ -209,11 +213,10 @@ export default function YouTubeSummarizer() {
                 <button
                   type="submit"
                   disabled={isProcessing}
-                  className={`group relative px-8 py-4 rounded-2xl font-bold text-white transition-all duration-300 hover:scale-105 hover:shadow-2xl ${
-                    isProcessing
-                      ? "bg-gray-600/50 cursor-not-allowed"
-                      : "bg-gradient-to-r from-purple-500 to-pink-500"
-                  }`}
+                  className={`group relative px-8 py-4 rounded-2xl font-bold text-white transition-all duration-300 hover:scale-105 hover:shadow-2xl ${isProcessing
+                    ? "bg-gray-600/50 cursor-not-allowed"
+                    : "bg-gradient-to-r from-purple-500 to-pink-500"
+                    }`}
                 >
                   <div className="flex items-center space-x-3">
                     {isProcessing ? (
