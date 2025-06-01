@@ -12,6 +12,7 @@ from app.routers import auth_router
 from app.routers import RA_router
 from app.routers import pdf_router
 from app.routers.export_share import router as export_share_router
+from app.routers import ytSumm_router
 
 logging.basicConfig(
     level=logging.INFO,
@@ -35,6 +36,7 @@ app.add_middleware(
 
 app.mount("/uploads", StaticFiles(directory=Path("uploads")), name="uploads")
 
+app.include_router(ytSumm_router.router)
 app.include_router(payment.router)
 app.include_router(auth_router.router)
 app.include_router(chatbot_router)

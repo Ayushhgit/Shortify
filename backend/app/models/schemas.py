@@ -88,3 +88,17 @@ class CreateOrderRequest(BaseModel):
     order_id: str
     amount: int
     currency: str
+
+class YouTubeRequest(BaseModel):
+    url: str
+
+class VideoDetails(BaseModel):
+    title: str
+    channelName: str
+    duration: str
+    publishDate: str
+    thumbnailUrl: str
+
+class YouTubeResponse(BaseModel):
+    videoDetails: VideoDetails
+    summary: str

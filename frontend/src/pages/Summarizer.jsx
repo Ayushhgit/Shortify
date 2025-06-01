@@ -1,16 +1,12 @@
 import React, { useState } from "react";
 import {
-  Link2,
-  Home,
-  Settings,
-  User,
+  Link2,Home,
+  Settings,User,
   PlayCircle,
-  Loader2,
-  Check,
-  X,
-  Sparkles
+  Loader2,Check,X,Sparkles
 } from "lucide-react";
 import Toast from "../components/Toast";
+import { useNavigate } from "react-router-dom";
 
 export default function YouTubeSummarizer() {
   const [showToast, setShowToast] = useState(false);
@@ -21,6 +17,8 @@ export default function YouTubeSummarizer() {
   const [summary, setSummary] = useState("");
   const [videoDetails, setVideoDetails] = useState(null);
   const [inputError, setInputError] = useState("");
+
+  const navigate = useNavigate();
 
   const displayToast = (message, type = "success") => {
     setToastMessage(message);
@@ -61,19 +59,31 @@ export default function YouTubeSummarizer() {
     try {
       setIsProcessing(true);
 
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      setVideoDetails({
-        title: "Understanding AI: A Comprehensive Overview",
-        channelName: "Tech Insights",
-        duration: "14:22",
-        publishDate: "May 5, 2025",
-        thumbnailUrl: "/api/placeholder/640/360"
+      const response = await fetch('http://localhost:8000/api/ytSummary', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          url:youtubeUrl
+        }),
       });
 
-      setSummary(
-        "This video provides a comprehensive overview of artificial intelligence and its applications. Key points include:\n\n• The evolution of AI from rule-based systems to machine learning and deep learning\n• How neural networks mimic human brain functionality\n• The importance of training data quality and potential biases\n• Practical applications in healthcare, transportation, and customer service\n• Ethical considerations and challenges in AI development\n• Future trends including multimodal AI systems and human-AI collaboration\n\nThe creator emphasizes that while AI has made tremendous progress, truly general artificial intelligence remains a challenge for the future. The video concludes by discussing the importance of responsible AI development practices."
-      );
+      if(!response.ok) {
+        displayToast(response.status);
+      }
+
+      const data = await response.json();
+
+      setVideoDetails({
+        title: data.videoDetails.title,
+        channelName: data.videoDetails.channelName,
+        duration: data.videoDetails.duration,
+        publishDate: data.videoDetails.publishDate,
+        thumbnailUrl: data.videoDetails.thumbnailUrl
+      });
+
+      setSummary(data.summary);
 
       displayToast("Video summarized successfully!");
       setIsProcessing(false);
@@ -83,6 +93,27 @@ export default function YouTubeSummarizer() {
       console.error("Error:", error);
     }
   };
+
+   const handleCopySummary = async () => {
+    try {
+      await navigator.clipboard.writeText(summary);
+      displayToast("Summary copied to clipboard!");
+    } catch (error) {
+      displayToast("Failed to copy summary", "error");
+    }
+  };
+
+    const handleDownloadSummary = () => {
+    const element = document.createElement("a");
+    const file = new Blob([summary], { type: 'text/plain' });
+    element.href = URL.createObjectURL(file);
+    element.download = `${videoDetails?.title || 'video'}_summary.txt`;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+    displayToast("Summary downloaded successfully!");
+  };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800 relative overflow-hidden">
@@ -115,8 +146,7 @@ export default function YouTubeSummarizer() {
             ].map((item, index) => (
               <button
                 key={index}
-                className="p-3 rounded-xl hover:bg-white/20 transition-all duration-300 hover:scale-110 backdrop-blur-sm border border-white/10"
-              >
+                className="p-3 rounded-xl hover:bg-white/20 transition-all duration-300 hover:scale-110 backdrop-blur-sm border border-white/10" onClick={() => navigate(item.href)}>
                 <item.icon className="h-5 w-5 text-white/80 hover:text-white" />
               </button>
             ))}
@@ -260,10 +290,12 @@ export default function YouTubeSummarizer() {
                 </div>
 
                 <div className="p-6 bg-white/5 border-t border-white/20 flex justify-end space-x-4">
-                  <button className="px-6 py-3 text-white border-2 border-white/30 hover:bg-white/20 rounded-xl transition-all duration-300 font-medium backdrop-blur-sm">
+                  <button className="px-6 py-3 text-white border-2 border-white/30 hover:bg-white/20 rounded-xl transition-all duration-300 font-medium backdrop-blur-sm"
+                    onClick={handleCopySummary}>
                     Copy Summary
                   </button>
-                  <button className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl transition-all duration-300 font-medium hover:scale-105">
+                  <button className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl transition-all duration-300 font-medium hover:scale-105"
+                    onClick={handleDownloadSummary}>
                     Download as Text
                   </button>
                 </div>
