@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
-import {Home,Youtube, Video,
-  FileText,Zap, User,Github,Menu,X,Sparkles,
-  ArrowRight,Play,Download,Eye,Cpu,Brain,Rocket} from "lucide-react";
+import {
+  Home, Youtube, Video,
+  FileText, Zap, User, Github, Menu, X, Sparkles,
+  ArrowRight, Play, Download, Eye, Cpu, Brain, Rocket, Target, TrendingUp, CheckCircle
+} from "lucide-react";
 import { auth } from "../firebase";
-import {onAuthStateChanged,sendEmailVerification,signOut,} from "firebase/auth";
+import { onAuthStateChanged, sendEmailVerification, signOut, } from "firebase/auth";
 import AuthModalSystem from "../components/AuthModalSystem";
 
 export default function ShortifyPage() {
@@ -131,6 +133,22 @@ export default function ShortifyPage() {
     }
   ];
 
+  const handleFeatureClick = (link) => {
+    // For dashboard navigation, switch to the appropriate tab
+    if (link === "/features/shorts-generator") {
+      setActiveTab("shorts");
+    } else if (link === "/features/summarizer") {
+      setActiveTab("summarizer");
+    } else if (link === "/features/pdf-summarizer") {
+      setActiveTab("pdf");
+    } else if (link === "/features/resumeAnalyzer") {
+      setActiveTab("resume");
+    } else {
+      // For external links, use window.location
+      window.location.href = link;
+    }
+  };
+
   return (
     <div className="flex h-screen bg-gray-900 text-white overflow-hidden relative">
       {/* Animated Background */}
@@ -160,9 +178,8 @@ export default function ShortifyPage() {
 
       {/* Sidebar */}
       <div
-        className={`${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0 fixed lg:relative z-40 w-80 h-full transition-transform duration-300 ease-in-out`}
+        className={`${sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          } lg:translate-x-0 fixed lg:relative z-40 w-80 h-full transition-transform duration-300 ease-in-out`}
       >
         <div className="h-full bg-gray-900/95 backdrop-blur-xl border-r border-gray-800 flex flex-col">
           {/* Logo Section */}
@@ -193,19 +210,17 @@ export default function ShortifyPage() {
                       setActiveTab(item.id);
                       setSidebarOpen(false);
                     }}
-                    className={`w-full group relative overflow-hidden rounded-2xl p-4 transition-all duration-300 ${
-                      isActive
+                    className={`w-full group relative overflow-hidden rounded-2xl p-4 transition-all duration-300 ${isActive
                         ? "bg-gradient-to-r " +
-                          item.gradient +
-                          " shadow-2xl shadow-blue-500/25"
+                        item.gradient +
+                        " shadow-2xl shadow-blue-500/25"
                         : "bg-gray-800/50 hover:bg-gray-800 border border-gray-700 hover:border-gray-600"
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center gap-4 relative z-10">
                       <div
-                        className={`p-2 rounded-xl ${
-                          isActive ? "bg-white/20" : "bg-gray-700"
-                        } transition-colors`}
+                        className={`p-2 rounded-xl ${isActive ? "bg-white/20" : "bg-gray-700"
+                          } transition-colors`}
                       >
                         <Icon
                           size={20}
@@ -214,9 +229,8 @@ export default function ShortifyPage() {
                       </div>
                       <div className="text-left">
                         <div
-                          className={`font-medium ${
-                            isActive ? "text-white" : "text-gray-300"
-                          }`}
+                          className={`font-medium ${isActive ? "text-white" : "text-gray-300"
+                            }`}
                         >
                           {item.label}
                         </div>
@@ -317,13 +331,12 @@ export default function ShortifyPage() {
                       {/* Badge */}
                       <div className="absolute top-6 right-6">
                         <div
-                          className={`px-3 py-1 rounded-full text-xs font-bold ${
-                            feature.badge === "Live"
+                          className={`px-3 py-1 rounded-full text-xs font-bold ${feature.badge === "Live"
                               ? "bg-green-500/20 text-green-400 border border-green-500/30"
                               : feature.badge === "Beta"
-                              ? "bg-purple-500/20 text-purple-400 border border-purple-500/30"
-                              : "bg-orange-500/20 text-orange-400 border border-orange-500/30"
-                          }`}
+                                ? "bg-purple-500/20 text-purple-400 border border-purple-500/30"
+                                : "bg-orange-500/20 text-orange-400 border border-orange-500/30"
+                            }`}
                         >
                           {feature.badge}
                         </div>
@@ -345,17 +358,13 @@ export default function ShortifyPage() {
                       </p>
 
                       {/* Action Button */}
-                      <a href={feature.link}>
-                        <button
-                          className={`w-full bg-gradient-to-r ${feature.gradient} hover:shadow-2xl hover:shadow-blue-500/25 text-white py-4 px-6 rounded-2xl font-medium transition-all duration-300 flex items-center justify-center gap-2 group-hover:gap-4`}
-                        >
-                          <span>{feature.label}</span>
-                          <ArrowRight
-                            size={16}
-                            className="group-hover:translate-x-1 transition-transform"
-                          />
-                        </button>
-                      </a>
+                      <button
+                        onClick={() => handleFeatureClick(feature.link)}
+                        className={`w-full bg-gradient-to-r ${feature.gradient} hover:shadow-2xl hover:shadow-blue-500/25 text-white py-4 px-6 rounded-2xl font-medium transition-all duration-300 flex items-center justify-center gap-2 group-hover:gap-4`}
+                      >
+                        <span>{feature.label}</span>
+                        <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                      </button>
                     </div>
                   );
                 })}
@@ -453,7 +462,7 @@ export default function ShortifyPage() {
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/20 border border-purple-500/30 mb-6">
                   <Brain className="w-5 h-5 text-purple-400" />
                   <span className="text-purple-400 font-medium">
-                    PDF SUMMARIZER
+                    VIDEO SUMMARIZER
                   </span>
                 </div>
                 <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-400 via-indigo-400 to-blue-400 bg-clip-text text-transparent mb-4">
@@ -490,7 +499,7 @@ export default function ShortifyPage() {
 
               <div className="text-center">
                 <a href="/features/summarizer">
-                  <button className="bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 hover:from-purple-600 hover:via-indigo-600 hover:to-blue-600 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-purple-500/25 flex items-center gap-3 mx-auto opacity-60 cursor-not-allowed">
+                  <button className="bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 hover:from-purple-600 hover:via-indigo-600 hover:to-blue-600 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-purple-500/25 flex items-center gap-3 mx-auto">
                     <Brain className="w-6 h-6" />
                     Try Now
                     <Sparkles className="w-6 h-6" />
@@ -544,13 +553,166 @@ export default function ShortifyPage() {
 
               <div className="text-center">
                 <a href="/features/pdf-summarizer">
-                  <button className="bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 hover:from-green-600 hover:via-emerald-600 hover:to-teal-600 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-green-500/25 flex items-center gap-3 mx-auto opacity-60 cursor-not-allowed">
+                  <button className="bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 hover:from-green-600 hover:via-emerald-600 hover:to-teal-600 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-green-500/25 flex items-center gap-3 mx-auto">
                     <FileText className="w-6 h-6" />
                     Try Now
                     <Cpu className="w-6 h-6" />
                   </button>
                 </a>
               </div>
+            </div>
+          )}
+
+          {/* Resume Analyzer */}
+          {activeTab === "resume" && (
+            <div className="max-w-4xl mx-auto space-y-8">
+              <div className="text-center mb-12">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-600/20 border border-purple-600/30 mb-6">
+                  <Eye className="w-5 h-5 text-purple-400" />
+                  <span className="text-purple-400 font-medium">
+                    CAREER INTELLIGENCE
+                  </span>
+                </div>
+                <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-400 via-violet-400 to-indigo-400 bg-clip-text text-transparent mb-4">
+                  AI-Powered Resume Analysis
+                </h2>
+                <p className="text-xl text-gray-400 leading-relaxed">
+                  Advanced machine learning algorithms analyze your resume and provide
+                  actionable insights to maximize your job application success.
+                </p>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-8 mb-8">
+                <div className="bg-gradient-to-br from-purple-600/10 to-indigo-600/10 border border-purple-600/20 rounded-3xl p-8">
+                  <h3 className="text-2xl font-bold text-purple-400 mb-4 flex items-center gap-3">
+                    <Brain className="w-8 h-8" />
+                    AI Analysis Features
+                  </h3>
+                  <ul className="space-y-4 text-gray-300">
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" />
+                      <span>ATS compatibility scoring and optimization</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-violet-400 mt-0.5 flex-shrink-0" />
+                      <span>Skills gap analysis with industry benchmarks</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-indigo-400 mt-0.5 flex-shrink-0" />
+                      <span>Keyword density optimization for job roles</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" />
+                      <span>Format and structure improvement suggestions</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="bg-gradient-to-br from-indigo-600/10 to-blue-600/10 border border-indigo-600/20 rounded-3xl p-8">
+                  <h3 className="text-2xl font-bold text-indigo-400 mb-4 flex items-center gap-3">
+                    <Target className="w-8 h-8" />
+                    Career Insights
+                  </h3>
+                  <ul className="space-y-4 text-gray-300">
+                    <li className="flex items-start gap-3">
+                      <TrendingUp className="w-5 h-5 text-indigo-400 mt-0.5 flex-shrink-0" />
+                      <span>Salary range predictions based on experience</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Target className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
+                      <span>Job match scoring for specific positions</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Eye className="w-5 h-5 text-indigo-400 mt-0.5 flex-shrink-0" />
+                      <span>Industry-specific recommendations</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Rocket className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
+                      <span>Career progression pathway mapping</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Statistics Section */}
+              <div className="bg-gradient-to-br from-purple-600/10 to-indigo-600/10 border border-purple-600/20 rounded-3xl p-8 mb-8">
+                <div className="grid md:grid-cols-4 gap-6 text-center">
+                  <div>
+                    <div className="text-3xl font-bold text-purple-400 mb-2">
+                      95%
+                    </div>
+                    <div className="text-gray-400">ATS Pass Rate</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-violet-400 mb-2">
+                      3x
+                    </div>
+                    <div className="text-gray-400">More Interviews</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-indigo-400 mb-2">
+                      85%
+                    </div>
+                    <div className="text-gray-400">Match Accuracy</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-blue-400 mb-2">
+                      24/7
+                    </div>
+                    <div className="text-gray-400">AI Analysis</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Analysis Process */}
+              <div className="bg-gradient-to-br from-indigo-600/10 to-purple-600/10 border border-indigo-600/20 rounded-3xl p-8 mb-8">
+                <h3 className="text-2xl font-bold text-indigo-400 mb-6 flex items-center gap-3">
+                  <Cpu className="w-8 h-8" />
+                  Analysis Process
+                </h3>
+                <div className="grid md:grid-cols-3 gap-6">
+                  {[
+                    {
+                      step: "01",
+                      title: "Upload & Parse",
+                      desc: "AI extracts and structures all resume data",
+                      color: "purple"
+                    },
+                    {
+                      step: "02",
+                      title: "Deep Analysis",
+                      desc: "Multi-layer AI evaluation of content and format",
+                      color: "indigo"
+                    },
+                    {
+                      step: "03",
+                      title: "Insights & Report",
+                      desc: "Detailed recommendations and improvement plan",
+                      color: "blue"
+                    }
+                  ].map((item, idx) => (
+                    <div key={idx} className="text-center">
+                      <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-${item.color}-500 to-${item.color}-600 flex items-center justify-center text-white font-bold text-xl`}>
+                        {item.step}
+                      </div>
+                      <h4 className="text-lg font-bold text-white mb-2">{item.title}</h4>
+                      <p className="text-gray-400 text-sm">{item.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* CTA Button */}
+              <div className="text-center">
+                <a href="/features/ResumeAnalyzer">
+                  <button className="bg-gradient-to-r from-[#8e2de2] via-purple-600 to-[#4A00E0] hover:from-[#9d3ef3] hover:via-purple-700 hover:to-[#5511f1] text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-purple-500/25 flex items-center gap-3 mx-auto group">
+                    <Eye className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                    Analyze My Resume
+                    <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                </a>
+              </div>
+
             </div>
           )}
         </div>
