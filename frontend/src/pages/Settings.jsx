@@ -124,7 +124,7 @@ export default function Settings() {
               </button>
               <button
                 className="flex items-center w-full gap-3 text-sm text-gray-700 hover:text-green-600 transition"
-                onClick={() => navigate('/profile')}>
+                onClick={() => navigate('/Profile')}>
                 <User size={18} />
                 Profile
               </button>
