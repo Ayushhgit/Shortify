@@ -49,7 +49,7 @@ export default function Home() {
             <Youtube className="h-6 w-6 text-red-600" />
               </div>
               <button className="bg-gradient-to-r from-blue-500 to-green-500 text-white text-sm font-semibold px-4 py-2 rounded-full shadow hover:shadow-lg hover:from-blue-400 hover:to-green-400 transition duration-300">
-                <a href="/features/summarizer">Coming Soon</a>
+                <a href="/features/summarizer">Try Now</a>
                 </button>
               </div>
               <h3 className="text-xl font-semibold mb-3">YouTube Summarizer</h3>
@@ -78,7 +78,7 @@ export default function Home() {
                   <FileText className="h-6 w-6 text-purple-600" />
                 </div>
                  <button className="bg-gradient-to-r from-blue-500 to-green-500 text-white text-sm font-semibold px-4 py-2 rounded-full shadow hover:shadow-lg hover:from-blue-400 hover:to-green-400 transition duration-300">
-                <a href="/features/pdf-summarizer">Coming Soon</a>
+                <a href="/features/pdf-summarizer">Try Now</a>
                 </button>
                 </div>
                 <h3 className="text-xl font-semibold mb-3">PDF Summarizer</h3>
