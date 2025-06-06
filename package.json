@@ -1,5 +1,7 @@
 {
   "dependencies": {
+    "@splinetool/react-spline": "^4.0.0",
+    "@splinetool/runtime": "^1.10.2",
     "psql": "^0.0.1",
     "react-firebase-hooks": "^5.1.1"
   }

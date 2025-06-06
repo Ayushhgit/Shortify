@@ -1,7 +1,7 @@
 from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound
 from yt_dlp import YoutubeDL
 from urllib.parse import urlparse, parse_qs
-import whisper
+import faster_whisper
 import os
 import tempfile
 
@@ -114,7 +114,7 @@ def transcribe_audio(video_url: str) -> str:
             print(f"Audio downloaded: {audio_file}")
             
             # Load Whisper model (using base model for balance of speed/accuracy)
-            model = whisper.load_model("base")
+            model = faster_whisper.load_model("base")
             
             # Transcribe the audio
             result = model.transcribe(audio_file)

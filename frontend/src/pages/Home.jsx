@@ -10,6 +10,7 @@ import {
   Check,
 } from "lucide-react";
 import Header from "../components/Header.jsx";
+import HelloBot from "../components/HelloBot.jsx";
 import { Mail } from "lucide-react";
 import { Typewriter } from "react-simple-typewriter";
 import { useNavigate } from "react-router-dom";
@@ -126,6 +127,7 @@ const ShortifyLanding = () => {
   ];
 
   return (
+    
     <div className="min-h-screen bg-gradient-to-br from-black to-gray-900 text-white overflow-hidden relative">
       {/* Ultra-Premium Animated Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
@@ -184,6 +186,9 @@ const ShortifyLanding = () => {
                 actionable intelligence
               </span>
             </p>
+            <HelloBot>
+              
+            </HelloBot>
           </div>
 
           {/* CTA Buttons */}

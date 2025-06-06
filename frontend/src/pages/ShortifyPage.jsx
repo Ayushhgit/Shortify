@@ -1,8 +1,9 @@
+
 import { useState, useEffect } from "react";
 import {
-  Home, Youtube, Video,
-  FileText, Zap, User, Github, Menu, X, Sparkles,
-  ArrowRight, Play, Download, Eye, Cpu, Brain, Rocket, Target, TrendingUp, CheckCircle
+  Home, Youtube, Video, FileText, Zap, User, Github, Menu, X, Sparkles,
+  ArrowRight, Play, Download, Eye, Cpu, Brain, Rocket, Target, TrendingUp,
+  CheckCircle, Clock, BarChart3, Activity, Layers, Zap as Lightning
 } from "lucide-react";
 import { auth } from "../firebase";
 import { onAuthStateChanged, sendEmailVerification, signOut, } from "firebase/auth";
@@ -15,6 +16,40 @@ export default function ShortifyPage() {
   const [user, setUser] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [animatedStats, setAnimatedStats] = useState({
+    documents: 0,
+    hours: 0,
+    accuracy: 0,
+    processing: 0
+  });
+
+  // Animated counter effect
+  useEffect(() => {
+    const targets = { documents: 100, hours: 50, accuracy: 99.2, processing: 10 };
+    const duration = 2000;
+    const interval = 50;
+    const steps = duration / interval;
+
+    let currentStep = 0;
+    const timer = setInterval(() => {
+      currentStep++;
+      const progress = currentStep / steps;
+
+      setAnimatedStats({
+        documents: Math.floor(targets.documents * progress),
+        hours: Math.floor(targets.hours * progress),
+        accuracy: Math.floor(targets.accuracy * progress * 10) / 10,
+        processing: Math.floor(targets.processing * progress)
+      });
+
+      if (currentStep >= steps) {
+        clearInterval(timer);
+        setAnimatedStats(targets);
+      }
+    }, interval);
+
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -48,15 +83,15 @@ export default function ShortifyPage() {
   const getTitle = () => {
     switch (activeTab) {
       case "home":
-        return "Neural Dashboard";
+        return "AI Command Center";
       case "shorts":
-        return "Shorts Generator";
+        return "Neural Shorts Forge";
       case "summarizer":
-        return "YouTube Summarizer";
+        return "Video Intelligence Hub";
       case "pdf":
-        return "PDF Summarizer";
+        return "Document Mind Reader";
       case "resume":
-        return "Resume Analyzer"
+        return "Career Intelligence AI";
       default:
         return "Shortify";
     }
@@ -66,71 +101,119 @@ export default function ShortifyPage() {
     {
       id: "home",
       icon: Home,
-      label: "Dashboard",
-      gradient: "from-blue-500 to-cyan-500",
+      label: "Command Center",
+      gradient: "from-cyan-400 to-blue-500",
+      glow: "shadow-cyan-500/25",
     },
     {
       id: "shorts",
       icon: Youtube,
-      label: "Shorts Generator",
+      label: "Neural Shorts",
       gradient: "from-red-500 to-pink-500",
+      glow: "shadow-red-500/25",
     },
     {
       id: "summarizer",
       icon: Video,
-      label: "Video Summarizer",
+      label: "Video Intelligence",
       gradient: "from-purple-500 to-indigo-500",
+      glow: "shadow-purple-500/25",
     },
     {
       id: "pdf",
       icon: FileText,
-      label: "PDF Summarizer",
-      gradient: "from-green-500 to-emerald-500",
+      label: "Document AI",
+      gradient: "from-emerald-500 to-teal-500",
+      glow: "shadow-emerald-500/25",
     },
     {
       id: "resume",
       icon: Eye,
-      label: "Resume Analyzer",
-      gradient: "from-[#8e2de2] to-[#4A00E0]",
+      label: "Career AI",
+      gradient: "from-violet-500 to-purple-600",
+      glow: "shadow-violet-500/25",
     },
   ];
 
   const features = [
     {
-      title: "AI Shorts Generator",
+      title: "Neural Shorts Generator",
       icon: Youtube,
-      desc: "Neural networks analyze your content to create viral-ready shorts with perfect timing and engagement hooks.",
-      gradient: "from-red-500 via-pink-500 to-purple-500",
+      desc: "Transform long-form videos into viral shorts using advanced AI that understands engagement patterns and optimal timing.",
+      gradient: "from-red-500 via-pink-500 to-red-500",
       link: "/features/shorts-generator",
-      label: "Try Now",
-      badge: "Live",
+      label: "Generate Now",
+      badge: "LIVE",
+      animation: "pulse",
+      bgPattern: "waveform"
     },
     {
-      title: "YouTube Summarizer",
+      title: "Video Intelligence Hub",
       icon: Brain,
-      desc: "Advanced AI processes hours of video content in seconds, extracting key insights.",
+      desc: "Quantum-speed processing extracts key insights from hours of content in seconds using next-generation NLP algorithms.",
       gradient: "from-purple-500 via-indigo-500 to-blue-500",
       link: "/features/summarizer",
-      label: "Try Now",
-      badge: "Live",
+      label: "Analyze Now",
+      badge: "LIVE",
+      animation: "neural",
+      bgPattern: "neural-network"
     },
     {
-      title: "PDF Summarizer",
+      title: "Document Mind Reader",
       icon: Cpu,
-      desc: "Transform complex documents into crystal-clear summaries using next-gen natural language processing.",
-      gradient: "from-green-500 via-emerald-500 to-teal-500",
+      desc: "Revolutionary AI transforms complex documents into crystal-clear summaries with human-like comprehension and precision.",
+      gradient: "from-emerald-500 via-teal-500 to-cyan-500",
       link: "/features/pdf-summarizer",
-      label: "Try Now",
-      badge: "Live",
+      label: "Process Now",
+      badge: "LIVE",
+      animation: "scan",
+      bgPattern: "grid"
     },
     {
-      title: "Resume Analyzer",
+      title: "Career Intelligence AI",
       icon: Eye,
-      desc: "Analyze your Resume and give you insights about your job description with AI.",
-      gradient: "from-[#8e2de2] via-[#8e2de2]/70 to-[#4A00E0]",
+      desc: "Advanced machine learning analyzes resumes and provides strategic insights to maximize your job application success rate.",
+      gradient: "from-violet-500 via-purple-600 to-indigo-600",
       link: "/features/resumeAnalyzer",
-      label: "Try Now",
-      badge: "Live",
+      label: "Analyze Now",
+      badge: "LIVE",
+      animation: "radar",
+      bgPattern: "radar"
+    }
+  ];
+
+  const stats = [
+    {
+      value: animatedStats.documents,
+      suffix: "+",
+      label: "Documents Processed",
+      icon: FileText,
+      color: "text-cyan-400",
+      bgColor: "bg-cyan-500/10"
+    },
+    {
+      value: animatedStats.hours,
+      suffix: "+",
+      label: "Hours Saved",
+      icon: Clock,
+      color: "text-blue-400",
+      bgColor: "bg-blue-500/10"
+    },
+    {
+      value: animatedStats.accuracy,
+      suffix: "%",
+      label: "Accuracy Rate",
+      icon: CheckCircle,
+      color: "text-emerald-400",
+      bgColor: "bg-emerald-500/10"
+    },
+    {
+      value: animatedStats.processing,
+      suffix: "s",
+      label: "Avg Processing",
+      icon: Lightning,
+      color: "text-purple-400",
+      bgColor: "bg-purple-500/10"
     }
   ];
 
@@ -151,55 +234,54 @@ export default function ShortifyPage() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-900 text-white overflow-hidden relative">
-      {/* Animated Background */}
-      <div className="fixed inset-0 opacity-20">
+    <div className="flex h-screen bg-gray-950 text-white overflow-hidden relative">
+      {/* Dynamic Mesh Background */}
+      <div className="fixed inset-0 opacity-30">
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-gray-900 to-black" />
         <div
-          className="absolute w-96 h-96 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-3xl"
+          className="absolute w-96 h-96 bg-gradient-to-r from-cyan-400/20 to-slate-500/20 rounded-full blur-3xl animate-pulse"
           style={{
-            left: mousePosition.x / 10,
-            top: mousePosition.y / 10,
+            left: mousePosition.x / 15,
+            top: mousePosition.y / 15,
             transition: "all 0.3s ease-out",
           }}
-        />
-        <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-gradient-to-r from-pink-500/10 to-red-500/10 rounded-full blur-2xl animate-pulse" />
-        <div
-          className="absolute bottom-1/4 left-1/3 w-80 h-80 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-full blur-3xl animate-bounce"
-          style={{ animationDuration: "3s" }}
         />
       </div>
 
       {/* Mobile Menu Button */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-xl bg-gray-800/80 backdrop-blur-sm border border-gray-700"
+        className="lg:hidden fixed top-4 left-4 z-50 p-3 rounded-xl bg-slate-800/90 backdrop-blur-sm border border-slate-700 hover:border-cyan-400/50 transition-all duration-300"
       >
         {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
 
-      {/* Sidebar */}
+      {/* Enhanced Sidebar */}
       <div
-        className={`${sidebarOpen ? "translate-x-0" : "-translate-x-full"
-          } lg:translate-x-0 fixed lg:relative z-40 w-80 h-full transition-transform duration-300 ease-in-out`}
+        className={`${sidebarOpen ? "translate-x-0" : "-translate-x-full"} 
+    lg:translate-x-0 fixed lg:relative z-40 w-80 h-full transition-all duration-300 ease-in-out`}
       >
-        <div className="h-full bg-gray-900/95 backdrop-blur-xl border-r border-gray-800 flex flex-col">
+        <div className="h-full bg-gray-950/98 backdrop-blur-xl border-r border-gray-900 flex flex-col relative overflow-hidden">
+          {/* Glow Effect */}
+          <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-blue-500/5 pointer-events-none" />
+
           {/* Logo Section */}
           <div className="p-8 border-b border-gray-800">
             <div className="flex items-center gap-3">
-             <a href="/" ><div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
-                <img src={logo} alt="Logo"  />
+              <a href="/" ><div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
+                <img src={logo} alt="Logo" />
               </div> </a>
               <div>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
                   Shortify
                 </h1>
-                <p className="text-xs text-gray-400">AI-Powered Content</p>
+                <p className="text-xs text-slate-400 font-medium">AI-Powered Intelligence</p>
               </div>
             </div>
           </div>
 
-          {/* Navigation */}
-          <div className="flex-1 p-6">
+          {/* Navigation - Fixed height with proper scrolling */}
+          <div className="flex-1 p-6 overflow-y-auto">
             <div className="space-y-3">
               {sidebarItems.map((item) => {
                 const Icon = item.icon;
@@ -212,40 +294,26 @@ export default function ShortifyPage() {
                       setSidebarOpen(false);
                     }}
                     className={`w-full group relative overflow-hidden rounded-2xl p-4 transition-all duration-300 ${isActive
-                        ? "bg-gradient-to-r " +
-                        item.gradient +
-                        " shadow-2xl shadow-blue-500/25"
-                        : "bg-gray-800/50 hover:bg-gray-800 border border-gray-700 hover:border-gray-600"
+                      ? `bg-gradient-to-r ${item.gradient} shadow-2xl ${item.glow}`
+                      : "bg-slate-800/50 hover:bg-slate-800 border border-slate-700 hover:border-slate-600 hover:shadow-lg"
                       }`}
                   >
                     <div className="flex items-center gap-4 relative z-10">
-                      <div
-                        className={`p-2 rounded-xl ${isActive ? "bg-white/20" : "bg-gray-700"
-                          } transition-colors`}
-                      >
-                        <Icon
-                          size={20}
-                          className={isActive ? "text-white" : "text-gray-300"}
-                        />
+                      <div className={`p-3 rounded-xl transition-all duration-300 ${isActive ? "bg-white/20 shadow-lg" : "bg-slate-700 group-hover:bg-slate-600"
+                        }`}>
+                        <Icon size={20} className={isActive ? "text-white" : "text-slate-300"} />
                       </div>
                       <div className="text-left">
-                        <div
-                          className={`font-medium ${isActive ? "text-white" : "text-gray-300"
-                            }`}
-                        >
+                        <div className={`font-semibold ${isActive ? "text-white" : "text-slate-300"}`}>
                           {item.label}
                         </div>
-                        <div className="text-xs text-gray-400">
-                          {item.id === "home" && "Control Center"}
-                          {item.id === "shorts" && "Video AI"}
-                          {item.id === "summarizer" && "Content AI"}
-                          {item.id === "pdf" && "Document AI"}
-                          {item.id === "resume" && "Resume AI"}
+                        <div className="text-xs text-slate-400">
+                          {item.description}
                         </div>
                       </div>
                     </div>
                     {isActive && (
-                      <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-20" />
+                      <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-30" />
                     )}
                   </button>
                 );
@@ -294,438 +362,474 @@ export default function ShortifyPage() {
           onAuthSuccess={handleAuthSuccess}
         />
       )}
-
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden relative">
-        {/* Header */}
-        <div className="h-20 flex-shrink-0 flex items-center justify-between px-8 bg-gray-900/80 backdrop-blur-xl border-b border-gray-800">
-          <div className="flex items-center gap-4">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+        {/* Enhanced Header */}
+        <div className="h-24 flex-shrink-0 flex items-center justify-between px-8 bg-gray-950/95 backdrop-blur-xl border-b border-gray-900/70">
+          <div className="flex items-center gap-6">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-white via-cyan-200 to-blue-300 bg-clip-text text-transparent">
               {getTitle()}
             </h1>
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/20 border border-green-500/30">
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              <span className="text-xs text-green-400 font-medium">ONLINE</span>
+            <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-emerald-500/20 border border-emerald-500/30 shadow-lg">
+              <div className="w-3 h-3 bg-emerald-400 rounded-full animate-pulse shadow-lg shadow-emerald-400/50" />
+              <span className="text-sm text-emerald-400 font-semibold">AI ONLINE</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800/50 border border-slate-700">
+              <Activity className="w-4 h-4 text-cyan-400" />
+              <span className="text-sm text-slate-300 font-medium">Real-time</span>
             </div>
           </div>
         </div>
 
         {/* Dynamic Content */}
-        <div className="flex-1 p-8 overflow-auto">
-          {/* Dashboard */}
-          {activeTab === "home" && (
-            <div className="space-y-8">
-              {/* Feature Cards */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {features.map((feature, idx) => {
-                  const Icon = feature.icon;
-                  return (
-                    <div
-                      key={idx}
-                      className="group relative overflow-hidden bg-gray-800/30 backdrop-blur-sm border border-gray-700 rounded-3xl p-8 hover:border-gray-600 transition-all duration-500 hover:transform hover:scale-105"
-                    >
-                      {/* Background Gradient */}
-                      <div
-                        className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
-                      />
+        <div className="flex-1 overflow-auto">
+          <div className="p-8">
+            {/* Enhanced Dashboard */}
+            {activeTab === "home" && (
+              <div className="space-y-12">
+                {/* Hero Section with Animated Stats */}
+                <div className="text-center mb-16">
+                  <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 mb-8 shadow-2xl shadow-cyan-500/10">
+                    <Brain className="w-6 h-6 text-cyan-400" />
+                    <span className="text-cyan-400 font-bold text-lg">YOUR AI-POWERED SUPPORT ENGINE</span>
+                  </div>
 
-                      {/* Badge */}
-                      <div className="absolute top-6 right-6">
-                        <div
-                          className={`px-3 py-1 rounded-full text-xs font-bold ${feature.badge === "Live"
-                              ? "bg-green-500/20 text-green-400 border border-green-500/30"
-                              : feature.badge === "Beta"
-                                ? "bg-purple-500/20 text-purple-400 border border-purple-500/30"
-                                : "bg-orange-500/20 text-orange-400 border border-orange-500/30"
-                            }`}
+                  <h1 className="text-5xl font-bold bg-gradient-to-r from-white via-cyan-200 to-blue-300 bg-clip-text text-transparent mb-6 leading-tight">
+                    Intelligence at the Speed of Light
+                  </h1>
+
+                  <p className="text-xl text-slate-400 mb-12 max-w-3xl mx-auto leading-relaxed">
+                    Transform any content into actionable insights with our neural-powered AI that processes information
+                    faster than human thought while maintaining perfect accuracy.
+                  </p>
+
+                  {/* Animated Stats Bar */}
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                    {stats.map((stat, idx) => {
+                      const Icon = stat.icon;
+                      return (
+                        <div key={idx} className="group relative overflow-hidden bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-6 hover:border-slate-600 transition-all duration-500 hover:shadow-2xl">
+                          <div className={`absolute inset-0 ${stat.bgColor} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                          <div className="relative z-10">
+                            <div className="flex items-center justify-between mb-3">
+                              <Icon className={`w-6 h-6 ${stat.color}`} />
+                              <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+                            </div>
+                            <div className={`text-3xl font-bold ${stat.color} mb-2`}>
+                              {stat.value}{stat.suffix}
+                            </div>
+                            <div className="text-sm text-slate-400 font-medium">{stat.label}</div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Enhanced Feature Cards */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {features.map((feature, idx) => {
+                    const Icon = feature.icon;
+                    return (
+                      <div
+                        key={idx}
+                        className="group relative overflow-hidden bg-gray-900/40 backdrop-blur-sm border border-gray-800 rounded-3xl p-8 hover:border-gray-700 transition-all duration-500 hover:transform hover:scale-[1.02] hover:shadow-2xl"
+                      >
+                        {/* Animated Background Pattern */}
+                        <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
+
+                        {/* Badge */}
+                        <div className="absolute top-6 right-6">
+                          <div className="px-4 py-2 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold flex items-center gap-2">
+                            <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+                            {feature.badge}
+                          </div>
+                        </div>
+
+                        {/* Icon */}
+                        <div className={`w-20 h-20 rounded-3xl bg-gradient-to-br ${feature.gradient} p-5 mb-8 group-hover:scale-110 transition-transform duration-300 shadow-2xl`}>
+                          <Icon className="w-10 h-10 text-white" />
+                        </div>
+
+                        {/* Content */}
+                        <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-cyan-100 transition-colors duration-300">
+                          {feature.title}
+                        </h3>
+                        <p className="text-slate-400 mb-8 leading-relaxed text-lg">
+                          {feature.desc}
+                        </p>
+
+                        {/* Action Button */}
+                        <button
+                          onClick={() => handleFeatureClick(feature.link)}
+                          className={`w-full bg-gradient-to-r ${feature.gradient} hover:shadow-2xl text-white py-4 px-6 rounded-2xl font-semibold transition-all duration-300 flex items-center justify-center gap-3 group-hover:gap-4 text-lg shadow-lg`}
                         >
-                          {feature.badge}
+                          <span>{feature.label}</span>
+                          <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform duration-300" />
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Shorts Generator */}
+            {activeTab === "shorts" && (
+              <div className="max-w-4xl mx-auto space-y-8">
+                <div className="text-center mb-12">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-500/20 border border-red-500/30 mb-6">
+                    <Youtube className="w-5 h-5 text-red-400" />
+                    <span className="text-red-400 font-medium">
+                      AI SHORTS FORGE
+                    </span>
+                  </div>
+                  <h2 className="text-4xl font-bold bg-gradient-to-r from-red-400 via-pink-400 to-purple-400 bg-clip-text text-transparent mb-4">
+                    Neural Content Creator
+                  </h2>
+                  <p className="text-xl text-gray-400 leading-relaxed">
+                    Advanced AI analyzes your content to create viral-ready shorts
+                    with perfect timing, engagement hooks, and cinematic cuts.
+                  </p>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-8">
+                  <div className="bg-gradient-to-br from-red-500/10 to-pink-500/10 border border-red-500/20 rounded-3xl p-8">
+                    <h3 className="text-2xl font-bold text-red-400 mb-4 flex items-center gap-3">
+                      <Cpu className="w-8 h-8" />
+                      AI Capabilities
+                    </h3>
+                    <ul className="space-y-4 text-gray-300">
+                      <li className="flex items-start gap-3">
+                        <div className="w-2 h-2 bg-red-400 rounded-full mt-2 flex-shrink-0" />
+                        <span>
+                          Intelligent moment detection using computer vision
+                        </span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <div className="w-2 h-2 bg-pink-400 rounded-full mt-2 flex-shrink-0" />
+                        <span>Automatic subtitle generation and styling</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <div className="w-2 h-2 bg-purple-400 rounded-full mt-2 flex-shrink-0" />
+                        <span>Engagement optimization algorithms</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <div className="w-2 h-2 bg-red-400 rounded-full mt-2 flex-shrink-0" />
+                        <span>Multi-platform format adaptation</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="bg-gradient-to-br from-purple-500/10 to-blue-500/10 border border-purple-500/20 rounded-3xl p-8">
+                    <h3 className="text-2xl font-bold text-purple-400 mb-4 flex items-center gap-3">
+                      <Rocket className="w-8 h-8" />
+                      Workflow
+                    </h3>
+                    <div className="space-y-4">
+                      {[
+                        "Paste YouTube URL",
+                        "AI analyzes content",
+                        "Generate optimized clips",
+                        "Preview & customize",
+                        "Export & share",
+                      ].map((step, idx) => (
+                        <div key={idx} className="flex items-center gap-4">
+                          <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                            {idx + 1}
+                          </div>
+                          <span className="text-gray-300">{step}</span>
                         </div>
-                      </div>
-
-                      {/* Icon */}
-                      <div
-                        className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.gradient} p-4 mb-6 group-hover:scale-110 transition-transform duration-300`}
-                      >
-                        <Icon className="w-8 h-8 text-white" />
-                      </div>
-
-                      {/* Content */}
-                      <h3 className="text-xl font-bold text-white mb-3">
-                        {feature.title}
-                      </h3>
-                      <p className="text-gray-400 mb-6 leading-relaxed">
-                        {feature.desc}
-                      </p>
-
-                      {/* Action Button */}
-                      <button
-                        onClick={() => handleFeatureClick(feature.link)}
-                        className={`w-full bg-gradient-to-r ${feature.gradient} hover:shadow-2xl hover:shadow-blue-500/25 text-white py-4 px-6 rounded-2xl font-medium transition-all duration-300 flex items-center justify-center gap-2 group-hover:gap-4`}
-                      >
-                        <span>{feature.label}</span>
-                        <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                      </button>
+                      ))}
                     </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Shorts Generator */}
-          {activeTab === "shorts" && (
-            <div className="max-w-4xl mx-auto space-y-8">
-              <div className="text-center mb-12">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-500/20 border border-red-500/30 mb-6">
-                  <Youtube className="w-5 h-5 text-red-400" />
-                  <span className="text-red-400 font-medium">
-                    AI SHORTS FORGE
-                  </span>
+                  </div>
                 </div>
-                <h2 className="text-4xl font-bold bg-gradient-to-r from-red-400 via-pink-400 to-purple-400 bg-clip-text text-transparent mb-4">
-                  Neural Content Creator
-                </h2>
-                <p className="text-xl text-gray-400 leading-relaxed">
-                  Advanced AI analyzes your content to create viral-ready shorts
-                  with perfect timing, engagement hooks, and cinematic cuts.
-                </p>
-              </div>
 
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="bg-gradient-to-br from-red-500/10 to-pink-500/10 border border-red-500/20 rounded-3xl p-8">
-                  <h3 className="text-2xl font-bold text-red-400 mb-4 flex items-center gap-3">
+                <div className="text-center">
+                  <a href="/features/shorts-generator">
+                    <button className="bg-gradient-to-r from-red-500 via-pink-500 to-purple-500 hover:from-red-600 hover:via-pink-600 hover:to-purple-600 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-red-500/25 flex items-center gap-3 mx-auto">
+                      <Play className="w-6 h-6" />
+                      Try Now
+                      <ArrowRight className="w-6 h-6" />
+                    </button>
+                  </a>
+                </div>
+              </div>
+            )}
+
+            {/* Summarizer */}
+            {activeTab === "summarizer" && (
+              <div className="max-w-4xl mx-auto space-y-8">
+                <div className="text-center mb-12">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/20 border border-purple-500/30 mb-6">
+                    <Brain className="w-5 h-5 text-purple-400" />
+                    <span className="text-purple-400 font-medium">
+                      VIDEO SUMMARIZER
+                    </span>
+                  </div>
+                  <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-400 via-indigo-400 to-blue-400 bg-clip-text text-transparent mb-4">
+                    Advanced Content Intelligence
+                  </h2>
+                  <p className="text-xl text-gray-400 leading-relaxed">
+                    Quantum-speed processing extracts key insights from hours of
+                    content in seconds using next-generation NLP.
+                  </p>
+                </div>
+
+                <div className="bg-gradient-to-br from-purple-500/10 to-blue-500/10 border border-purple-500/20 rounded-3xl p-8 mb-8">
+                  <div className="grid md:grid-cols-3 gap-6 text-center">
+                    <div>
+                      <div className="text-3xl font-bold text-purple-400 mb-2">
+                        10x
+                      </div>
+                      <div className="text-gray-400">Faster Processing</div>
+                    </div>
+                    <div>
+                      <div className="text-3xl font-bold text-indigo-400 mb-2">
+                        99.8%
+                      </div>
+                      <div className="text-gray-400">Accuracy Rate</div>
+                    </div>
+                    <div>
+                      <div className="text-3xl font-bold text-blue-400 mb-2">
+                        50+
+                      </div>
+                      <div className="text-gray-400">Languages</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="text-center">
+                  <a href="/features/summarizer">
+                    <button className="bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 hover:from-purple-600 hover:via-indigo-600 hover:to-blue-600 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-purple-500/25 flex items-center gap-3 mx-auto">
+                      <Brain className="w-6 h-6" />
+                      Try Now
+                      <Sparkles className="w-6 h-6" />
+                    </button>
+                  </a>
+                </div>
+              </div>
+            )}
+
+            {/* PDF */}
+            {activeTab === "pdf" && (
+              <div className="max-w-4xl mx-auto space-y-8">
+                <div className="text-center mb-12">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/20 border border-green-500/30 mb-6">
+                    <FileText className="w-5 h-5 text-green-400" />
+                    <span className="text-green-400 font-medium">
+                      DOCUMENT MIND READER
+                    </span>
+                  </div>
+                  <h2 className="text-4xl font-bold bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400 bg-clip-text text-transparent mb-4">
+                    Intelligent Document Processing
+                  </h2>
+                  <p className="text-xl text-gray-400 leading-relaxed">
+                    Revolutionary AI transforms complex documents into
+                    crystal-clear summaries with human-like comprehension.
+                  </p>
+                </div>
+
+                <div className="bg-gradient-to-br from-green-500/10 to-teal-500/10 border border-green-500/20 rounded-3xl p-8 mb-8">
+                  <div className="grid md:grid-cols-3 gap-6 text-center">
+                    <div>
+                      <div className="text-3xl font-bold text-green-400 mb-2">
+                        1000+
+                      </div>
+                      <div className="text-gray-400">Pages/Minute</div>
+                    </div>
+                    <div>
+                      <div className="text-3xl font-bold text-emerald-400 mb-2">
+                        95%
+                      </div>
+                      <div className="text-gray-400">Time Saved</div>
+                    </div>
+                    <div>
+                      <div className="text-3xl font-bold text-teal-400 mb-2">
+                        ∞
+                      </div>
+                      <div className="text-gray-400">File Size</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="text-center">
+                  <a href="/features/pdf-summarizer">
+                    <button className="bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 hover:from-green-600 hover:via-emerald-600 hover:to-teal-600 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-green-500/25 flex items-center gap-3 mx-auto">
+                      <FileText className="w-6 h-6" />
+                      Try Now
+                      <Cpu className="w-6 h-6" />
+                    </button>
+                  </a>
+                </div>
+              </div>
+            )}
+
+            {/* Resume Analyzer */}
+            {activeTab === "resume" && (
+              <div className="max-w-4xl mx-auto space-y-8">
+                <div className="text-center mb-12">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-600/20 border border-purple-600/30 mb-6">
+                    <Eye className="w-5 h-5 text-purple-400" />
+                    <span className="text-purple-400 font-medium">
+                      CAREER INTELLIGENCE
+                    </span>
+                  </div>
+                  <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-400 via-violet-400 to-indigo-400 bg-clip-text text-transparent mb-4">
+                    AI-Powered Resume Analysis
+                  </h2>
+                  <p className="text-xl text-gray-400 leading-relaxed">
+                    Advanced machine learning algorithms analyze your resume and provide
+                    actionable insights to maximize your job application success.
+                  </p>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-8 mb-8">
+                  <div className="bg-gradient-to-br from-purple-600/10 to-indigo-600/10 border border-purple-600/20 rounded-3xl p-8">
+                    <h3 className="text-2xl font-bold text-purple-400 mb-4 flex items-center gap-3">
+                      <Brain className="w-8 h-8" />
+                      AI Analysis Features
+                    </h3>
+                    <ul className="space-y-4 text-gray-300">
+                      <li className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" />
+                        <span>ATS compatibility scoring and optimization</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-violet-400 mt-0.5 flex-shrink-0" />
+                        <span>Skills gap analysis with industry benchmarks</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-indigo-400 mt-0.5 flex-shrink-0" />
+                        <span>Keyword density optimization for job roles</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" />
+                        <span>Format and structure improvement suggestions</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="bg-gradient-to-br from-indigo-600/10 to-blue-600/10 border border-indigo-600/20 rounded-3xl p-8">
+                    <h3 className="text-2xl font-bold text-indigo-400 mb-4 flex items-center gap-3">
+                      <Target className="w-8 h-8" />
+                      Career Insights
+                    </h3>
+                    <ul className="space-y-4 text-gray-300">
+                      <li className="flex items-start gap-3">
+                        <TrendingUp className="w-5 h-5 text-indigo-400 mt-0.5 flex-shrink-0" />
+                        <span>Salary range predictions based on experience</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <Target className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
+                        <span>Job match scoring for specific positions</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <Eye className="w-5 h-5 text-indigo-400 mt-0.5 flex-shrink-0" />
+                        <span>Industry-specific recommendations</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <Rocket className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
+                        <span>Career progression pathway mapping</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Statistics Section */}
+                <div className="bg-gradient-to-br from-purple-600/10 to-indigo-600/10 border border-purple-600/20 rounded-3xl p-8 mb-8">
+                  <div className="grid md:grid-cols-4 gap-6 text-center">
+                    <div>
+                      <div className="text-3xl font-bold text-purple-400 mb-2">
+                        95%
+                      </div>
+                      <div className="text-gray-400">ATS Pass Rate</div>
+                    </div>
+                    <div>
+                      <div className="text-3xl font-bold text-violet-400 mb-2">
+                        3x
+                      </div>
+                      <div className="text-gray-400">More Interviews</div>
+                    </div>
+                    <div>
+                      <div className="text-3xl font-bold text-indigo-400 mb-2">
+                        85%
+                      </div>
+                      <div className="text-gray-400">Match Accuracy</div>
+                    </div>
+                    <div>
+                      <div className="text-3xl font-bold text-blue-400 mb-2">
+                        24/7
+                      </div>
+                      <div className="text-gray-400">AI Analysis</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Analysis Process */}
+                <div className="bg-gradient-to-br from-indigo-600/10 to-purple-600/10 border border-indigo-600/20 rounded-3xl p-8 mb-8">
+                  <h3 className="text-2xl font-bold text-indigo-400 mb-6 flex items-center gap-3">
                     <Cpu className="w-8 h-8" />
-                    AI Capabilities
+                    Analysis Process
                   </h3>
-                  <ul className="space-y-4 text-gray-300">
-                    <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-red-400 rounded-full mt-2 flex-shrink-0" />
-                      <span>
-                        Intelligent moment detection using computer vision
-                      </span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-pink-400 rounded-full mt-2 flex-shrink-0" />
-                      <span>Automatic subtitle generation and styling</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-purple-400 rounded-full mt-2 flex-shrink-0" />
-                      <span>Engagement optimization algorithms</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-red-400 rounded-full mt-2 flex-shrink-0" />
-                      <span>Multi-platform format adaptation</span>
-                    </li>
-                  </ul>
-                </div>
-
-                <div className="bg-gradient-to-br from-purple-500/10 to-blue-500/10 border border-purple-500/20 rounded-3xl p-8">
-                  <h3 className="text-2xl font-bold text-purple-400 mb-4 flex items-center gap-3">
-                    <Rocket className="w-8 h-8" />
-                    Workflow
-                  </h3>
-                  <div className="space-y-4">
+                  <div className="grid md:grid-cols-3 gap-6">
                     {[
-                      "Paste YouTube URL",
-                      "AI analyzes content",
-                      "Generate optimized clips",
-                      "Preview & customize",
-                      "Export & share",
-                    ].map((step, idx) => (
-                      <div key={idx} className="flex items-center gap-4">
-                        <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                          {idx + 1}
+                      {
+                        step: "01",
+                        title: "Upload & Parse",
+                        desc: "AI extracts and structures all resume data",
+                        color: "purple"
+                      },
+                      {
+                        step: "02",
+                        title: "Deep Analysis",
+                        desc: "Multi-layer AI evaluation of content and format",
+                        color: "indigo"
+                      },
+                      {
+                        step: "03",
+                        title: "Insights & Report",
+                        desc: "Detailed recommendations and improvement plan",
+                        color: "blue"
+                      }
+                    ].map((item, idx) => (
+                      <div key={idx} className="text-center">
+                        <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-${item.color}-500 to-${item.color}-600 flex items-center justify-center text-white font-bold text-xl`}>
+                          {item.step}
                         </div>
-                        <span className="text-gray-300">{step}</span>
+                        <h4 className="text-lg font-bold text-white mb-2">{item.title}</h4>
+                        <p className="text-gray-400 text-sm">{item.desc}</p>
                       </div>
                     ))}
                   </div>
                 </div>
-              </div>
 
-              <div className="text-center">
-                <a href="/features/shorts-generator">
-                  <button className="bg-gradient-to-r from-red-500 via-pink-500 to-purple-500 hover:from-red-600 hover:via-pink-600 hover:to-purple-600 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-red-500/25 flex items-center gap-3 mx-auto">
-                    <Play className="w-6 h-6" />
-                    Try Now
-                    <ArrowRight className="w-6 h-6" />
-                  </button>
-                </a>
+                {/* CTA Button */}
+                <div className="text-center">
+                  <a href="/features/ResumeAnalyzer">
+                    <button className="bg-gradient-to-r from-[#8e2de2] via-purple-600 to-[#4A00E0] hover:from-[#9d3ef3] hover:via-purple-700 hover:to-[#5511f1] text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-purple-500/25 flex items-center gap-3 mx-auto group">
+                      <Eye className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                      Analyze My Resume
+                      <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                    </button>
+                  </a>
+                </div>
+
               </div>
+            )}
+          </div>
+
+          {/* Footer */}
+          <div className="h-16 flex items-center justify-center border-t border-gray-900 bg-gray-950/90 backdrop-blur-xl mt-16">
+            <div className="flex items-center gap-2 text-gray-400">
+              <Sparkles className="w-4 h-4" />
+              <span className="text-sm">
+                Made with ❤️ and ☕.
+              </span>
+              <Sparkles className="w-4 h-4" />
             </div>
-          )}
-
-          {/* Summarizer */}
-          {activeTab === "summarizer" && (
-            <div className="max-w-4xl mx-auto space-y-8">
-              <div className="text-center mb-12">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/20 border border-purple-500/30 mb-6">
-                  <Brain className="w-5 h-5 text-purple-400" />
-                  <span className="text-purple-400 font-medium">
-                    VIDEO SUMMARIZER
-                  </span>
-                </div>
-                <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-400 via-indigo-400 to-blue-400 bg-clip-text text-transparent mb-4">
-                  Advanced Content Intelligence
-                </h2>
-                <p className="text-xl text-gray-400 leading-relaxed">
-                  Quantum-speed processing extracts key insights from hours of
-                  content in seconds using next-generation NLP.
-                </p>
-              </div>
-
-              <div className="bg-gradient-to-br from-purple-500/10 to-blue-500/10 border border-purple-500/20 rounded-3xl p-8 mb-8">
-                <div className="grid md:grid-cols-3 gap-6 text-center">
-                  <div>
-                    <div className="text-3xl font-bold text-purple-400 mb-2">
-                      10x
-                    </div>
-                    <div className="text-gray-400">Faster Processing</div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-bold text-indigo-400 mb-2">
-                      99.8%
-                    </div>
-                    <div className="text-gray-400">Accuracy Rate</div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-bold text-blue-400 mb-2">
-                      50+
-                    </div>
-                    <div className="text-gray-400">Languages</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="text-center">
-                <a href="/features/summarizer">
-                  <button className="bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 hover:from-purple-600 hover:via-indigo-600 hover:to-blue-600 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-purple-500/25 flex items-center gap-3 mx-auto">
-                    <Brain className="w-6 h-6" />
-                    Try Now
-                    <Sparkles className="w-6 h-6" />
-                  </button>
-                </a>
-              </div>
-            </div>
-          )}
-
-          {/* PDF */}
-          {activeTab === "pdf" && (
-            <div className="max-w-4xl mx-auto space-y-8">
-              <div className="text-center mb-12">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/20 border border-green-500/30 mb-6">
-                  <FileText className="w-5 h-5 text-green-400" />
-                  <span className="text-green-400 font-medium">
-                    DOCUMENT MIND READER
-                  </span>
-                </div>
-                <h2 className="text-4xl font-bold bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400 bg-clip-text text-transparent mb-4">
-                  Intelligent Document Processing
-                </h2>
-                <p className="text-xl text-gray-400 leading-relaxed">
-                  Revolutionary AI transforms complex documents into
-                  crystal-clear summaries with human-like comprehension.
-                </p>
-              </div>
-
-              <div className="bg-gradient-to-br from-green-500/10 to-teal-500/10 border border-green-500/20 rounded-3xl p-8 mb-8">
-                <div className="grid md:grid-cols-3 gap-6 text-center">
-                  <div>
-                    <div className="text-3xl font-bold text-green-400 mb-2">
-                      1000+
-                    </div>
-                    <div className="text-gray-400">Pages/Minute</div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-bold text-emerald-400 mb-2">
-                      95%
-                    </div>
-                    <div className="text-gray-400">Time Saved</div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-bold text-teal-400 mb-2">
-                      ∞
-                    </div>
-                    <div className="text-gray-400">File Size</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="text-center">
-                <a href="/features/pdf-summarizer">
-                  <button className="bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 hover:from-green-600 hover:via-emerald-600 hover:to-teal-600 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-green-500/25 flex items-center gap-3 mx-auto">
-                    <FileText className="w-6 h-6" />
-                    Try Now
-                    <Cpu className="w-6 h-6" />
-                  </button>
-                </a>
-              </div>
-            </div>
-          )}
-
-          {/* Resume Analyzer */}
-          {activeTab === "resume" && (
-            <div className="max-w-4xl mx-auto space-y-8">
-              <div className="text-center mb-12">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-600/20 border border-purple-600/30 mb-6">
-                  <Eye className="w-5 h-5 text-purple-400" />
-                  <span className="text-purple-400 font-medium">
-                    CAREER INTELLIGENCE
-                  </span>
-                </div>
-                <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-400 via-violet-400 to-indigo-400 bg-clip-text text-transparent mb-4">
-                  AI-Powered Resume Analysis
-                </h2>
-                <p className="text-xl text-gray-400 leading-relaxed">
-                  Advanced machine learning algorithms analyze your resume and provide
-                  actionable insights to maximize your job application success.
-                </p>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-8 mb-8">
-                <div className="bg-gradient-to-br from-purple-600/10 to-indigo-600/10 border border-purple-600/20 rounded-3xl p-8">
-                  <h3 className="text-2xl font-bold text-purple-400 mb-4 flex items-center gap-3">
-                    <Brain className="w-8 h-8" />
-                    AI Analysis Features
-                  </h3>
-                  <ul className="space-y-4 text-gray-300">
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" />
-                      <span>ATS compatibility scoring and optimization</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-violet-400 mt-0.5 flex-shrink-0" />
-                      <span>Skills gap analysis with industry benchmarks</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-indigo-400 mt-0.5 flex-shrink-0" />
-                      <span>Keyword density optimization for job roles</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" />
-                      <span>Format and structure improvement suggestions</span>
-                    </li>
-                  </ul>
-                </div>
-
-                <div className="bg-gradient-to-br from-indigo-600/10 to-blue-600/10 border border-indigo-600/20 rounded-3xl p-8">
-                  <h3 className="text-2xl font-bold text-indigo-400 mb-4 flex items-center gap-3">
-                    <Target className="w-8 h-8" />
-                    Career Insights
-                  </h3>
-                  <ul className="space-y-4 text-gray-300">
-                    <li className="flex items-start gap-3">
-                      <TrendingUp className="w-5 h-5 text-indigo-400 mt-0.5 flex-shrink-0" />
-                      <span>Salary range predictions based on experience</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <Target className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
-                      <span>Job match scoring for specific positions</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <Eye className="w-5 h-5 text-indigo-400 mt-0.5 flex-shrink-0" />
-                      <span>Industry-specific recommendations</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <Rocket className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
-                      <span>Career progression pathway mapping</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-
-              {/* Statistics Section */}
-              <div className="bg-gradient-to-br from-purple-600/10 to-indigo-600/10 border border-purple-600/20 rounded-3xl p-8 mb-8">
-                <div className="grid md:grid-cols-4 gap-6 text-center">
-                  <div>
-                    <div className="text-3xl font-bold text-purple-400 mb-2">
-                      95%
-                    </div>
-                    <div className="text-gray-400">ATS Pass Rate</div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-bold text-violet-400 mb-2">
-                      3x
-                    </div>
-                    <div className="text-gray-400">More Interviews</div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-bold text-indigo-400 mb-2">
-                      85%
-                    </div>
-                    <div className="text-gray-400">Match Accuracy</div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-bold text-blue-400 mb-2">
-                      24/7
-                    </div>
-                    <div className="text-gray-400">AI Analysis</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Analysis Process */}
-              <div className="bg-gradient-to-br from-indigo-600/10 to-purple-600/10 border border-indigo-600/20 rounded-3xl p-8 mb-8">
-                <h3 className="text-2xl font-bold text-indigo-400 mb-6 flex items-center gap-3">
-                  <Cpu className="w-8 h-8" />
-                  Analysis Process
-                </h3>
-                <div className="grid md:grid-cols-3 gap-6">
-                  {[
-                    {
-                      step: "01",
-                      title: "Upload & Parse",
-                      desc: "AI extracts and structures all resume data",
-                      color: "purple"
-                    },
-                    {
-                      step: "02",
-                      title: "Deep Analysis",
-                      desc: "Multi-layer AI evaluation of content and format",
-                      color: "indigo"
-                    },
-                    {
-                      step: "03",
-                      title: "Insights & Report",
-                      desc: "Detailed recommendations and improvement plan",
-                      color: "blue"
-                    }
-                  ].map((item, idx) => (
-                    <div key={idx} className="text-center">
-                      <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-${item.color}-500 to-${item.color}-600 flex items-center justify-center text-white font-bold text-xl`}>
-                        {item.step}
-                      </div>
-                      <h4 className="text-lg font-bold text-white mb-2">{item.title}</h4>
-                      <p className="text-gray-400 text-sm">{item.desc}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* CTA Button */}
-              <div className="text-center">
-                <a href="/features/ResumeAnalyzer">
-                  <button className="bg-gradient-to-r from-[#8e2de2] via-purple-600 to-[#4A00E0] hover:from-[#9d3ef3] hover:via-purple-700 hover:to-[#5511f1] text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-purple-500/25 flex items-center gap-3 mx-auto group">
-                    <Eye className="w-6 h-6 group-hover:scale-110 transition-transform" />
-                    Analyze My Resume
-                    <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-                  </button>
-                </a>
-              </div>
-
-            </div>
-          )}
-        </div>
-
-        {/* Footer */}
-        <div className="h-16 flex-shrink-0 flex items-center justify-center border-t border-gray-800 bg-gray-900/80 backdrop-blur-xl">
-          <div className="flex items-center gap-2 text-gray-400">
-            <Sparkles className="w-4 h-4" />
-            <span className="text-sm">
-              Made with ❤️ and ☕.
-            </span>
-            <Sparkles className="w-4 h-4" />
           </div>
         </div>
       </div>

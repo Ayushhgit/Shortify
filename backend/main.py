@@ -13,6 +13,8 @@ from app.routers import RA_router
 from app.routers import pdf_router
 from app.routers.export_share import router as export_share_router
 from app.routers import ytSumm_router, review_router
+from app.routers.review_router import router as review_router
+
 
 logging.basicConfig(
     level=logging.INFO,
