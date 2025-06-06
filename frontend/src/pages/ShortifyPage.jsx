@@ -7,6 +7,7 @@ import {
 import { auth } from "../firebase";
 import { onAuthStateChanged, sendEmailVerification, signOut, } from "firebase/auth";
 import AuthModalSystem from "../components/AuthModalSystem";
+import logo from '../assets/logo.png';
 
 export default function ShortifyPage() {
   const [activeTab, setActiveTab] = useState("home");
@@ -185,9 +186,9 @@ export default function ShortifyPage() {
           {/* Logo Section */}
           <div className="p-8 border-b border-gray-800">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
-                <Sparkles className="w-6 h-6 text-white" />
-              </div>
+             <a href="/" ><div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
+                <img src={logo} alt="Logo"  />
+              </div> </a>
               <div>
                 <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                   Shortify

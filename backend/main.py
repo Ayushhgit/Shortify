@@ -12,7 +12,7 @@ from app.routers import auth_router
 from app.routers import RA_router
 from app.routers import pdf_router
 from app.routers.export_share import router as export_share_router
-from app.routers import ytSumm_router
+from app.routers import ytSumm_router, review_router
 
 logging.basicConfig(
     level=logging.INFO,
@@ -44,6 +44,7 @@ app.include_router(shorts.router, prefix="/api/shorts", tags=["shorts"])
 app.include_router(RA_router.router)
 app.include_router(pdf_router.router)
 app.include_router(export_share_router)
+app.include_router(review_router)
 
 @app.get("/", tags=["status"])
 async def root():

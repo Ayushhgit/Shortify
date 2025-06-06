@@ -1,12 +1,6 @@
 @import "tailwindcss";
 
-body {
-  background-image: url('/background.png'); /* adjust path if different */
-  background-size: cover;        /* make it cover the full screen */
-  background-repeat: no-repeat;  /* prevent repeating */
-  background-position: center;   /* center the image */
-  background-attachment: fixed;  /* optional: keep background fixed on scroll */
-}
+
 * {
   font-family: 'Open Sans', sans-serif;
 }

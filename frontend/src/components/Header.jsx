@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ChevronDown, ChevronUp, Menu, X, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+
 export default function Header() {
   const [openDropdown, setOpenDropdown] = useState(null); // for desktop
   const [hideTimeout, setHideTimeout] = useState(null);
@@ -63,9 +64,9 @@ export default function Header() {
   }, [mobileNavOpen]);
 
   return (
-    <header className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] max-w-7xl rounded-full bg-white/70 backdrop-blur-lg shadow-xl border border-gray-200 px-6 py-4">
+    <header className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] max-w-7xl rounded-full bg-gray-800/10 backdrop-blur-lg shadow-xl border border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-extrabold text-gray-900">
+        <h1 className="text-3xl font-extrabold text-white-900">
           <a href='/'>Short<span className="text-green-400">ify</span></a>
         </h1>
 
@@ -85,7 +86,7 @@ export default function Header() {
               }}
             >
               <div className="flex flex-col">
-                <button className="text-gray-900 font-semibold hover:text-green-500 transition-colors duration-200 flex items-center">
+                <button className="text-white-900 font-semibold hover:text-green-500 transition-colors duration-200 flex items-center">
                   {item.name}
                   <ChevronDown className="ml-1 h-4 w-4" />
                 </button>
@@ -106,7 +107,7 @@ export default function Header() {
             </div>
           ))}
           <a href="/pricing">
-            <button className="text-gray-900 font-semibold hover:text-green-500 transition-colors duration-200">
+            <button className="text-white-900 font-semibold hover:text-green-500 transition-colors duration-200">
               Pricing
             </button>
           </a>

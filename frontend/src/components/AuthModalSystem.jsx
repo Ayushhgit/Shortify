@@ -306,7 +306,7 @@ export default function AuthModalSystem({ onClose, initialMode = 'signup', onAut
     } else if (mode === 'login') {
       return (
         <>
-          <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-center">
+          <h2 className="text-2xl sm:text-3xl text-black font-bold mb-6 text-center">
             Welcome back
           </h2>
 
@@ -319,7 +319,7 @@ export default function AuthModalSystem({ onClose, initialMode = 'signup', onAut
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg py-3 px-4 pl-12 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 rounded-lg py-3 text-black px-4 pl-12 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Enter your email"
                   required
                 />
@@ -337,7 +337,7 @@ export default function AuthModalSystem({ onClose, initialMode = 'signup', onAut
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg py-3 px-4 pl-12 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 rounded-lg text-black py-3 px-4 pl-12 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Enter your password"
                   required
                 />
@@ -370,13 +370,13 @@ export default function AuthModalSystem({ onClose, initialMode = 'signup', onAut
           <button
             onClick={handleGoogleSignIn}
             disabled={loading}
-            className="w-full border border-gray-300 rounded-full py-3 flex items-center justify-center hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full border border-gray-300 rounded-full py-3 text-black flex items-center justify-center hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5 mr-2" />
             Continue with Google
           </button>
 
-          <div className="text-center mt-5">
+          <div className="text-center text-black mt-5">
             <p>
               Don't have an account?{' '}
               <button

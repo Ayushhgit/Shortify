@@ -30,6 +30,7 @@ const LayoutWrapper = ({ children }) => {
     "/features/ResumeAnalyzer",
     "/Profile",
     "/Settings",
+    "/",
     
   ];
   

@@ -102,3 +102,8 @@ class VideoDetails(BaseModel):
 class YouTubeResponse(BaseModel):
     videoDetails: VideoDetails
     summary: str
+
+class review(BaseModel):
+    email: EmailStr
+    rating: int
+    review: Optional[str] = None
