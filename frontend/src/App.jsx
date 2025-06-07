@@ -17,6 +17,7 @@ import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import ResumeAnalyzer from "./pages/ResumeAnalyzer";
 import ArticleSummarizer from "./pages/ArticleSummarizer";
+import CoverLetterGenerator from "./pages/CoverLetterGenerator";
 
 
 const LayoutWrapper = ({ children }) => {
@@ -34,6 +35,7 @@ const LayoutWrapper = ({ children }) => {
     "/Profile",
     "/settings",
     "/Settings",
+    "/features/coverLetterGenerator",
     "/",
     
   ];
@@ -68,6 +70,7 @@ function App() {
           <Route path="/features/pdf-summarizer" element={<PdfSummarizer />} />
           <Route path="/features/ResumeAnalyzer" element={<ResumeAnalyzer />}/>
           <Route path="/features/ArticleSummarizer" element={<ArticleSummarizer />}/>
+          <Route path="/features/coverLetterGenerator" element={<CoverLetterGenerator />}/>
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>

@@ -16,7 +16,7 @@ import {
   Send,
 } from "lucide-react";
 import { getToken } from '../firebase';
-import  { Navigate, useNavigate } from "react-router-dom";
+import  { useNavigate } from "react-router-dom";
 
 // Toast Component
 const Toast = ({ show, message, type, onClose }) => {

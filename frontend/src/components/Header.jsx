@@ -19,6 +19,7 @@ export default function Header() {
         { label: "Video Summarizer", path: "/features/summarizer" },
         { label: "Resume Analyzer", path: "/features/ResumeAnalyzer" },
         { label: "Article Summarizer", path: "/features/ArticleSummarizer" },
+        { label: "Cove Letter Generator", path: "/features/coverLetterGenerator" },
       ],
     },
     {
