@@ -5,18 +5,15 @@ import {
   Home,
   Settings,
   User,
-  Video,
   Lock,
   LogOut,
   Mail,
-  Pencil,
   Loader,
   Crown,
   Calendar,
   CreditCard,
   Shield,
   Sparkles,
-  Camera,
   Edit3,
   Save,
   X,
@@ -24,17 +21,6 @@ import {
   Brain,
   Github,
   Menu,
-  Bell,
-  Download,
-  Upload,
-  Trash2,
-  Eye,
-  EyeOff,
-  Wallet,
-  Star,
-  TrendingUp,
-  Award,
-  Zap
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import logo from '../assets/logo.png';
@@ -55,10 +41,10 @@ export default function EnhancedProfile() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [notifications, setNotifications] = useState(true);
-  const [darkMode, setDarkMode] = useState(true);
   const [twoFactor, setTwoFactor] = useState(false);
   const [autoSave, setAutoSave] = useState(true);
+  const [recentVideos, setRecentVideos] = useState([]);
+  const [userStats, setUserStats] = useState({});
 
   // User subscription data from API
   const [subscriptionType, setSubscriptionType] = useState("free");
@@ -130,61 +116,13 @@ export default function EnhancedProfile() {
           if (subscriptionData.subscription_end) {
             setSubscriptionEnd(new Date(subscriptionData.subscription_end));
           }
-        }
-      } catch (err) {
-        console.error("Error fetching subscription data:", err);
-      }
-
-      // Fetch user profile data
-      try {
-        const profileResponse = await fetch(`/api/users/${currentUser.uid}`, {
-          headers
-        });
-
-        if (profileResponse.ok) {
-          const profileData = await profileResponse.json();
-          if (profileData.name) setName(profileData.name);
-          if (profileData.bio) setBio(profileData.bio);
-          if (profileData.preferences) {
-            setNotifications(profileData.preferences.notifications ?? true);
-            setAutoSave(profileData.preferences.autoSave ?? true);
-            setTwoFactor(profileData.preferences.twoFactor ?? false);
+          else {
+            console.log("Subscription API failed with status:", subscriptionResponse.status);
+            console.log("Response text:", await subscriptionResponse.text());
           }
         }
       } catch (err) {
-        console.error("Error fetching profile data:", err);
-      }
-
-      // Fetch recent videos
-      try {
-        const videosResponse = await fetch("/api/videos/recent", {
-          headers
-        });
-
-        if (videosResponse.ok) {
-          const videosData = await videosResponse.json();
-          setRecentVideos(videosData.videos || []);
-        }
-      } catch (err) {
-        console.error("Error fetching videos:", err);
-      }
-
-      // Fetch user statistics
-      try {
-        const statsResponse = await fetch("/api/users/stats", {
-          headers
-        });
-
-        if (statsResponse.ok) {
-          const statsData = await statsResponse.json();
-          setUserStats({
-            totalVideos: statsData.total_videos || 0,
-            storageUsed: statsData.storage_used || 0,
-            accountAge: statsData.account_age_days || 0
-          });
-        }
-      } catch (err) {
-        console.error("Error fetching user stats:", err);
+        console.error("Error fetching subscription data:", err);
       }
 
     } catch (apiError) {
@@ -219,6 +157,7 @@ export default function EnhancedProfile() {
   }, [error]);
 
   // Handlers
+  // Replace your existing handleUpdateProfile function with this:
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
 
@@ -237,32 +176,13 @@ export default function EnhancedProfile() {
         return;
       }
 
-      // Update Firebase auth profile
+      // Only update Firebase auth profile
       await updateProfile(user, {
         displayName: name
       });
 
-      // Update user data via API
-      const response = await fetch(`/api/users/${user.uid}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${await user.getIdToken()}`
-        },
-        body: JSON.stringify({
-          name,
-          email: user.email,
-          bio
-        })
-      });
-
-      if (response.ok) {
-        setSuccess("Profile updated successfully!");
-        setEditing(false);
-      } else {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to update profile");
-      }
+      setSuccess("Profile updated successfully!");
+      setEditing(false);
 
     } catch (err) {
       console.error("Error updating profile:", err);
@@ -602,10 +522,6 @@ export default function EnhancedProfile() {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800/50 border border-slate-700">
-              <Activity className="w-4 h-4 text-cyan-400" />
-              <span className="text-sm text-slate-300 font-medium">Real-time</span>
-            </div>
           </div>
         </div>
 
@@ -642,9 +558,6 @@ export default function EnhancedProfile() {
                         .toUpperCase()
                       : "U"}
                   </div>
-                  <button className="absolute -bottom-2 -right-2 p-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full shadow-lg hover:shadow-cyan-500/25 transition-all duration-300 group-hover:scale-110">
-                    <Camera className="w-4 h-4 text-white" />
-                  </button>
                 </div>
 
                 {/* Profile Info */}
@@ -776,9 +689,14 @@ export default function EnhancedProfile() {
                   <div className="space-y-4">
                     <div className="p-3 bg-slate-700/50 rounded-xl">
                       <p className="text-sm text-slate-400 mb-1">Payment ID</p>
-                      <p className="text-white font-mono text-xs break-all">{paymentId}</p>
+                      <p className="text-white font-mono text-xs break-all">
+                        {paymentId || "No payment ID available"}
+                      </p>
                     </div>
-                    <button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-3 rounded-xl transition-all duration-300 shadow-lg hover:shadow-purple-500/25">
+                    <button
+                      onClick={() => navigate("/pricing")}
+                      className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-3 rounded-xl transition-all duration-300 shadow-lg hover:shadow-purple-500/25"
+                    >
                       Manage Billing
                     </button>
                   </div>

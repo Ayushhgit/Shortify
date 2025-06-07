@@ -376,10 +376,6 @@ export default function ShortifyPage() {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800/50 border border-slate-700">
-              <Activity className="w-4 h-4 text-cyan-400" />
-              <span className="text-sm text-slate-300 font-medium">Real-time</span>
-            </div>
           </div>
         </div>
 

@@ -100,7 +100,10 @@ class PaymentService:
                 return {
                     'subscription_type': 'free',
                     'is_active': False,
-                    'subscription_end': None
+                    'subscription_end': None,
+                    "subscription_start": None,
+                    "payment_id": None,
+                    "video_generation_count": 0
                 }
             
             # Check if subscription is still active
@@ -118,7 +121,9 @@ class PaymentService:
                 'subscription_type': user.subscription_type or 'free',
                 'is_active': is_active,
                 'subscription_end': user.subscription_end.isoformat() if user.subscription_end else None,
-                'subscription_start': user.subscription_start.isoformat() if user.subscription_start else None
+                'subscription_start': user.subscription_start.isoformat() if user.subscription_start else None,
+                "payment_id": user.payment_id, 
+                "video_generation_count": user.video_generation_count or 0
             }
             
         except Exception as e:

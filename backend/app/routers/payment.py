@@ -32,6 +32,8 @@ class SubscriptionStatusResponse(BaseModel):
     is_active: bool
     subscription_end: Optional[str] = None
     subscription_start: Optional[str] = None
+    payment_id: Optional[str] = None  
+    video_generation_count: Optional[int] = 0  
 
 payment_service = PaymentService()
 
@@ -135,7 +137,9 @@ async def get_subscription_status(
             "subscription_type": "free",
             "is_active": False,
             "subscription_end": None,
-            "subscription_start": None
+            "subscription_start": None,
+            "payment_id": None,
+            "video_generation_count": 0
         }
 
 @router.post("/cancel-subscription")
@@ -202,6 +206,7 @@ async def test_subscription_status(
                 "subscription_type": "free",
                 "is_active": False,
                 "subscription_end": None,
+                "payment_id": None,
                 "subscription_start": None
             }
         }
