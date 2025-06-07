@@ -30,7 +30,9 @@ const LayoutWrapper = ({ children }) => {
     "/features/summarizer",
     "/features/ResumeAnalyzer",
     "/features/ArticleSummarizer",
+    "/profile",
     "/Profile",
+    "/settings",
     "/Settings",
     "/",
     

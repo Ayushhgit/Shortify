@@ -16,6 +16,7 @@ import {
   Send,
 } from "lucide-react";
 import { getToken } from '../firebase';
+import  { Navigate, useNavigate } from "react-router-dom";
 
 // Toast Component
 const Toast = ({ show, message, type, onClose }) => {
@@ -111,6 +112,7 @@ const ChatWithDocument = ({ documentContent, isVisible, onClose }) => {
 
   if (!isVisible) return null;
 
+
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-gray-900 rounded-2xl border border-gray-700 shadow-2xl w-full max-w-2xl h-[600px] flex flex-col">
@@ -205,6 +207,7 @@ export default function ArticleSummarizer() {
   const [inputError, setInputError] = useState("");
   const [showChat, setShowChat] = useState(false);
   const [articleContent, setArticleContent] = useState("");
+  const navigate = useNavigate();
 
   const displayToast = (message, type = "success") => {
     setToastMessage(message);
@@ -350,11 +353,12 @@ export default function ArticleSummarizer() {
             </span>
           </div>
           <div className="flex items-center space-x-2">
-            {[{ icon: Home }, { icon: User }, { icon: Settings }].map(
+            {[{ icon: Home , path:"/"}, { icon: User , path:"/profile"}, { icon: Settings, path:"/settings"}].map(
               (item, index) => (
                 <button
                   key={index}
                   className="p-3 rounded-xl hover:bg-white/20 transition-all duration-300 hover:scale-110 backdrop-blur-sm border border-white/10"
+                  onClick={() => navigate(item.path)}
                 >
                   <item.icon className="h-5 w-5 text-white/80 hover:text-white" />
                 </button>
