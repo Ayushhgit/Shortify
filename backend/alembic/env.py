@@ -11,39 +11,30 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # Load environment variables
 load_dotenv()
 
-# Import your models after adding to path
+# Import Base AFTER adding path
 try:
     from app.core.database import Base
-    from app.models.user import User  # Import all your models here
+    # DO NOT import individual models here — Base.metadata already collects all models
 except ImportError as e:
     print(f"Import error: {e}")
     print("Make sure your app directory structure is correct")
-    # Alternative import method if above fails
-    try:
-        import sys
-        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        sys.path.append(project_root)
-        from app.core.database import Base
-        from app.models.user import User
-    except ImportError:
-        print("Could not import models. Please check your project structure.")
-        raise
+    raise
 
-# this is the Alembic Config object
+# Alembic Config object
 config = context.config
 
-# Set the database URL from environment variable
+# Set database URL from env var
 database_url = os.getenv('DATABASE_URL')
 if database_url:
     config.set_main_option('sqlalchemy.url', database_url)
 else:
     print("Warning: DATABASE_URL not found in environment variables")
 
-# Interpret the config file for Python logging.
+# Interpret config file for Python logging
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# Set target metadata for autogenerate support
+# Target metadata for 'autogenerate' support
 target_metadata = Base.metadata
 
 def run_migrations_offline() -> None:
@@ -69,7 +60,7 @@ def run_migrations_online() -> None:
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, 
+            connection=connection,
             target_metadata=target_metadata
         )
 

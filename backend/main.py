@@ -16,7 +16,9 @@ from app.routers import ytSumm_router
 from app.routers.article_router import router as article_router
 from app.routers.review_router import router as review_router
 from app.routers import cover_letter_router
-from app.routers import resumeParser_router
+from app.routers import resumeParser_router 
+from app.models.user import User
+from app.models.review import Review
 
 
 logging.basicConfig(

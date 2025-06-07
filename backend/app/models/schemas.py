@@ -1,5 +1,5 @@
 from typing import List, Optional, Dict, Any 
-from pydantic import BaseModel, EmailStr, HttpUrl, field_validator
+from pydantic import BaseModel, EmailStr, Field, HttpUrl, field_validator
 from enum import Enum
 from datetime import datetime
 import re
@@ -82,7 +82,7 @@ class UserResponse(UserBase):
     subscription_type: SubscriptionTypeEnum
     
     class Config:
-        orm_mode = True
+        from_attributes = True  # Changed from orm_mode = True
 
 class CreateOrderRequest(BaseModel):
     order_id: str
@@ -169,4 +169,33 @@ class CoverLetterResponse(BaseModel):
 class ResumeExtractionResponse(BaseModel):
     success: bool
     text: Optional[str] = None
-    message: Optional[str] = None
+    message: Optional[str] = None 
+
+# Review Schemas
+class ReviewBase(BaseModel):
+    rating: int = Field(..., ge=1, le=5, description="Rating must be between 1 and 5")
+    feedback: Optional[str] = Field(None, max_length=500, description="Feedback text")
+
+class ReviewCreate(ReviewBase):
+    email: EmailStr
+
+class ReviewUpdate(BaseModel):
+    rating: Optional[int] = Field(None, ge=1, le=5)
+    feedback: Optional[str] = Field(None, max_length=500)
+
+class ReviewResponse(ReviewBase):
+    id: int
+    email: str
+    created_at: datetime
+    updated_at: datetime
+    
+    class Config:
+        from_attributes = True  # Changed from orm_mode = True
+
+class ReviewWithUser(ReviewResponse):
+    user: UserResponse
+
+class APIResponse(BaseModel):
+    success: bool
+    message: str
+    data: Optional[Any] = None

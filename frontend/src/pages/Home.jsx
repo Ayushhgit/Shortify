@@ -54,17 +54,29 @@ const ShortifyLanding = () => {
 
   const handleSend = async () => {
     if (!user || !user.email) {
-      displayToast("Please log in to submit a review.");
+      displayToast("Please log in to submit a review.", "error");
+      return;
+    }
+
+    if (rating === 0) {
+      displayToast("Please select a rating.", "error");
+      return;
+    }
+
+    if (!feedback.trim()) {
+      displayToast("Please provide feedback.", "error");
       return;
     }
 
     const reviewPayload = {
       email: user.email,
       rating,
-      feedback,
+      feedback: feedback.trim(),
     };
+
     try {
-      const review = await fetch("http://localhost:8000/api/reviews", {
+      // Fixed: Changed variable name from 'review' to 'response'
+      const response = await fetch("http://localhost:8000/api/reviews", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -72,21 +84,92 @@ const ShortifyLanding = () => {
         body: JSON.stringify(reviewPayload),
       });
 
+      const data = await response.json();
+
       if (response.ok) {
         // Clear form
-        displayToast("Thanks for your feedback!");
+        displayToast("Thanks for your feedback!", "success");
         setShowForm(false);
         setRating(0);
         setFeedback("");
+        setHovered(0);
       } else {
-        displayToast("Failed to submit review. Please try again.")
+        displayToast(data.detail || "Failed to submit review. Please try again.", "error");
       }
     } catch (err) {
       console.error("Error submitting review:", err);
-      displayToast("Something went wrong while submitting your review.");
+      displayToast("Something went wrong while submitting your review.", "error");
     }
-    
   };
+
+  // Enhanced review form component (optional improvement)
+  const ReviewForm = () => (
+    <div className="mt-10 max-w-xl mx-auto bg-white/5 backdrop-blur-lg border border-white/10 p-8 rounded-3xl shadow-xl">
+      <h3 className="text-xl font-semibold text-white mb-6 text-center">Share Your Experience</h3>
+
+      {/* Stars */}
+      <div className="flex justify-center mb-6">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <Star
+            key={star}
+            onMouseEnter={() => setHovered(star)}
+            onMouseLeave={() => setHovered(0)}
+            onClick={() => setRating(star)}
+            className={`w-10 h-10 cursor-pointer transition-all duration-200 mx-1 ${(hovered || rating) >= star
+                ? "text-yellow-400 fill-current scale-110"
+                : "text-gray-500 hover:text-gray-400"
+              }`}
+          />
+        ))}
+      </div>
+
+      {/* Rating text */}
+      {rating > 0 && (
+        <p className="text-center text-gray-300 mb-4">
+          {rating === 1 && "Poor"}
+          {rating === 2 && "Fair"}
+          {rating === 3 && "Good"}
+          {rating === 4 && "Very Good"}
+          {rating === 5 && "Excellent"}
+        </p>
+      )}
+
+      {/* Feedback Text Area */}
+      <textarea
+        placeholder="Tell us about your experience with Shortify..."
+        rows={4}
+        value={feedback}
+        onChange={(e) => setFeedback(e.target.value)}
+        className="w-full px-4 py-3 rounded-xl bg-gray-800/50 text-white border border-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-6 resize-none"
+        maxLength={500}
+      />
+
+      <div className="text-right text-sm text-gray-400 mb-4">
+        {feedback.length}/500
+      </div>
+
+      <div className="flex gap-3">
+        <button
+          onClick={() => {
+            setShowForm(false);
+            setRating(0);
+            setFeedback("");
+            setHovered(0);
+          }}
+          className="flex-1 px-6 py-3 rounded-xl bg-gray-700 text-white font-semibold hover:bg-gray-600 transition-all"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleSend}
+          disabled={rating === 0 || !feedback.trim()}
+          className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-6 py-3 rounded-xl font-semibold hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+        >
+          Send Feedback
+        </button>
+      </div>
+    </div>
+  );
 
   const features = [
     {
@@ -127,7 +210,7 @@ const ShortifyLanding = () => {
   ];
 
   return (
-    
+
     <div className="min-h-screen bg-gradient-to-br from-black to-gray-900 text-white overflow-hidden relative">
       {/* Ultra-Premium Animated Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
@@ -187,7 +270,7 @@ const ShortifyLanding = () => {
               </span>
             </p>
             <HelloBot>
-              
+
             </HelloBot>
           </div>
 
@@ -308,11 +391,10 @@ const ShortifyLanding = () => {
                   onMouseEnter={() => setHovered(star)}
                   onMouseLeave={() => setHovered(0)}
                   onClick={() => setRating(star)}
-                  className={`w-8 h-8 cursor-pointer transition-colors ${
-                    (hovered || rating) >= star
+                  className={`w-8 h-8 cursor-pointer transition-colors ${(hovered || rating) >= star
                       ? "text-yellow-400 fill-current"
                       : "text-gray-500"
-                  }`}
+                    }`}
                 />
               ))}
             </div>
