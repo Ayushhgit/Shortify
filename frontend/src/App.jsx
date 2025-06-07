@@ -16,6 +16,7 @@ import CorporateSection from "./pages/CorporateUseCase";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import ResumeAnalyzer from "./pages/ResumeAnalyzer";
+import ArticleSummarizer from "./pages/ArticleSummarizer";
 
 
 const LayoutWrapper = ({ children }) => {
@@ -28,6 +29,7 @@ const LayoutWrapper = ({ children }) => {
     "/features/shorts-generator",
     "/features/summarizer",
     "/features/ResumeAnalyzer",
+    "/features/ArticleSummarizer",
     "/Profile",
     "/Settings",
     "/",
@@ -63,6 +65,7 @@ function App() {
           <Route path="/features/shorts-generator" element={<ShortsGenerator />} />
           <Route path="/features/pdf-summarizer" element={<PdfSummarizer />} />
           <Route path="/features/ResumeAnalyzer" element={<ResumeAnalyzer />}/>
+          <Route path="/features/ArticleSummarizer" element={<ArticleSummarizer />}/>
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>

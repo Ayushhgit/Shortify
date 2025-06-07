@@ -107,3 +107,17 @@ class review(BaseModel):
     email: EmailStr
     rating: int
     review: Optional[str] = None
+
+class ArticleRequest(BaseModel):
+    url: HttpUrl
+
+class ArticleDetails(BaseModel):
+    title: Optional[str] = None
+    author: Optional[str] = None
+    publishDate: Optional[str] = None
+    domain: Optional[str] = None
+    readTime: Optional[int] = None
+
+class ArticleResponse(BaseModel):
+    summary: str
+    articleDetails: ArticleDetails
