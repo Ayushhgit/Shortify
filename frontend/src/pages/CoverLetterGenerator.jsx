@@ -35,7 +35,23 @@ export default function CoverLetterGenerator() {
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState("success");
   const [errors, setErrors] = useState({});
-  const [uploadMethod, setUploadMethod] = useState("file"); // "file" or "text"
+  const [uploadMethod, setUploadMethod] = useState("file"); // "file" or "text" 
+
+  const handleUploadMethodChange = (method) => {
+    setUploadMethod(method);
+
+    // Clear data when switching methods to avoid confusion
+    if (method === "text") {
+      setFormData(prev => ({ ...prev, resumeFile: null }));
+    } else if (method === "file") {
+      setFormData(prev => ({ ...prev, resumeText: "" }));
+    }
+
+    // Clear any existing errors
+    if (errors.resume) {
+      setErrors(prev => ({ ...prev, resume: "" }));
+    }
+  };
 
   // Backend API URL - change this to your deployed backend URL
   const API_BASE_URL = "http://localhost:8000";
@@ -70,19 +86,21 @@ export default function CoverLetterGenerator() {
   const validateForm = () => {
     const newErrors = {};
 
-    if (
-      uploadMethod === "file" &&
-      !formData.resumeFile &&
-      !formData.resumeText.trim()
-    ) {
-      newErrors.resume = "Please upload a resume file or extract text first";
-    } else if (uploadMethod === "text" && !formData.resumeText.trim()) {
-      newErrors.resume = "Resume/background text is required";
+    // Check if we have resume content from either method
+    const hasResumeText = formData.resumeText && formData.resumeText.trim();
+    const hasResumeFile = formData.resumeFile;
+    const isProcessingFile = isExtractingResume;
+
+    if (!hasResumeText && !hasResumeFile && !isProcessingFile) {
+      newErrors.resume = "Resume content is required. Please upload a file or paste text.";
+    } else if (hasResumeFile && !hasResumeText && !isProcessingFile) {
+      newErrors.resume = "File uploaded but content extraction failed. Please try again or paste text manually.";
+    } else if (isProcessingFile) {
+      newErrors.resume = "Please wait for file processing to complete.";
     }
 
     if (!formData.job.trim()) newErrors.job = "Job description is required";
-    if (!formData.company.trim())
-      newErrors.company = "Company name is required";
+    if (!formData.company.trim()) newErrors.company = "Company name is required";
     if (!formData.role.trim()) newErrors.role = "Role/position is required";
 
     setErrors(newErrors);
@@ -137,11 +155,13 @@ export default function CoverLetterGenerator() {
 
       const data = await response.json();
 
-      setFormData((prev) => ({ ...prev, resumeText: data.extracted_text }));
+      setFormData((prev) => ({ ...prev, resumeText: data.text }));
       displayToast("Resume uploaded and processed successfully!");
     } catch (error) {
       console.error("Error processing resume:", error);
       displayToast(`Error processing resume: ${error.message}`, "error");
+      // Don't remove the file, allow manual text entry as fallback
+      setFormData((prev) => ({ ...prev, resumeText: `[File uploaded: ${file.name}] - Please paste your resume content manually below or try uploading again.` }));
     } finally {
       setIsExtractingResume(false);
     }
@@ -171,6 +191,8 @@ export default function CoverLetterGenerator() {
         role: formData.role,
       };
 
+      console.log('Request payload:', jsonPayload);
+      console.log('API URL:', `${API_BASE_URL}/generate-cover-letter`);
       const response = await fetch(`${API_BASE_URL}/generate-cover-letter`, {
         method: "POST",
         headers: {
@@ -179,10 +201,16 @@ export default function CoverLetterGenerator() {
         body: JSON.stringify(jsonPayload),
       });
 
-      
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || "Failed to generate cover letter");
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch (parseError) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        console.error('Backend error details:', errorData);
+        throw new Error(errorData.detail || errorData.message || `HTTP ${response.status}: Failed to generate cover letter`);
       }
 
       const data = await response.json();
@@ -195,7 +223,11 @@ export default function CoverLetterGenerator() {
       }
     } catch (error) {
       console.error("Error generating cover letter:", error);
-      displayToast(`Error: ${error.message}`, "error");
+      let errorMessage = error.message;
+      if (errorMessage === '[object Object]' || !errorMessage) {
+        errorMessage = 'Server validation error. Please check your input data.';
+      }
+      displayToast(`Error: ${errorMessage}`, "error");
     } finally {
       setIsGenerating(false);
     }
@@ -312,7 +344,7 @@ export default function CoverLetterGenerator() {
               <div className="space-y-6">
                 {/* Company Name */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2 flex items-center">
+                  <label className="block text-sm font-medium text-gray-300 mb-2 items-center">
                     <Building2 className="w-4 h-4 mr-2" />
                     Company Name *
                   </label>
@@ -323,9 +355,8 @@ export default function CoverLetterGenerator() {
                       handleInputChange("company", e.target.value)
                     }
                     placeholder="e.g., Google, Microsoft, Meta"
-                    className={`w-full px-4 py-3 rounded-xl bg-white/10 border ${
-                      errors.company ? "border-red-400" : "border-white/30"
-                    } text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 backdrop-blur-sm`}
+                    className={`w-full px-4 py-3 rounded-xl bg-white/10 border ${errors.company ? "border-red-400" : "border-white/30"
+                      } text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 backdrop-blur-sm`}
                   />
                   {errors.company && (
                     <p className="text-red-400 text-sm mt-1">
@@ -336,7 +367,7 @@ export default function CoverLetterGenerator() {
 
                 {/* Role/Position */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2 flex items-center">
+                  <label className="block text-sm font-medium text-gray-300 mb-2 items-center">
                     <Briefcase className="w-4 h-4 mr-2" />
                     Role/Position *
                   </label>
@@ -345,9 +376,8 @@ export default function CoverLetterGenerator() {
                     value={formData.role}
                     onChange={(e) => handleInputChange("role", e.target.value)}
                     placeholder="e.g., Software Engineer, Product Manager"
-                    className={`w-full px-4 py-3 rounded-xl bg-white/10 border ${
-                      errors.role ? "border-red-400" : "border-white/30"
-                    } text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 backdrop-blur-sm`}
+                    className={`w-full px-4 py-3 rounded-xl bg-white/10 border ${errors.role ? "border-red-400" : "border-white/30"
+                      } text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 backdrop-blur-sm`}
                   />
                   {errors.role && (
                     <p className="text-red-400 text-sm mt-1">{errors.role}</p>
@@ -356,7 +386,7 @@ export default function CoverLetterGenerator() {
 
                 {/* Tone Selection */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2 flex items-center">
+                  <label className="block text-sm font-medium text-gray-300 mb-2 items-center">
                     <User className="w-4 h-4 mr-2" />
                     Tone
                   </label>
@@ -390,24 +420,22 @@ export default function CoverLetterGenerator() {
                   <div className="flex bg-white/10 rounded-xl p-1 mb-4">
                     <button
                       type="button"
-                      onClick={() => setUploadMethod("file")}
-                      className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                        uploadMethod === "file"
-                          ? "bg-purple-500 text-white"
-                          : "text-gray-300 hover:text-white"
-                      }`}
+                      onClick={() => handleUploadMethodChange("file")}
+                      className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${uploadMethod === "file"
+                        ? "bg-purple-500 text-white"
+                        : "text-gray-300 hover:text-white"
+                        }`}
                     >
                       <Upload className="w-4 h-4 inline mr-2" />
                       Upload File
                     </button>
                     <button
                       type="button"
-                      onClick={() => setUploadMethod("text")}
-                      className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                        uploadMethod === "text"
-                          ? "bg-purple-500 text-white"
-                          : "text-gray-300 hover:text-white"
-                      }`}
+                      onClick={() => handleUploadMethodChange("text")}
+                      className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${uploadMethod === "text"
+                        ? "bg-purple-500 text-white"
+                        : "text-gray-300 hover:text-white"
+                        }`}
                     >
                       <FileText className="w-4 h-4 inline mr-2" />
                       Paste Text
@@ -425,11 +453,10 @@ export default function CoverLetterGenerator() {
                             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                           />
                           <div
-                            className={`w-full px-4 py-8 rounded-xl border-2 border-dashed ${
-                              errors.resume
-                                ? "border-red-400"
-                                : "border-white/30"
-                            } text-center hover:border-purple-400 transition-all duration-300 bg-white/5`}
+                            className={`w-full px-4 py-8 rounded-xl border-2 border-dashed ${errors.resume
+                              ? "border-red-400"
+                              : "border-white/30"
+                              } text-center hover:border-purple-400 transition-all duration-300 bg-white/5`}
                           >
                             <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
                             <p className="text-gray-300 mb-1">
@@ -498,9 +525,8 @@ export default function CoverLetterGenerator() {
                       }
                       placeholder="Paste your resume content or key experiences, skills, and achievements..."
                       rows={6}
-                      className={`w-full px-4 py-3 rounded-xl bg-white/10 border ${
-                        errors.resume ? "border-red-400" : "border-white/30"
-                      } text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 backdrop-blur-sm resize-none`}
+                      className={`w-full px-4 py-3 rounded-xl bg-white/10 border ${errors.resume ? "border-red-400" : "border-white/30"
+                        } text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 backdrop-blur-sm resize-none`}
                     />
                   )}
 
@@ -519,9 +545,8 @@ export default function CoverLetterGenerator() {
                     onChange={(e) => handleInputChange("job", e.target.value)}
                     placeholder="Paste the full job description including requirements, responsibilities, and qualifications..."
                     rows={6}
-                    className={`w-full px-4 py-3 rounded-xl bg-white/10 border ${
-                      errors.job ? "border-red-400" : "border-white/30"
-                    } text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 backdrop-blur-sm resize-none`}
+                    className={`w-full px-4 py-3 rounded-xl bg-white/10 border ${errors.job ? "border-red-400" : "border-white/30"
+                      } text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 backdrop-blur-sm resize-none`}
                   />
                   {errors.job && (
                     <p className="text-red-400 text-sm mt-1">{errors.job}</p>
@@ -534,11 +559,10 @@ export default function CoverLetterGenerator() {
                     type="button"
                     onClick={handleSubmit}
                     disabled={isGenerating}
-                    className={`flex-1 group relative px-6 py-4 rounded-2xl font-bold text-white transition-all duration-300 hover:scale-105 hover:shadow-2xl ${
-                      isGenerating
-                        ? "bg-gray-600/50 cursor-not-allowed"
-                        : "bg-gradient-to-r from-purple-500 to-pink-500"
-                    }`}
+                    className={`flex-1 group relative px-6 py-4 rounded-2xl font-bold text-white transition-all duration-300 hover:scale-105 hover:shadow-2xl ${isGenerating
+                      ? "bg-gray-600/50 cursor-not-allowed"
+                      : "bg-gradient-to-r from-purple-500 to-pink-500"
+                      }`}
                   >
                     <div className="flex items-center justify-center space-x-3">
                       {isGenerating ? (
@@ -567,8 +591,8 @@ export default function CoverLetterGenerator() {
             </div>
 
             {/* Preview Section */}
-            <div className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8">
-              <div className="flex items-center justify-between mb-6">
+            <div className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-4 sm:p-6 md:p-8 w-full">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 space-y-4 md:space-y-0">
                 <div className="flex items-center">
                   <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl mr-3">
                     <Mail className="w-6 h-6 text-white" />
@@ -598,7 +622,7 @@ export default function CoverLetterGenerator() {
                 )}
               </div>
 
-              <div className="min-h-[500px] max-h-[600px] overflow-y-auto">
+              <div className="min-h-[400px] max-h-[70vh] md:max-h-[600px] overflow-y-auto">
                 {!generatedLetter && !isGenerating && (
                   <div className="text-center text-gray-400 py-16">
                     <Mail className="h-16 w-16 mx-auto mb-4 opacity-50" />
@@ -622,9 +646,9 @@ export default function CoverLetterGenerator() {
                 )}
 
                 {generatedLetter && (
-                  <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
-                    <div className="prose max-w-none">
-                      <div className="whitespace-pre-line text-gray-200 leading-relaxed">
+                  <div className="bg-white/5 rounded-2xl p-4 md:p-6 border border-white/10">
+                    <div className="prose prose-sm md:prose-base max-w-none">
+                      <div className="whitespace-pre-line text-gray-200 leading-relaxed text-sm md:text-base">
                         {generatedLetter}
                       </div>
                     </div>
@@ -632,6 +656,7 @@ export default function CoverLetterGenerator() {
                 )}
               </div>
             </div>
+
           </div>
         </div>
       </main>

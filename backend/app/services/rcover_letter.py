@@ -23,7 +23,7 @@ if not GROQ_API_KEY:
 llm = ChatGroq(
     temperature=0.7,
     groq_api_key=GROQ_API_KEY,
-    model_name="meta-llama/llama-4-scout-17b-16e-instruct"  
+    model_name="llama3-8b-8192"  
 )
 
 # Document processing functions
@@ -84,7 +84,7 @@ COVER_LETTER_PROMPT = ChatPromptTemplate.from_messages([
     2. Match the candidate's background to the specific job requirements
     3. Use the specified tone while maintaining professionalism
     4. Structure: Opening paragraph (interest + brief intro), body paragraphs (relevant experience/skills), closing paragraph (call to action)
-    5. Keep it concise (3-4 paragraphs, ~300-400 words)
+    5. Keep it concise (1-2 paragraphs, ~100-200 words)
     6. Avoid generic statements; be specific and tailored
     7. Show enthusiasm for the role and company
     8. Include specific examples from the resume when relevant
