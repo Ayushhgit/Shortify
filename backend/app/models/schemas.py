@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Dict, Any 
 from pydantic import BaseModel, EmailStr, HttpUrl, field_validator
 from enum import Enum
 from datetime import datetime
@@ -121,3 +121,35 @@ class ArticleDetails(BaseModel):
 class ArticleResponse(BaseModel):
     summary: str
     articleDetails: ArticleDetails
+
+class ArticleChatRequest(BaseModel):
+    message: str
+    article_content: Optional[str] = None
+    article_url: Optional[str] = None
+
+class ArticleChatResponse(BaseModel):
+    response: str
+    timestamp: str
+    source_info: Optional[Dict[str, Any]] = None
+
+class BatchChatMessage(BaseModel):
+    message: str
+    timestamp: Optional[str] = None
+
+class BatchArticleChatRequest(BaseModel):
+    messages: List[BatchChatMessage]
+    article_content: str
+
+class BatchArticleChatResponse(BaseModel):
+    responses: List[Dict[str, Any]]
+    total_processed: int
+
+class SimpleChatRequest(BaseModel):
+    message: str
+    article_content: str
+    article_url: Optional[str] = None
+
+class SimpleChatResponse(BaseModel):
+    response: str
+    timestamp: str
+    article_url: Optional[str] = None

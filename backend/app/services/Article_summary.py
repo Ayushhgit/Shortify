@@ -10,24 +10,81 @@ from urllib.parse import urlparse
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
 import os
-from langchain_anthropic import ChatAnthropic
-from langchain.schema import HumanMessage
+import json
 import logging
+from groq import Groq  # Add this import
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Groq API configuration
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
-
-try:
-    claude = ChatAnthropic(
-        model="claude-3-sonnet-20240229",
-        anthropic_api_key=os.getenv("ANTHROPIC_API_KEY")
-    )
-except Exception as e:
-    logger.warning(f"Claude client initialization failed: {e}")
-    claude = None
+def generate_summary_with_groq(content: str) -> str:
+    """
+    Generate summary using Groq API
+    """
+    if not GROQ_API_KEY:
+        logger.warning("Groq API key not found, using fallback summary")
+        # Fallback simple summary if Groq API key is not available
+        sentences = content.split('.')[:5]  # Take first 5 sentences
+        return '. '.join(sentences) + '.'
+    
+    try:
+        headers = {
+            "Authorization": f"Bearer {GROQ_API_KEY}",
+            "Content-Type": "application/json"
+        }
+        
+        # Limit content to avoid token limits (Groq has context limits)
+        truncated_content = content[:6000] if len(content) > 6000 else content
+        
+        payload = {
+            "model": "llama3-70b-8192",  # You can also use "mixtral-8x7b-32768" or "gemma-7b-it"
+            "messages": [
+                {
+                    "role": "system",
+                    "content": "You are a professional article summarizer. Create comprehensive yet concise summaries that capture the main points, key arguments, and important details. Structure your summaries with clear paragraphs and use bullet points where appropriate to make them informative and easy to understand."
+                },
+                {
+                    "role": "user",
+                    "content": f"Please provide a comprehensive yet concise summary of the following article:\n\n{truncated_content}"
+                }
+            ],
+            "temperature": 0.3,
+            "max_tokens": 1000,
+            "top_p": 0.9
+        }
+        
+        response = requests.post(GROQ_API_URL, headers=headers, json=payload, timeout=30)
+        
+        if response.status_code == 200:
+            result = response.json()
+            summary = result['choices'][0]['message']['content'].strip()
+            return summary
+        else:
+            logger.error(f"Groq API error {response.status_code}: {response.text}")
+            raise Exception(f"Groq API returned status code {response.status_code}")
+            
+    except Exception as e:
+        logger.error(f"Groq summarization failed: {e}")
+        # Fallback to simple extractive summary
+        sentences = content.split('.')
+        # Take first few sentences up to ~300 words
+        summary_sentences = []
+        word_count = 0
+        for sentence in sentences:
+            sentence = sentence.strip()
+            if sentence:
+                sentence_words = len(sentence.split())
+                if word_count + sentence_words > 300:
+                    break
+                summary_sentences.append(sentence)
+                word_count += sentence_words
+        
+        return '. '.join(summary_sentences) + '.'
 
 def extract_article_content(url: str) -> tuple[str, ArticleDetails]:
     """
@@ -133,51 +190,6 @@ def extract_article_content(url: str) -> tuple[str, ArticleDetails]:
     
     raise HTTPException(status_code=400, detail="Could not extract meaningful content from the provided URL")
 
-def generate_summary_with_claude(content: str) -> str:
-    """
-    Generate summary using Claude via LangChain
-    """
-    if not claude:
-        # Fallback simple summary if Claude is not available
-        sentences = content.split('.')[:5]  # Take first 5 sentences
-        return '. '.join(sentences) + '.'
-    
-    try:
-        prompt = f"""
-        Please provide a comprehensive yet concise summary of the following article. 
-        Focus on the main points, key arguments, and important details. 
-        Structure the summary with clear paragraphs and bullet points where appropriate.
-        Make it informative and easy to understand.
-
-        Article content:
-        {content[:8000]}  # Limit content to avoid token limits
-        
-        Summary:
-        """
-        
-        message = HumanMessage(content=prompt)
-        response = claude([message])
-        
-        return response.content.strip()
-        
-    except Exception as e:
-        logger.error(f"Claude summarization failed: {e}")
-        # Fallback to simple extractive summary
-        sentences = content.split('.')
-        # Take first few sentences up to ~300 words
-        summary_sentences = []
-        word_count = 0
-        for sentence in sentences:
-            sentence = sentence.strip()
-            if sentence:
-                sentence_words = len(sentence.split())
-                if word_count + sentence_words > 300:
-                    break
-                summary_sentences.append(sentence)
-                word_count += sentence_words
-        
-        return '. '.join(summary_sentences) + '.'
-
 async def process_article_async(url: str) -> tuple[str, ArticleDetails]:
     """
     Process article extraction in a thread pool to avoid blocking
@@ -185,3 +197,103 @@ async def process_article_async(url: str) -> tuple[str, ArticleDetails]:
     loop = asyncio.get_event_loop()
     with ThreadPoolExecutor() as executor:
         return await loop.run_in_executor(executor, extract_article_content, url)
+
+def chat_with_article(user_message: str, article_content: str) -> str:
+    """
+    Generate a response to user's question based on article content
+    Similar to PDF chat functionality
+    """
+    if not GROQ_API_KEY:
+        return "Groq API key not configured. Please set GROQ_API_KEY environment variable."
+    
+    try:
+        # Create a prompt that combines the article content with the user's question
+        chat_prompt = f"""
+        Based on the following article content, please answer the user's question accurately and helpfully.
+        
+        ARTICLE CONTENT:
+        {article_content[:4000]}  # Limit content to avoid token limits
+        
+        USER QUESTION:
+        {user_message}
+        
+        Please provide a clear, informative response based on the article content. If the question cannot be answered from the article, please say so.
+        """
+        
+        # Initialize Groq client
+        client = Groq(api_key=GROQ_API_KEY)
+        
+        response = client.chat.completions.create(
+            model="meta-llama/llama-4-scout-17b-16e-instruct",  # or your preferred model
+            messages=[
+                {
+                    "role": "system", 
+                    "content": "You are a helpful assistant that answers questions based on provided article content. Be accurate and cite specific parts of the article when relevant."
+                },
+                {"role": "user", "content": chat_prompt}
+            ],
+            max_tokens=1000,
+            temperature=0.7
+        )
+        
+        return response.choices[0].message.content.strip()
+        
+    except Exception as e:
+        logger.error(f"Error in chat_with_article: {e}")
+        return f"Sorry, I encountered an error while processing your question: {str(e)}"
+
+def chat_with_article_simple(user_message: str, article_content: str) -> str:
+    """
+    Simplified version that creates a focused response using direct API calls
+    """
+    if not GROQ_API_KEY:
+        return "Groq API key not configured. Please set GROQ_API_KEY environment variable."
+    
+    try:
+        # Truncate article content if too long
+        max_content_length = 3000
+        if len(article_content) > max_content_length:
+            article_content = article_content[:max_content_length] + "..."
+        
+        prompt = f"""
+        Article: {article_content}
+        
+        Question: {user_message}
+        
+        Answer the question based on the article content above. Be concise and accurate.
+        """
+        
+        # Use direct API call (consistent with your generate_summary_with_groq function)
+        headers = {
+            "Authorization": f"Bearer {GROQ_API_KEY}",
+            "Content-Type": "application/json"
+        }
+        
+        payload = {
+            "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+            "messages": [
+                {
+                    "role": "system",
+                    "content": "You are a helpful assistant that answers questions based on provided article content. Be concise and accurate."
+                },
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            "max_tokens": 800,
+            "temperature": 0.5
+        }
+        
+        response = requests.post(GROQ_API_URL, headers=headers, json=payload, timeout=30)
+        
+        if response.status_code == 200:
+            result = response.json()
+            return result['choices'][0]['message']['content'].strip()
+        else:
+            logger.error(f"Groq API error {response.status_code}: {response.text}")
+            return f"Error: Groq API returned status code {response.status_code}"
+        
+    except Exception as e:
+        logger.error(f"Error in chat_with_article_simple: {e}")
+        return f"Error generating response: {str(e)}"
