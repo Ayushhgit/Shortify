@@ -15,8 +15,8 @@ from app.routers.export_share import router as export_share_router
 from app.routers import ytSumm_router
 from app.routers.article_router import router as article_router
 from app.routers.review_router import router as review_router
-
-
+from app.routers import cover_letter_router
+from app.routers import resumeParser_router
 
 
 logging.basicConfig(
@@ -51,6 +51,8 @@ app.include_router(pdf_router.router)
 app.include_router(export_share_router)
 app.include_router(review_router)
 app.include_router(article_router)
+app.include_router(resumeParser_router.router)
+app.include_router(cover_letter_router.router)
 
 @app.get("/", tags=["status"])
 async def root():

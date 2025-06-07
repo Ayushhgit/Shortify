@@ -17,6 +17,7 @@ import {
   X,
   File,
 } from "lucide-react";
+import Toast from "../components/Toast";
 
 export default function CoverLetterGenerator() {
   const [formData, setFormData] = useState({
@@ -25,7 +26,7 @@ export default function CoverLetterGenerator() {
     job: "",
     tone: "professional",
     company: "",
-    role: ""
+    role: "",
   });
   const [isGenerating, setIsGenerating] = useState(false);
   const [isExtractingResume, setIsExtractingResume] = useState(false);
@@ -35,16 +36,28 @@ export default function CoverLetterGenerator() {
   const [toastType, setToastType] = useState("success");
   const [errors, setErrors] = useState({});
   const [uploadMethod, setUploadMethod] = useState("file"); // "file" or "text"
-  
+
   // Backend API URL - change this to your deployed backend URL
   const API_BASE_URL = "http://localhost:8000";
 
   const toneOptions = [
-    { value: "professional", label: "Professional", desc: "Formal and business-like" },
+    {
+      value: "professional",
+      label: "Professional",
+      desc: "Formal and business-like",
+    },
     { value: "friendly", label: "Friendly", desc: "Warm yet professional" },
-    { value: "enthusiastic", label: "Enthusiastic", desc: "Energetic and excited" },
-    { value: "confident", label: "Confident", desc: "Assertive and self-assured" },
-    { value: "casual", label: "Casual", desc: "Relaxed but respectful" }
+    {
+      value: "enthusiastic",
+      label: "Enthusiastic",
+      desc: "Energetic and excited",
+    },
+    {
+      value: "confident",
+      label: "Confident",
+      desc: "Assertive and self-assured",
+    },
+    { value: "casual", label: "Casual", desc: "Relaxed but respectful" },
   ];
 
   const displayToast = (message, type = "success") => {
@@ -56,25 +69,30 @@ export default function CoverLetterGenerator() {
 
   const validateForm = () => {
     const newErrors = {};
-    
-    if (uploadMethod === "file" && !formData.resumeFile && !formData.resumeText.trim()) {
+
+    if (
+      uploadMethod === "file" &&
+      !formData.resumeFile &&
+      !formData.resumeText.trim()
+    ) {
       newErrors.resume = "Please upload a resume file or extract text first";
     } else if (uploadMethod === "text" && !formData.resumeText.trim()) {
       newErrors.resume = "Resume/background text is required";
     }
-    
+
     if (!formData.job.trim()) newErrors.job = "Job description is required";
-    if (!formData.company.trim()) newErrors.company = "Company name is required";
+    if (!formData.company.trim())
+      newErrors.company = "Company name is required";
     if (!formData.role.trim()) newErrors.role = "Role/position is required";
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleInputChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: "" }));
+      setErrors((prev) => ({ ...prev, [field]: "" }));
     }
   };
 
@@ -83,7 +101,12 @@ export default function CoverLetterGenerator() {
     if (!file) return;
 
     // Validate file type
-    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'];
+    const allowedTypes = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "text/plain",
+    ];
     if (!allowedTypes.includes(file.type)) {
       displayToast("Please upload a PDF, DOC, DOCX, or TXT file", "error");
       return;
@@ -95,26 +118,26 @@ export default function CoverLetterGenerator() {
       return;
     }
 
-    setFormData(prev => ({ ...prev, resumeFile: file }));
+    setFormData((prev) => ({ ...prev, resumeFile: file }));
     setIsExtractingResume(true);
 
     try {
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append("file", file);
 
       const response = await fetch(`${API_BASE_URL}/extract-resume`, {
-        method: 'POST',
+        method: "POST",
         body: formData,
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.detail || 'Failed to extract resume text');
+        throw new Error(errorData.detail || "Failed to extract resume text");
       }
 
       const data = await response.json();
-      
-      setFormData(prev => ({ ...prev, resumeText: data.extracted_text }));
+
+      setFormData((prev) => ({ ...prev, resumeText: data.extracted_text }));
       displayToast("Resume uploaded and processed successfully!");
     } catch (error) {
       console.error("Error processing resume:", error);
@@ -125,12 +148,12 @@ export default function CoverLetterGenerator() {
   };
 
   const removeFile = () => {
-    setFormData(prev => ({ ...prev, resumeFile: null, resumeText: "" }));
+    setFormData((prev) => ({ ...prev, resumeFile: null, resumeText: "" }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       displayToast("Please fill in all required fields", "error");
       return;
@@ -140,30 +163,35 @@ export default function CoverLetterGenerator() {
     setGeneratedLetter("");
 
     try {
-      const formDataToSend = new FormData();
-      formDataToSend.append('resume_text', formData.resumeText);
-      formDataToSend.append('job_description', formData.job);
-      formDataToSend.append('company_name', formData.company);
-      formDataToSend.append('role', formData.role);
-      formDataToSend.append('tone', formData.tone);
+      const jsonPayload = {
+        resume: formData.resumeText,
+        job: formData.job,
+        tone: formData.tone,
+        company: formData.company,
+        role: formData.role,
+      };
 
       const response = await fetch(`${API_BASE_URL}/generate-cover-letter`, {
-        method: 'POST',
-        body: formDataToSend,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(jsonPayload),
       });
 
+      
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.detail || 'Failed to generate cover letter');
+        throw new Error(errorData.detail || "Failed to generate cover letter");
       }
 
       const data = await response.json();
-      
+
       if (data.success) {
         setGeneratedLetter(data.cover_letter);
         displayToast("Cover letter generated successfully!");
       } else {
-        throw new Error(data.message || 'Failed to generate cover letter');
+        throw new Error(data.message || "Failed to generate cover letter");
       }
     } catch (error) {
       console.error("Error generating cover letter:", error);
@@ -186,7 +214,11 @@ export default function CoverLetterGenerator() {
     const element = document.createElement("a");
     const file = new Blob([generatedLetter], { type: "text/plain" });
     element.href = URL.createObjectURL(file);
-    element.download = `${formData.company}_${formData.role}_cover_letter.txt`.replace(/[^a-z0-9]/gi, "_");
+    element.download =
+      `${formData.company}_${formData.role}_cover_letter.txt`.replace(
+        /[^a-z0-9]/gi,
+        "_"
+      );
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
@@ -200,7 +232,7 @@ export default function CoverLetterGenerator() {
       job: "",
       tone: "professional",
       company: "",
-      role: ""
+      role: "",
     });
     setGeneratedLetter("");
     setErrors({});
@@ -260,7 +292,8 @@ export default function CoverLetterGenerator() {
               </span>
             </h1>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              Generate personalized, compelling cover letters tailored to any job description and company using AI
+              Generate personalized, compelling cover letters tailored to any
+              job description and company using AI
             </p>
           </div>
 
@@ -271,7 +304,9 @@ export default function CoverLetterGenerator() {
                 <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl mr-3">
                   <FileText className="w-6 h-6 text-white" />
                 </div>
-                <h2 className="text-2xl font-bold text-white">Cover Letter Details</h2>
+                <h2 className="text-2xl font-bold text-white">
+                  Cover Letter Details
+                </h2>
               </div>
 
               <div className="space-y-6">
@@ -284,13 +319,19 @@ export default function CoverLetterGenerator() {
                   <input
                     type="text"
                     value={formData.company}
-                    onChange={(e) => handleInputChange("company", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("company", e.target.value)
+                    }
                     placeholder="e.g., Google, Microsoft, Meta"
                     className={`w-full px-4 py-3 rounded-xl bg-white/10 border ${
                       errors.company ? "border-red-400" : "border-white/30"
                     } text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 backdrop-blur-sm`}
                   />
-                  {errors.company && <p className="text-red-400 text-sm mt-1">{errors.company}</p>}
+                  {errors.company && (
+                    <p className="text-red-400 text-sm mt-1">
+                      {errors.company}
+                    </p>
+                  )}
                 </div>
 
                 {/* Role/Position */}
@@ -308,7 +349,9 @@ export default function CoverLetterGenerator() {
                       errors.role ? "border-red-400" : "border-white/30"
                     } text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 backdrop-blur-sm`}
                   />
-                  {errors.role && <p className="text-red-400 text-sm mt-1">{errors.role}</p>}
+                  {errors.role && (
+                    <p className="text-red-400 text-sm mt-1">{errors.role}</p>
+                  )}
                 </div>
 
                 {/* Tone Selection */}
@@ -320,11 +363,17 @@ export default function CoverLetterGenerator() {
                   <div className="relative">
                     <select
                       value={formData.tone}
-                      onChange={(e) => handleInputChange("tone", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("tone", e.target.value)
+                      }
                       className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/30 text-white focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 backdrop-blur-sm appearance-none cursor-pointer"
                     >
                       {toneOptions.map((option) => (
-                        <option key={option.value} value={option.value} className="bg-gray-800">
+                        <option
+                          key={option.value}
+                          value={option.value}
+                          className="bg-gray-800"
+                        >
                           {option.label} - {option.desc}
                         </option>
                       ))}
@@ -375,9 +424,13 @@ export default function CoverLetterGenerator() {
                             onChange={handleFileUpload}
                             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                           />
-                          <div className={`w-full px-4 py-8 rounded-xl border-2 border-dashed ${
-                            errors.resume ? "border-red-400" : "border-white/30"
-                          } text-center hover:border-purple-400 transition-all duration-300 bg-white/5`}>
+                          <div
+                            className={`w-full px-4 py-8 rounded-xl border-2 border-dashed ${
+                              errors.resume
+                                ? "border-red-400"
+                                : "border-white/30"
+                            } text-center hover:border-purple-400 transition-all duration-300 bg-white/5`}
+                          >
                             <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
                             <p className="text-gray-300 mb-1">
                               Drop your resume here or click to browse
@@ -392,9 +445,16 @@ export default function CoverLetterGenerator() {
                           <div className="flex items-center">
                             <File className="w-5 h-5 text-purple-400 mr-3" />
                             <div>
-                              <p className="text-white font-medium">{formData.resumeFile.name}</p>
+                              <p className="text-white font-medium">
+                                {formData.resumeFile.name}
+                              </p>
                               <p className="text-gray-400 text-sm">
-                                {(formData.resumeFile.size / 1024 / 1024).toFixed(2)} MB
+                                {(
+                                  formData.resumeFile.size /
+                                  1024 /
+                                  1024
+                                ).toFixed(2)}{" "}
+                                MB
                               </p>
                             </div>
                           </div>
@@ -407,19 +467,25 @@ export default function CoverLetterGenerator() {
                           </button>
                         </div>
                       )}
-                      
+
                       {isExtractingResume && (
                         <div className="flex items-center justify-center mt-4 p-4 bg-white/5 rounded-xl">
                           <Loader2 className="w-5 h-5 animate-spin text-purple-400 mr-2" />
-                          <span className="text-gray-300">Processing resume...</span>
+                          <span className="text-gray-300">
+                            Processing resume...
+                          </span>
                         </div>
                       )}
-                      
+
                       {formData.resumeText && (
                         <div className="mt-4">
-                          <p className="text-gray-300 text-sm mb-2">Extracted content preview:</p>
+                          <p className="text-gray-300 text-sm mb-2">
+                            Extracted content preview:
+                          </p>
                           <div className="max-h-32 overflow-y-auto p-3 bg-white/5 rounded-xl border border-white/10">
-                            <p className="text-gray-300 text-sm">{formData.resumeText.substring(0, 200)}...</p>
+                            <p className="text-gray-300 text-sm">
+                              {formData.resumeText.substring(0, 200)}...
+                            </p>
                           </div>
                         </div>
                       )}
@@ -427,7 +493,9 @@ export default function CoverLetterGenerator() {
                   ) : (
                     <textarea
                       value={formData.resumeText}
-                      onChange={(e) => handleInputChange("resumeText", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("resumeText", e.target.value)
+                      }
                       placeholder="Paste your resume content or key experiences, skills, and achievements..."
                       rows={6}
                       className={`w-full px-4 py-3 rounded-xl bg-white/10 border ${
@@ -435,8 +503,10 @@ export default function CoverLetterGenerator() {
                       } text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 backdrop-blur-sm resize-none`}
                     />
                   )}
-                  
-                  {errors.resume && <p className="text-red-400 text-sm mt-1">{errors.resume}</p>}
+
+                  {errors.resume && (
+                    <p className="text-red-400 text-sm mt-1">{errors.resume}</p>
+                  )}
                 </div>
 
                 {/* Job Description */}
@@ -453,7 +523,9 @@ export default function CoverLetterGenerator() {
                       errors.job ? "border-red-400" : "border-white/30"
                     } text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 backdrop-blur-sm resize-none`}
                   />
-                  {errors.job && <p className="text-red-400 text-sm mt-1">{errors.job}</p>}
+                  {errors.job && (
+                    <p className="text-red-400 text-sm mt-1">{errors.job}</p>
+                  )}
                 </div>
 
                 {/* Action Buttons */}
@@ -501,9 +573,11 @@ export default function CoverLetterGenerator() {
                   <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl mr-3">
                     <Mail className="w-6 h-6 text-white" />
                   </div>
-                  <h2 className="text-2xl font-bold text-white">Generated Cover Letter</h2>
+                  <h2 className="text-2xl font-bold text-white">
+                    Generated Cover Letter
+                  </h2>
                 </div>
-                
+
                 {generatedLetter && (
                   <div className="flex space-x-2">
                     <button
@@ -528,15 +602,21 @@ export default function CoverLetterGenerator() {
                 {!generatedLetter && !isGenerating && (
                   <div className="text-center text-gray-400 py-16">
                     <Mail className="h-16 w-16 mx-auto mb-4 opacity-50" />
-                    <p className="text-lg mb-2">Your cover letter will appear here</p>
-                    <p className="text-sm">Fill out the form and click "Generate Cover Letter"</p>
+                    <p className="text-lg mb-2">
+                      Your cover letter will appear here
+                    </p>
+                    <p className="text-sm">
+                      Fill out the form and click "Generate Cover Letter"
+                    </p>
                   </div>
                 )}
 
                 {isGenerating && (
                   <div className="text-center text-gray-400 py-16">
                     <Loader2 className="h-16 w-16 mx-auto mb-4 animate-spin opacity-50" />
-                    <p className="text-lg mb-2">Crafting your perfect cover letter...</p>
+                    <p className="text-lg mb-2">
+                      Crafting your perfect cover letter...
+                    </p>
                     <p className="text-sm">This may take a few moments</p>
                   </div>
                 )}
@@ -558,18 +638,18 @@ export default function CoverLetterGenerator() {
 
       <footer className="relative z-10 bg-white/5 backdrop-blur-sm border-t border-white/20">
         <div className="max-w-7xl mx-auto px-6 py-8 flex items-center justify-center">
-          <p className="text-gray-300 text-center">Made with ❤️ and ☕ | Powered by AI</p>
+          <p className="text-gray-300 text-center">
+            Made with ❤️ and ☕ | Powered by AI
+          </p>
         </div>
       </footer>
 
-      {/* Toast */}
-      {showToast && (
-        <div className={`fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg transition-all duration-300 ${
-          toastType === "success" ? "bg-green-500" : "bg-red-500"
-        } text-white`}>
-          {toastMessage}
-        </div>
-      )}
+      <Toast
+        show={showToast}
+        message={toastMessage}
+        type={toastType}
+        onClose={() => setShowToast(false)}
+      />
     </div>
   );
 }

@@ -153,3 +153,20 @@ class SimpleChatResponse(BaseModel):
     response: str
     timestamp: str
     article_url: Optional[str] = None
+
+class CoverLetterRequest(BaseModel):
+    resume: str
+    job: str
+    tone: str = "professional"
+    company: str
+    role: str
+
+class CoverLetterResponse(BaseModel):
+    success: bool
+    cover_letter: Optional[str] = None
+    message: Optional[str] = None
+
+class ResumeExtractionResponse(BaseModel):
+    success: bool
+    text: Optional[str] = None
+    message: Optional[str] = None
