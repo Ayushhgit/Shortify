@@ -18,6 +18,7 @@ import {
   File,
 } from "lucide-react";
 import Toast from "../components/Toast";
+import { useNavigate } from "react-router-dom";
 
 export default function CoverLetterGenerator() {
   const [formData, setFormData] = useState({
@@ -36,6 +37,8 @@ export default function CoverLetterGenerator() {
   const [toastType, setToastType] = useState("success");
   const [errors, setErrors] = useState({});
   const [uploadMethod, setUploadMethod] = useState("file"); // "file" or "text" 
+
+  const navigate = useNavigate();
 
   const handleUploadMethodChange = (method) => {
     setUploadMethod(method);
@@ -294,12 +297,12 @@ export default function CoverLetterGenerator() {
             </span>
           </div>
           <div className="flex items-center space-x-2">
-            {[{ icon: Home }, { icon: User }, { icon: Settings }].map(
+            {[{ icon: Home, path:"/shortify" }, { icon: User, path:"/profile" }, { icon: Settings, path:"/settings" }].map(
               (item, index) => (
                 <button
                   key={index}
                   className="p-3 rounded-xl hover:bg-white/20 transition-all duration-300 hover:scale-110 backdrop-blur-sm border border-white/10"
-                >
+                  onClick={() => navigate(item.path)}>
                   <item.icon className="h-5 w-5 text-white/80 hover:text-white" />
                 </button>
               )
