@@ -19,6 +19,10 @@ from app.routers import cover_letter_router
 from app.routers import resumeParser_router 
 from app.models.user import User
 from app.models.review import Review
+from app.routers import ai_solver
+from app.routers import export 
+from app.routers import handwriting
+
 
 
 logging.basicConfig(
@@ -43,10 +47,12 @@ app.add_middleware(
 Path("uploads").mkdir(exist_ok=True)
 Path("outputs").mkdir(exist_ok=True)
 Path("fonts").mkdir(exist_ok=True)
+Path("static").mkdir(exist_ok=True)
 
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.mount("/uploads", StaticFiles(directory=Path("uploads")), name="uploads")
+app.mount("/outputs", StaticFiles(directory="outputs"), name="outputs")
 
 app.include_router(ytSumm_router.router)
 app.include_router(payment.router)
@@ -60,6 +66,9 @@ app.include_router(review_router)
 app.include_router(article_router)
 app.include_router(resumeParser_router.router)
 app.include_router(cover_letter_router.router)
+app.include_router(ai_solver.router)
+app.include_router(export.router)
+app.include_router(handwriting.router)
 
 @app.get("/", tags=["status"])
 async def root():

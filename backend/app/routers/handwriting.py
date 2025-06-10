@@ -19,10 +19,6 @@ FONT_SIZES = {
     "xxlarge": 60
 }
 
-PAPER_TYPES = {
-    "plain": lambda w, h: Image.new("RGB", (w, h), "white"),
-    "ruled": create_ruled_paper
-}
 
 INK_COLORS = {
     "black": (0, 0, 0),
@@ -45,20 +41,25 @@ def create_ruled_paper(width: int, height: int) -> Image.Image:
     for y in range(50, height, line_spacing):
         draw.line((0, y, width, y), fill=(220, 220, 220), width=1)
     
-    return img
+    return img 
+
+PAPER_TYPES = {
+    "plain": lambda w, h: Image.new("RGB", (w, h), "white"),
+    "ruled": create_ruled_paper
+}
 
 @router.post("/handwriting")
 async def render_handwriting(request: Dict):
     try:
         text = request.get("text", "")
-        if not text:
-            raise ValueError("No text provided")
+        if not text or text.strip() == "":
+            raise HTTPException(status_code=400, detail="No text provided or text is empty")
         
         # Get configuration or use defaults
         paper_type = request.get("paper_type", "ruled")
         ink_color = request.get("ink_color", "blue")
         font_size = request.get("font_size", "medium")
-        font_style = request.get("font_style", "kalam")
+        font_style = request.get("font_style", "kalam-Regular")
         line_spacing = request.get("line_spacing", 1.5)
         margin = request.get("margin", 100)
         
@@ -79,7 +80,7 @@ async def render_handwriting(request: Dict):
             font = ImageFont.truetype(font_path, font_size_px)
         except:
             # Fallback to default font
-            font_path = "fonts/kalam.ttf"
+            font_path = "fonts/kalam-Regular.ttf"
             font = ImageFont.truetype(font_path, font_size_px)
         
         # Create paper
@@ -98,7 +99,11 @@ async def render_handwriting(request: Dict):
             return random.randint(-2, 2), random.randint(-2, 2)
         
         # Wrap text
-        avg_char_width = sum(font.getsize(char)[0] for char in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") / 52
+        avg_char_width = sum(
+            (font.getbbox(char)[2] - font.getbbox(char)[0])
+            for char in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        ) / 52
+
         max_chars = int((paper_width - 2 * margin) / avg_char_width)
         wrapped_text = textwrap.wrap(text, width=max_chars)
         
@@ -107,7 +112,7 @@ async def render_handwriting(request: Dict):
             # Add slight variations to each character for more natural look
             current_x = x
             for char in line:
-                char_width = font.getsize(char)[0]
+                char_width = font.getbbox(char)[2] - font.getbbox(char)[0]
                 offset_x, offset_y = get_variation()
                 draw.text(
                     (current_x + offset_x, y + offset_y),
@@ -127,5 +132,9 @@ async def render_handwriting(request: Dict):
         paper.save(output_path, "PNG", dpi=(300, 300))
         
         return {"image_path": output_path}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Rendering failed: {str(e)}")
