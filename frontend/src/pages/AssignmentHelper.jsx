@@ -204,7 +204,7 @@ const AssignmentHelper = () => {
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-purple-400 rounded-full animate-pulse"></div>
             </div>
             <span className="text-xl font-bold text-white">
-              Cover<span className="text-purple-400">AI</span>
+              Assignment<span className="text-purple-400">AI</span>
             </span>
           </div>
           <div className="flex items-center space-x-2">
