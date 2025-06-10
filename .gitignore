@@ -23,6 +23,8 @@ frontend/dist/
 frontend/.env
 frontend/.vite/
 
+alembic/
+
 # Vite
 .vite/
 *.local

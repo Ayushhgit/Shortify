@@ -40,7 +40,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+Path("uploads").mkdir(exist_ok=True)
+Path("outputs").mkdir(exist_ok=True)
+Path("fonts").mkdir(exist_ok=True)
 
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
 app.mount("/uploads", StaticFiles(directory=Path("uploads")), name="uploads")
 
 app.include_router(ytSumm_router.router)
