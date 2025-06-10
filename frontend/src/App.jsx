@@ -18,7 +18,7 @@ import Settings from "./pages/Settings";
 import ResumeAnalyzer from "./pages/ResumeAnalyzer";
 import ArticleSummarizer from "./pages/ArticleSummarizer";
 import CoverLetterGenerator from "./pages/CoverLetterGenerator";
-
+import AssignmentHelper from "./pages/AssignmentHelper";
 
 const LayoutWrapper = ({ children }) => {
   const location = useLocation();
@@ -36,6 +36,7 @@ const LayoutWrapper = ({ children }) => {
     "/settings",
     "/Settings",
     "/features/coverLetterGenerator",
+    "/features/AssignmentHelper",
     "/",
     
   ];
@@ -71,6 +72,7 @@ function App() {
           <Route path="/features/ResumeAnalyzer" element={<ResumeAnalyzer />}/>
           <Route path="/features/ArticleSummarizer" element={<ArticleSummarizer />}/>
           <Route path="/features/coverLetterGenerator" element={<CoverLetterGenerator />}/>
+          <Route path="/features/AssignmentHelper" element={<AssignmentHelper />}/>
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>

@@ -1,0 +1,674 @@
+import React, { useState, useRef } from "react";
+import { 
+  Search, Home, User, Settings, Upload, Camera, FileText, 
+  Brain, Zap, Target, CheckCircle, AlertCircle, Download,
+  Sparkles, BookOpen, PenTool, Eye, Edit3, MessageSquare,
+  ArrowRight, RotateCcw, ImageIcon
+} from "lucide-react";
+import Toast from "../components/Toast";
+import { useNavigate } from "react-router-dom";
+
+const AssignmentHelper = () => {
+  const [step, setStep] = useState(1);
+  const [inputMethod, setInputMethod] = useState(null);
+  const [textInput, setTextInput] = useState("");
+  const [uploadedFile, setUploadedFile] = useState(null);
+  const [capturedImage, setCapturedImage] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(null);
+  const [dragActive, setDragActive] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState("success"); 
+
+  const navigate = useNavigate();
+  
+  const fileInputRef = useRef(null);
+  const cameraInputRef = useRef(null);
+
+  const inputMethods = [
+    {
+      id: "text",
+      name: "Type Your Question",
+      icon: PenTool,
+      color: "from-blue-500 to-indigo-600",
+      description: "Paste or type your assignment question directly"
+    },
+    {
+      id: "upload",
+      name: "Upload Document",
+      icon: Upload,
+      color: "from-green-500 to-emerald-600", 
+      description: "Upload PDF, DOCX, or image files"
+    },
+    {
+      id: "camera",
+      name: "Take Photo",
+      icon: Camera,
+      color: "from-purple-500 to-pink-600",
+      description: "Capture assignment questions with your camera"
+    }
+  ];
+
+  const displayToast = (message, type = "success") => {
+    setToastMessage(message);
+    setToastType(type);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
+
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0];
+      const validTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png', 'image/gif'];
+      
+      if (validTypes.includes(file.type)) {
+        setUploadedFile(file);
+        setInputMethod(inputMethods.find(m => m.id === 'upload'));
+        displayToast("File uploaded successfully!");
+      } else {
+        displayToast("Please upload a valid file type (PDF, DOCX, or image)", "error");
+      }
+    }
+  };
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setUploadedFile(file);
+      displayToast("File uploaded successfully!");
+    }
+  };
+
+  const handleCameraCapture = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setCapturedImage(e.target.result);
+        displayToast("Photo captured successfully!");
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!inputMethod) {
+      displayToast("Please select an input method", "error");
+      return;
+    }
+
+    if (inputMethod.id === 'text' && !textInput.trim()) {
+      displayToast("Please enter your question", "error");
+      return;
+    }
+
+    if (inputMethod.id === 'upload' && !uploadedFile) {
+      displayToast("Please upload a file", "error");
+      return;
+    }
+
+    if (inputMethod.id === 'camera' && !capturedImage) {
+      displayToast("Please capture an image", "error");
+      return;
+    }
+
+    setLoading(true);
+    setStep(3);
+
+    // Simulate API call
+    setTimeout(() => {
+      setResult({
+        question: inputMethod.id === 'text' ? textInput : "Question extracted from uploaded content",
+        answer: "This is a comprehensive answer to your assignment question. The solution involves multiple steps and considerations that need to be addressed systematically.",
+        explanation: "Here's a detailed explanation of the approach and methodology used to solve this problem.",
+        steps: [
+          "Analyze the problem statement and identify key requirements",
+          "Research relevant theories and concepts",
+          "Apply appropriate methodologies and frameworks", 
+          "Develop a structured solution approach",
+          "Validate results and provide recommendations"
+        ],
+        keyPoints: [
+          "Critical thinking and analysis",
+          "Evidence-based reasoning",
+          "Structured problem-solving approach",
+          "Clear communication of ideas"
+        ],
+        confidence: 92
+      });
+      setLoading(false);
+      setStep(4);
+    }, 3000);
+  };
+
+  const generatePDF = () => {
+    displayToast("PDF generation feature coming soon!");
+  };
+
+  const reset = () => {
+    setStep(1);
+    setInputMethod(null);
+    setTextInput("");
+    setUploadedFile(null);
+    setCapturedImage(null);
+    setResult(null);
+  };
+
+  const Toast = ({ show, message, type, onClose }) => {
+    if (!show) return null;
+    
+    return (
+      <div className="fixed top-4 right-4 z-50 animate-slideInRight">
+        <div className={`px-6 py-4 rounded-lg shadow-lg ${
+          type === 'success' ? 'bg-green-500' : 'bg-red-500'
+        } text-white flex items-center space-x-2`}>
+          {type === 'success' ? <CheckCircle className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
+          <span>{message}</span>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+      {/* Animated Background */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -inset-10 opacity-30">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
+          <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-yellow-500 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
+          <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
+        </div>
+      </div>
+
+      {/* Header */}
+      <header className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] max-w-7xl rounded-2xl bg-white/20 backdrop-blur-xl shadow-2xl border border-white/30">
+        <div className="flex justify-between items-center h-16 px-6">
+          <div className="flex items-center">
+            <div className="relative">
+              <Brain className="h-8 w-8 text-purple-400 mr-3" />
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-purple-400 rounded-full animate-pulse"></div>
+            </div>
+            <span className="text-xl font-bold text-white">
+              Cover<span className="text-purple-400">AI</span>
+            </span>
+          </div>
+          <div className="flex items-center space-x-2">
+            {[{ icon: Home, path:"/shortify" }, { icon: User, path:"/profile" }, { icon: Settings, path:"/settings" }].map(
+              (item, index) => (
+                <button
+                  key={index}
+                  className="p-3 rounded-xl hover:bg-white/20 transition-all duration-300 hover:scale-110 backdrop-blur-sm border border-white/10"
+                  onClick={() => navigate(item.path)}>
+                  <item.icon className="h-5 w-5 text-white/80 hover:text-white" />
+                </button>
+              )
+            )}
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="relative z-10 pt-32 pb-16 px-6">
+        <div className="max-w-6xl mx-auto">
+          {/* Hero Section */}
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-sm font-medium mb-6">
+              <Brain className="w-4 h-4 mr-2" />
+              AI-Powered Assignment Assistant
+            </div>
+            <h1 className="text-6xl font-bold text-white mb-6 leading-tight">
+              Assignment AI
+              <span className="block bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent">
+                Get Instant Help
+              </span>
+            </h1>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Upload documents, take photos, or type questions directly. Get comprehensive solutions with step-by-step explanations powered by advanced AI.
+            </p>
+          </div>
+
+          {/* Step 1: Input Method Selection */}
+          {step === 1 && (
+            <div className="max-w-4xl mx-auto space-y-12">
+              <div className="space-y-8">
+                <div className="flex items-center justify-center space-x-3 mb-8">
+                  <Target className="w-6 h-6 text-emerald-400" />
+                  <h2 className="text-2xl font-bold text-white">
+                    Choose Your Input Method
+                  </h2>
+                </div>
+                
+                <div className="grid md:grid-cols-3 gap-6">
+                  {inputMethods.map((method) => (
+                    <div
+                      key={method.id}
+                      onClick={() => {
+                        setInputMethod(method);
+                        setStep(2);
+                      }}
+                      className={`relative p-8 rounded-3xl border-2 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl ${
+                        inputMethod?.id === method.id
+                          ? 'border-emerald-400 bg-emerald-500/20'
+                          : 'border-white/30 bg-white/10 hover:border-emerald-400/50'
+                      }`}
+                    >
+                      <div className="text-center space-y-4">
+                        <div className={`mx-auto w-16 h-16 rounded-2xl bg-gradient-to-r ${method.color} flex items-center justify-center`}>
+                          <method.icon className="w-8 h-8 text-white" />
+                        </div>
+                        <h3 className="text-xl font-semibold text-white">{method.name}</h3>
+                        <p className="text-gray-300 text-sm">{method.description}</p>
+                      </div>
+                      {inputMethod?.id === method.id && (
+                        <div className="absolute top-4 right-4">
+                          <CheckCircle className="w-6 h-6 text-emerald-400" />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Step 2: Input Content */}
+          {step === 2 && inputMethod && (
+            <div className="max-w-4xl mx-auto space-y-8">
+              <div className="text-center mb-8">
+                <h2 className="text-3xl font-bold text-white mb-4">
+                  {inputMethod.name}
+                </h2>
+                <p className="text-gray-300">{inputMethod.description}</p>
+              </div>
+
+              {/* Text Input */}
+              {inputMethod.id === 'text' && (
+                <div className="space-y-6">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20">
+                    <textarea
+                      value={textInput}
+                      onChange={(e) => setTextInput(e.target.value)}
+                      placeholder="Type or paste your assignment question here..."
+                      className="w-full h-64 bg-transparent border-none resize-none text-white placeholder-gray-400 focus:outline-none text-lg"
+                    />
+                  </div>
+                  {textInput.trim() && (
+                    <div className="flex justify-center">
+                      <button
+                        onClick={handleSubmit}
+                        className="px-8 py-4 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-2xl font-bold text-white transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+                      >
+                        <div className="flex items-center space-x-3">
+                          <Zap className="w-5 h-5" />
+                          <span>Get Solution</span>
+                        </div>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* File Upload */}
+              {inputMethod.id === 'upload' && (
+                <div className="space-y-6">
+                  <div
+                    className={`relative border-2 border-dashed rounded-3xl p-12 text-center transition-all duration-300 ${
+                      dragActive
+                        ? "border-emerald-400 bg-emerald-500/20"
+                        : uploadedFile
+                        ? "border-green-400 bg-green-500/20"
+                        : "border-white/30 bg-white/10 hover:border-emerald-400/50"
+                    }`}
+                    onDragEnter={handleDrag}
+                    onDragLeave={handleDrag}
+                    onDragOver={handleDrag}
+                    onDrop={handleDrop}
+                  >
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept=".pdf,.docx,.jpg,.jpeg,.png,.gif"
+                      onChange={handleFileUpload}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    />
+                    <div className="space-y-4">
+                      {uploadedFile ? (
+                        <>
+                          <CheckCircle className="w-16 h-16 text-green-400 mx-auto" />
+                          <div>
+                            <p className="text-green-300 font-semibold text-lg">
+                              File uploaded successfully!
+                            </p>
+                            <p className="text-gray-300">{uploadedFile.name}</p>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <FileText className="w-16 h-16 text-white/60 mx-auto" />
+                          <div>
+                            <p className="text-white font-semibold text-lg">
+                              Drop your files here
+                            </p>
+                            <p className="text-gray-300">
+                              PDF, DOCX, or image files supported
+                            </p>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  {uploadedFile && (
+                    <div className="flex justify-center">
+                      <button
+                        onClick={handleSubmit}
+                        className="px-8 py-4 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-2xl font-bold text-white transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+                      >
+                        <div className="flex items-center space-x-3">
+                          <Zap className="w-5 h-5" />
+                          <span>Analyze Document</span>
+                        </div>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Camera Capture */}
+              {inputMethod.id === 'camera' && (
+                <div className="space-y-6">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20 text-center">
+                    {capturedImage ? (
+                      <div className="space-y-4">
+                        <img 
+                          src={capturedImage} 
+                          alt="Captured" 
+                          className="max-w-full max-h-64 mx-auto rounded-2xl"
+                        />
+                        <p className="text-green-300 font-semibold">
+                          Photo captured successfully!
+                        </p>
+                        <button
+                          onClick={() => cameraInputRef.current?.click()}
+                          className="px-6 py-3 bg-blue-500/20 text-blue-300 rounded-xl hover:bg-blue-500/30 transition-all duration-300"
+                        >
+                          Take Another Photo
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        <Camera className="w-16 h-16 text-white/60 mx-auto" />
+                        <div>
+                          <p className="text-white font-semibold text-lg mb-4">
+                            Capture Assignment Question
+                          </p>
+                          <button
+                            onClick={() => cameraInputRef.current?.click()}
+                            className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl font-bold text-white transition-all duration-300 hover:scale-105"
+                          >
+                            <div className="flex items-center space-x-3">
+                              <Camera className="w-5 h-5" />
+                              <span>Take Photo</span>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                    <input
+                      ref={cameraInputRef}
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      onChange={handleCameraCapture}
+                      className="hidden"
+                    />
+                  </div>
+                  {capturedImage && (
+                    <div className="flex justify-center">
+                      <button
+                        onClick={handleSubmit}
+                        className="px-8 py-4 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-2xl font-bold text-white transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+                      >
+                        <div className="flex items-center space-x-3">
+                          <Zap className="w-5 h-5" />
+                          <span>Analyze Image</span>
+                        </div>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Back Button */}
+              <div className="flex justify-center">
+                <button
+                  onClick={() => setStep(1)}
+                  className="px-6 py-3 bg-white/10 text-white rounded-xl hover:bg-white/20 transition-all duration-300"
+                >
+                  ← Back to Input Methods
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Step 3: Loading */}
+          {step === 3 && loading && (
+            <div className="max-w-2xl mx-auto text-center space-y-8">
+              <div className="space-y-6">
+                <Brain className="w-20 h-20 text-emerald-400 mx-auto animate-pulse" />
+                <h2 className="text-3xl font-bold text-white">
+                  Analyzing Your Assignment
+                </h2>
+                <p className="text-gray-300 text-lg">
+                  Our AI is processing your question and generating a comprehensive solution...
+                </p>
+              </div>
+
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                <div className="space-y-4">
+                  {[
+                    "Processing your input...",
+                    "Understanding the context...",
+                    "Researching relevant information...",
+                    "Generating step-by-step solution...",
+                    "Preparing detailed explanation..."
+                  ].map((text, index) => (
+                    <div key={index} className="flex items-center space-x-3">
+                      <div
+                        className={`w-4 h-4 rounded-full ${
+                          index < 3
+                            ? "bg-emerald-400"
+                            : index === 3
+                            ? "bg-emerald-400 animate-pulse"
+                            : "bg-gray-600"
+                        }`}
+                      ></div>
+                      <span className="text-gray-300">{text}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Step 4: Results */}
+          {step === 4 && result && (
+            <div className="space-y-8">
+              <div className="text-center space-y-4">
+                <h2 className="text-4xl font-bold text-white">
+                  Solution Ready
+                </h2>
+                <div className="inline-flex items-center px-6 py-3 rounded-full bg-green-500/20 text-green-300 border border-green-500/30 font-semibold">
+                  <CheckCircle className="w-5 h-5 mr-2" />
+                  {result.confidence}% Confidence
+                </div>
+              </div>
+
+              {/* Question */}
+              <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-blue-400/30">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="p-3 bg-blue-500/20 rounded-xl">
+                    <MessageSquare className="w-6 h-6 text-blue-400" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white">Question</h3>
+                </div>
+                <p className="text-gray-300 text-lg">{result.question}</p>
+              </div>
+
+              {/* Answer */}
+              <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-green-400/30">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="p-3 bg-green-500/20 rounded-xl">
+                    <CheckCircle className="w-6 h-6 text-green-400" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white">Answer</h3>
+                </div>
+                <p className="text-gray-300 text-lg leading-relaxed">{result.answer}</p>
+              </div>
+
+              {/* Steps */}
+              <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-purple-400/30">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="p-3 bg-purple-500/20 rounded-xl">
+                    <BookOpen className="w-6 h-6 text-purple-400" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white">Step-by-Step Solution</h3>
+                </div>
+                <div className="space-y-4">
+                  {result.steps.map((step, index) => (
+                    <div key={index} className="flex items-start space-x-4">
+                      <div className="flex-shrink-0 w-8 h-8 bg-purple-500/20 rounded-full flex items-center justify-center">
+                        <span className="text-purple-300 font-semibold">{index + 1}</span>
+                      </div>
+                      <p className="text-gray-300 flex-1">{step}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Key Points */}
+              <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-orange-400/30">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="p-3 bg-orange-500/20 rounded-xl">
+                    <Target className="w-6 h-6 text-orange-400" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white">Key Points</h3>
+                </div>
+                <div className="grid md:grid-cols-2 gap-4">
+                  {result.keyPoints.map((point, index) => (
+                    <div key={index} className="flex items-center space-x-3">
+                      <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
+                      <span className="text-gray-300">{point}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Explanation */}
+              <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="p-3 bg-gray-500/20 rounded-xl">
+                    <Eye className="w-6 h-6 text-gray-400" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white">Detailed Explanation</h3>
+                </div>
+                <p className="text-gray-300 text-lg leading-relaxed">{result.explanation}</p>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex justify-center space-x-4">
+                <button
+                  onClick={generatePDF}
+                  className="px-8 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl font-semibold hover:scale-105 transition-all duration-300"
+                >
+                  <div className="flex items-center space-x-2">
+                    <Download className="w-5 h-5" />
+                    <span>Download PDF</span>
+                  </div>
+                </button>
+                <button
+                  onClick={reset}
+                  className="px-8 py-3 bg-gradient-to-r from-emerald-500 to-blue-500 text-white rounded-xl font-semibold hover:scale-105 transition-all duration-300"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RotateCcw className="w-5 h-5" />
+                    <span>New Question</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </main>
+
+      <footer className="relative z-10 bg-white/5 backdrop-blur-sm border-t border-white/20">
+        <div className="max-w-7xl mx-auto px-6 py-8 flex items-center justify-center">
+          <p className="text-gray-300 text-center">
+            Made with ❤️ and ☕ | Powered by AI
+          </p>
+        </div>
+      </footer>
+
+
+      {/* Toast */}
+      <Toast
+        show={showToast}
+        message={toastMessage}
+        type={toastType}
+        onClose={() => setShowToast(false)}
+      />
+
+      <style jsx>{`
+        @keyframes blob {
+          0% { transform: translate(0px, 0px) scale(1); }
+          33% { transform: translate(30px, -50px) scale(1.1); }
+          66% { transform: translate(-20px, 20px) scale(0.9); }
+          100% { transform: translate(0px, 0px) scale(1); }
+        }
+        
+        .animate-blob {
+          animation: blob 7s infinite;
+        }
+        
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+        
+        .animation-delay-4000 {
+          animation-delay: 4s;
+        }
+
+        @keyframes slideInRight {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+
+        .animate-slideInRight {
+          animation: slideInRight 0.3s ease-out;
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default AssignmentHelper;
