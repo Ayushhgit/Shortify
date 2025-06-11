@@ -19,6 +19,7 @@ import ResumeAnalyzer from "./pages/ResumeAnalyzer";
 import ArticleSummarizer from "./pages/ArticleSummarizer";
 import CoverLetterGenerator from "./pages/CoverLetterGenerator";
 import AssignmentHelper from "./pages/AssignmentHelper";
+import ResearchAssistantChat from "./pages/ResearchAssistant";
 
 const LayoutWrapper = ({ children }) => {
   const location = useLocation();
@@ -37,6 +38,7 @@ const LayoutWrapper = ({ children }) => {
     "/Settings",
     "/features/coverLetterGenerator",
     "/features/AssignmentHelper",
+    "/features/ResearchAssistant",
     "/",
     
   ];
@@ -73,6 +75,7 @@ function App() {
           <Route path="/features/ArticleSummarizer" element={<ArticleSummarizer />}/>
           <Route path="/features/coverLetterGenerator" element={<CoverLetterGenerator />}/>
           <Route path="/features/AssignmentHelper" element={<AssignmentHelper />}/>
+          <Route path="/features/ResearchAssistant"  element={<ResearchAssistantChat />}/>
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>

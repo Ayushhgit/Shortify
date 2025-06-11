@@ -4,7 +4,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import firebase_admin
 
 # Initialize Firebase Admin SDK only once
-cred = credentials.Certificate(r"C:\Hari om\Shortify\backend\shortify-876e7-firebase-adminsdk-fbsvc-9193bebcff.json")
+cred = credentials.Certificate(r"A:\ML-Project\short-ify\backend\shortify-876e7-firebase-adminsdk-fbsvc-9193bebcff.json")
 if not firebase_admin._apps:
     firebase_admin.initialize_app(cred)
 
@@ -20,6 +20,6 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
 
     try:
         decoded_token = auth.verify_id_token(token)
-        return decoded_token  # You get uid, email, etc.
+        return decoded_token 
     except Exception:
         raise credentials_exception

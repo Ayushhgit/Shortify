@@ -3,6 +3,7 @@ from pydantic import BaseModel, EmailStr, Field, HttpUrl, field_validator
 from enum import Enum
 from datetime import datetime
 import re
+from dataclasses import dataclass
 
 class TaskStatusEnum(str, Enum):
     pending = "pending"
@@ -199,3 +200,8 @@ class APIResponse(BaseModel):
     success: bool
     message: str
     data: Optional[Any] = None
+class UserQuery(BaseModel):
+    message: str
+
+class AgentResponse(BaseModel):
+    reply: str

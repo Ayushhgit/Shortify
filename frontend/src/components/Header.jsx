@@ -21,6 +21,7 @@ export default function Header() {
         { label: "Article Summarizer", path: "/features/ArticleSummarizer" },
         { label: "Cove Letter Generator", path: "/features/coverLetterGenerator" },
         { label: "Assignment Helper", path: "/features/AssignmentHelper" },
+        { label: "Research Assistant", path: "/features/ResearchAssistant" }, 
       ],
     },
     {
