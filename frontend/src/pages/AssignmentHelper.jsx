@@ -379,8 +379,8 @@ const AssignmentHelper = () => {
                     paper_type: 'ruled',
                     ink_color: 'blue',
                     font_size: 'medium',
-                    font_style: 'kalam',
-                    line_spacing: 1.5,
+                    font_style: 'QECarolineMutiboko',
+                    line_spacing: 1.3,
                     margin: 100
                 }),
             });
