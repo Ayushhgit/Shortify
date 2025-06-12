@@ -11,8 +11,13 @@ import {
   Github,
   Menu,
   X,
+  BookText,
+  Pencil,
+  Binoculars,
   Sparkles,
+  Search,
   ArrowRight,
+  Lightbulb,
   Play,
   Eye,
   Cpu,
@@ -21,6 +26,7 @@ import {
   Target,
   TrendingUp,
   CheckCircle,
+  BookOpen,
   Clock,
   Chrome,
   Zap as Lightning,
@@ -127,6 +133,10 @@ export default function ShortifyPage() {
         return "Article Summarizer";
       case "coverLetter":
         return "Cover Letter Maker";
+      case "assignment":
+        return "Assignment Maker";
+      case "research":
+        return "Research Assistant";
       default:
         return "Shortify";
     }
@@ -183,17 +193,17 @@ export default function ShortifyPage() {
       glow: "shadow-violet-500/25",
     },
     {
-      id: "coverLetter",
-      icon: SquareChartGantt,
-      label: "Cover Letter",
-      gradient: "from-violet-500 via-blue-600 to-indigo-600",
+      id: "assignment",
+      icon: Pencil,
+      label: "Assignment Maker",
+      gradient: "from-yellow-500 via-orange-400 to-amber-200",
       glow: "shadow-violet-500/25",
     },
     {
-      id: "coverLetter",
-      icon: SquareChartGantt,
-      label: "Cover Letter",
-      gradient: "from-violet-500 via-blue-600 to-indigo-600",
+      id: "research",
+      icon: Binoculars,
+      label: "Research Assistant",
+      gradient: "from-rose-500 via-cyan-600 to-fuchsia-600",
       glow: "shadow-violet-500/25",
     },
   ];
@@ -203,7 +213,7 @@ export default function ShortifyPage() {
       title: "YouTube Shorts Generator",
       icon: Youtube,
       desc: "Transform long-form videos into viral shorts using advanced AI that understands engagement patterns and optimal timing.",
-      gradient: "from-red-500 via-pink-500 to-red-500",
+      gradient: "from-rose-500 via-pink-500 to-fuchsia-500",
       link: "/features/shorts-generator",
       label: "Generate Now",
       badge: "LIVE",
@@ -223,7 +233,7 @@ export default function ShortifyPage() {
     },
     {
       title: "Document Summarizer",
-      icon: Cpu,
+      icon: BookText,
       desc: "Revolutionary AI transforms complex documents into crystal-clear summaries with human-like comprehension and precision.",
       gradient: "from-emerald-500 via-teal-500 to-cyan-500",
       link: "/features/pdf-summarizer",
@@ -267,28 +277,27 @@ export default function ShortifyPage() {
       bgPattern: "radar",
     },
     {
-  title: "Assignment Maker",
-  icon: SquareChartGantt,
-  desc: "Convert AI-generated answers into realistic handwritten assignments with ruled paper styling – perfect for fast, smart submissions.",
-  gradient: "from-yellow-500 via-orange-400 to-gold-500",
-  link: "/features/assignmentMaker",
-  label: "Try Now",
-  badge: "LIVE",
-  animation: "pulse",
-  bgPattern: "paper",
-},
-{
-  title: "Research Assistant",
-  icon: SquareChartGantt,
-  desc: "AI-powered assistant that searches research papers, summarizes concepts, and answers your academic queries using real citations.",
-  gradient: "from-violet-500 via-blue-600 to-indigo-600",
-  link: "/features/researchAssistant",
-  label: "Explore",
-  badge: "LIVE",
-  animation: "radar",
-  bgPattern: "radar",
-},
-
+      title: "Assignment Maker",
+      icon: Pencil,
+      desc: "Convert AI-generated answers into realistic handwritten assignments with ruled paper styling – perfect for fast, smart submissions.",
+      gradient: "from-yellow-500 via-orange-400 to-amber-200",
+      link: "/features/assignmentMaker",
+      label: "Try Now",
+      badge: "LIVE",
+      animation: "pulse",
+      bgPattern: "paper",
+    },
+    {
+      title: "Research Assistant",
+      icon: Binoculars,
+      desc: "AI-powered assistant that searches research papers, summarizes concepts, and answers your academic queries using real citations.",
+      gradient: "from-rose-500 via-cyan-600 to-fuchsia-600",
+      link: "/features/researchAssistant",
+      label: "Explore",
+      badge: "LIVE",
+      animation: "radar",
+      bgPattern: "radar",
+    },
   ];
 
   const stats = [
@@ -592,7 +601,8 @@ export default function ShortifyPage() {
 
                         {/* Icon */}
                         <div
-                          className={`w-20 h-20 rounded-3xl bg-gradient-to-br ${feature.gradient} p-5 mb-8 group-hover:scale-110 transition-transform duration-300 shadow-2xl`}>
+                          className={`w-20 h-20 rounded-3xl bg-gradient-to-br ${feature.gradient} p-5 mb-8 group-hover:scale-110 transition-transform duration-300 shadow-2xl`}
+                        >
                           <Icon className="w-10 h-10 text-white" />
                         </div>
 
@@ -607,10 +617,13 @@ export default function ShortifyPage() {
                         {/* Action Button */}
                         <button
                           onClick={() => navigate(feature.link)}
-                          className={`w-full bg-gradient-to-r ${feature.gradient} hover:shadow-2xl text-white py-4 px-6 rounded-2xl font-semibold transition-all duration-300 flex items-center justify-center gap-3 group-hover:gap-4 text-lg shadow-lg`}>
+                          className={`w-full bg-gradient-to-r ${feature.gradient} hover:shadow-2xl text-white py-4 px-6 rounded-2xl font-semibold transition-all duration-300 flex items-center justify-center gap-3 group-hover:gap-4 text-lg shadow-lg`}
+                        >
                           <span>{feature.label}</span>
-                          <ArrowRight size={20}
-                            className="group-hover:translate-x-1 transition-transform duration-300"/>
+                          <ArrowRight
+                            size={20}
+                            className="group-hover:translate-x-1 transition-transform duration-300"
+                          />
                         </button>
                       </div>
                     );
@@ -973,6 +986,7 @@ export default function ShortifyPage() {
             )}
           </div>
 
+          {/*Artcile summarizer */}
           {activeTab === "article" && (
             <div className="max-w-4xl mx-auto space-y-12">
               {/* Header */}
@@ -1105,6 +1119,170 @@ export default function ShortifyPage() {
                   <button className="bg-gradient-to-r from-violet-500 via-blue-600 to-indigo-600 hover:from-violet-600 hover:via-blue-700 hover:to-indigo-700 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-violet-500/25 flex items-center gap-3 mx-auto">
                     <SquareChartGantt className="w-6 h-6" />
                     Generate Now
+                  </button>
+                </a>
+              </div>
+            </div>
+          )}
+
+          {/* Research Assistant */}
+          {activeTab === "research" && (
+            <div className="max-w-4xl mx-auto space-y-8">
+              <div className="text-center mb-12">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-fuchsia-600/20 border border-emerald-600/30 mb-6">
+                  <Search className="w-5 h-5 text-pink-400" />
+                  <span className="text-pink-400 font-medium">
+                    RESEARCH INTELLIGENCE
+                  </span>
+                </div>
+                <h2 className="text-4xl font-bold bg-gradient-to-r from-rose-400 via-cyan-400 to-fuchsia-400 bg-clip-text text-transparent mb-4">
+                  AI-Powered Research Assistant
+                </h2>
+                <p className="text-xl text-gray-400 leading-relaxed">
+                  Advanced AI algorithms that comprehend, analyze, and
+                  synthesize information from multiple sources to accelerate
+                  your research workflow.
+                </p>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-8 mb-8">
+                <div className="bg-gradient-to-br from-emerald-600/10 to-teal-600/10 border border-emerald-600/20 rounded-3xl p-8">
+                  <h3 className="text-2xl font-bold text-pink-400 mb-4 flex items-center gap-3">
+                    <BookOpen className="w-8 h-8" />
+                    Research Capabilities
+                  </h3>
+                  <ul className="space-y-4 text-gray-300">
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0" />
+                      <span>
+                        Multi-source information synthesis and analysis
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-teal-400 mt-0.5 flex-shrink-0" />
+                      <span>
+                        Academic paper summarization with key insights
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" />
+                      <span>Citation formatting and reference management</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0" />
+                      <span>
+                        Fact-checking and source credibility assessment
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="bg-gradient-to-br from-teal-600/10 to-cyan-600/10 border border-teal-600/20 rounded-3xl p-8">
+                  <h3 className="text-2xl font-bold text-fuchsia-400 mb-4 flex items-center gap-3">
+                    <Lightbulb className="w-8 h-8" />
+                    Smart Insights
+                  </h3>
+                  <ul className="space-y-4 text-gray-300">
+                    <li className="flex items-start gap-3">
+                      <TrendingUp className="w-5 h-5 text-teal-400 mt-0.5 flex-shrink-0" />
+                      <span>Trend analysis and pattern recognition</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Target className="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" />
+                      <span>
+                        Knowledge gap identification and recommendations
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Eye className="w-5 h-5 text-teal-400 mt-0.5 flex-shrink-0" />
+                      <span>Cross-disciplinary connection mapping</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Rocket className="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" />
+                      <span>Research methodology optimization</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Statistics Section */}
+              <div className="bg-gradient-to-br from-emerald-600/10 to-teal-600/10 border border-emerald-600/20 rounded-3xl p-8 mb-8">
+                <div className="grid md:grid-cols-4 gap-6 text-center">
+                  <div>
+                    <div className="text-3xl font-bold text-emerald-400 mb-2">
+                      98%
+                    </div>
+                    <div className="text-gray-400">Accuracy Rate</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-rose-400 mb-2">
+                      5x
+                    </div>
+                    <div className="text-gray-400">Faster Research</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-cyan-400 mb-2">
+                      50+
+                    </div>
+                    <div className="text-gray-400">Source Types</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-fuchsia-400 mb-2">
+                      24/7
+                    </div>
+                    <div className="text-gray-400">AI Assistant</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Research Process */}
+              <div className="bg-gradient-to-br from-teal-600/10 to-emerald-600/10 border border-teal-600/20 rounded-3xl p-8 mb-8">
+                <h3 className="text-2xl font-bold text-teal-400 mb-6 flex items-center gap-3">
+                  <Cpu className="w-8 h-8" />
+                  Research Process
+                </h3>
+                <div className="grid md:grid-cols-3 gap-6">
+                  {[
+                    {
+                      step: "01",
+                      title: "Query & Discover",
+                      desc: "AI understands your research needs and finds relevant sources",
+                      color: "rose",
+                    },
+                    {
+                      step: "02",
+                      title: "Analyze & Synthesize",
+                      desc: "Deep content analysis with cross-referencing and validation",
+                      color: "cyan",
+                    },
+                    {
+                      step: "03",
+                      title: "Insights & Report",
+                      desc: "Comprehensive findings with actionable recommendations",
+                      color: "fuchsia",
+                    },
+                  ].map((item, idx) => (
+                    <div key={idx} className="text-center">
+                      <div
+                        className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-${item.color}-500 to-${item.color}-600 flex items-center justify-center text-white font-bold text-xl`}
+                      >
+                        {item.step}
+                      </div>
+                      <h4 className="text-lg font-bold text-white mb-2">
+                        {item.title}
+                      </h4>
+                      <p className="text-gray-400 text-sm">{item.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="text-center">
+                <a href="/features/ResearchAssistant">
+                  <button className="bg-gradient-to-r from-rose-400 via-cyan-600 to-fuchsia-400 hover:from-rose-500 hover:via-cyan-700 hover:to-fuchsia-500 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-emerald-500/25 flex items-center gap-3 mx-auto group">
+                    <Search className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                    Start Research
+                    <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
                   </button>
                 </a>
               </div>
