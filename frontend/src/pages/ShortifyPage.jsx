@@ -182,6 +182,20 @@ export default function ShortifyPage() {
       gradient: "from-violet-500 via-blue-600 to-indigo-600",
       glow: "shadow-violet-500/25",
     },
+    {
+      id: "coverLetter",
+      icon: SquareChartGantt,
+      label: "Cover Letter",
+      gradient: "from-violet-500 via-blue-600 to-indigo-600",
+      glow: "shadow-violet-500/25",
+    },
+    {
+      id: "coverLetter",
+      icon: SquareChartGantt,
+      label: "Cover Letter",
+      gradient: "from-violet-500 via-blue-600 to-indigo-600",
+      glow: "shadow-violet-500/25",
+    },
   ];
 
   const features = [
@@ -252,6 +266,29 @@ export default function ShortifyPage() {
       animation: "radar",
       bgPattern: "radar",
     },
+    {
+  title: "Assignment Maker",
+  icon: SquareChartGantt,
+  desc: "Convert AI-generated answers into realistic handwritten assignments with ruled paper styling – perfect for fast, smart submissions.",
+  gradient: "from-yellow-500 via-orange-400 to-gold-500",
+  link: "/features/assignmentMaker",
+  label: "Try Now",
+  badge: "LIVE",
+  animation: "pulse",
+  bgPattern: "paper",
+},
+{
+  title: "Research Assistant",
+  icon: SquareChartGantt,
+  desc: "AI-powered assistant that searches research papers, summarizes concepts, and answers your academic queries using real citations.",
+  gradient: "from-violet-500 via-blue-600 to-indigo-600",
+  link: "/features/researchAssistant",
+  label: "Explore",
+  badge: "LIVE",
+  animation: "radar",
+  bgPattern: "radar",
+},
+
   ];
 
   const stats = [

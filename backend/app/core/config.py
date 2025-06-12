@@ -30,6 +30,7 @@ class Settings(BaseSettings):
     # Redis and Celery
     REDIS_HOST: str = "localhost"
     REDIS_PORT: int = 6379
+    REDIS_URL: str = os.getenv("REDIS_URL")
     CELERY_BROKER_URL: Optional[str] = None
     CELERY_RESULT_BACKEND: Optional[str] = None
 

@@ -61,7 +61,7 @@ const ResearchAssistantChat = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8000/api/agent/query", {
+      const response = await fetch("http://localhost:8000/api/research/agent/query", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

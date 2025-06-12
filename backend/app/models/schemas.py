@@ -207,10 +207,33 @@ class UserQuery(BaseModel):
 class AgentResponse(BaseModel):
     reply: str
 
+
 class QueryRequest(BaseModel):
-    query: str
+    query: str = Field(..., min_length=1, max_length=1000, description="The research query")
+    
+    @field_validator('query')
+    def validate_query(cls, v):
+        if not v or not v.strip():
+            raise ValueError('Query cannot be empty or just whitespace')
+        return v.strip()
 
 class ResearchResponse(BaseModel):
-    topic: str
-    summary: str
-    sources: list[str]
+    topic: str = Field(..., description="The main topic of research")
+    summary: str = Field(..., description="Comprehensive summary of research findings")
+    sources: List[str] = Field(default_factory=list, description="List of sources used")
+    timestamp: Optional[datetime] = Field(default_factory=datetime.now, description="When the research was conducted")
+    
+    class Config:
+        json_encoders = {
+            datetime: lambda v: v.isoformat()
+        }
+
+class ErrorResponse(BaseModel):
+    error: str = Field(..., description="Error message")
+    detail: Optional[str] = Field(None, description="Detailed error information")
+    timestamp: datetime = Field(default_factory=datetime.now, description="When the error occurred")
+
+class HealthResponse(BaseModel):
+    status: str = Field(..., description="Service status")
+    service: str = Field(..., description="Service name")
+    timestamp: datetime = Field(default_factory=datetime.now, description="Health check timestamp")
