@@ -51,49 +51,59 @@ const ResearchAssistantChat = () => {
     if (!inputValue.trim() || isLoading) return;
 
     const userMessage = {
-      role: 'user',
+      role: "user",
       content: inputValue,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
-    setInputValue('');
+    setMessages((prev) => [...prev, userMessage]);
+    setInputValue("");
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8000/api/agent/query', {
-        method: 'POST',
+      const response = await fetch("http://localhost:8000/api/agent/query", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          query: inputValue
+          query: inputValue,
         }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to get response');
+        throw new Error("Failed to get response");
       }
 
       const data = await response.json();
 
       const assistantMessage = {
-        role: 'assistant',
-        content: data.result || 'No response content.',
+        role: "assistant",
+        content: `
+          Topic: ${data.topic}
+
+          Summary: ${data.summary}
+
+          Sources:
+                  ${
+                      data.sources && data.sources.length > 0
+                      ? data.sources.map((src, i) => `- ${src}`).join("\n")
+                      : "No sources found."
+                      }`.trim(),
         timestamp: new Date(),
       };
 
-      setMessages(prev => [...prev, assistantMessage]);
+      setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
       const errorMessage = {
-        role: 'assistant',
+        role: "assistant",
         content: "There was an error fetching the response.",
         timestamp: new Date(),
         sources: [],
-        papers: []
+        papers: [],
       };
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
@@ -148,12 +158,16 @@ const ResearchAssistantChat = () => {
         className={`flex ${isUser ? "justify-end" : "justify-start"} mb-6`}
       >
         <div
-          className={`flex max-w-4xl ${isUser ? "flex-row-reverse" : "flex-row"
-            }`}
+          className={`flex max-w-4xl ${
+            isUser ? "flex-row-reverse" : "flex-row"
+          }`}
         >
           <div
-            className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${isUser ? "bg-gradient-to-r from-emerald-500 to-emerald-600 ml-3" : "bg-gradient-to-r from-indigo-500 to-cyan-500 mr-3"
-              } shadow-lg`}
+            className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
+              isUser
+                ? "bg-gradient-to-r from-emerald-500 to-emerald-600 ml-3"
+                : "bg-gradient-to-r from-indigo-500 to-cyan-500 mr-3"
+            } shadow-lg`}
           >
             {isUser ? (
               <User size={18} className="text-white" />
@@ -163,19 +177,17 @@ const ResearchAssistantChat = () => {
           </div>
 
           <div
-            className={`rounded-2xl px-6 py-4 backdrop-blur-xl shadow-lg border ${isUser
-              ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white border-emerald-400/30"
-              : "bg-white/10 text-gray-100 border-white/20"
-              }`}
+            className={`rounded-2xl px-6 py-4 backdrop-blur-xl shadow-lg border ${
+              isUser
+                ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white border-emerald-400/30"
+                : "bg-white/10 text-gray-100 border-white/20"
+            }`}
           >
             <div className="prose prose-sm max-w-none">
               {message.content.split("\n").map((line, i) => {
                 if (line.startsWith("# ")) {
                   return (
-                    <h1
-                      key={i}
-                      className="text-xl font-bold mb-3 text-white"
-                    >
+                    <h1 key={i} className="text-xl font-bold mb-3 text-white">
                       {line.slice(2)}
                     </h1>
                   );
@@ -331,21 +343,25 @@ const ResearchAssistantChat = () => {
               className="p-3 rounded-xl hover:bg-white/20 transition-all duration-300 hover:scale-110 backdrop-blur-sm border border-white/10 flex items-center space-x-2"
             >
               <Download size={16} className="text-white/80" />
-              <span className="text-white/80 text-sm hidden sm:inline">Export</span>
+              <span className="text-white/80 text-sm hidden sm:inline">
+                Export
+              </span>
             </button>
             <button
               onClick={clearChat}
               className="p-3 rounded-xl hover:bg-white/20 transition-all duration-300 hover:scale-110 backdrop-blur-sm border border-white/10 flex items-center space-x-2"
             >
               <Trash2 size={16} className="text-white/80" />
-              <span className="text-white/80 text-sm hidden sm:inline">Clear</span>
+              <span className="text-white/80 text-sm hidden sm:inline">
+                Clear
+              </span>
             </button>
 
             <div className="flex items-center gap-2">
               {[
                 { icon: Home, label: "Home", href: "/shortify" },
                 { icon: User, label: "Profile", href: "/Profile" },
-                { icon: Settings, label: "Settings", href: "/Settings" }
+                { icon: Settings, label: "Settings", href: "/Settings" },
               ].map(({ icon: Icon, label, href }) => (
                 <button
                   key={label}
@@ -357,7 +373,6 @@ const ResearchAssistantChat = () => {
                   <Icon className="h-5 w-5 text-gray-400 group-hover:text-emerald-400 transition-colors" />
                 </button>
               ))}
-
             </div>
           </div>
         </div>
@@ -377,7 +392,8 @@ const ResearchAssistantChat = () => {
             </span>
           </h1>
           <p className="text-lg text-gray-300 max-w-3xl mx-auto mb-8">
-            Get comprehensive research summaries with citations from web sources and academic papers
+            Get comprehensive research summaries with citations from web sources
+            and academic papers
           </p>
         </div>
       </div>
@@ -386,7 +402,6 @@ const ResearchAssistantChat = () => {
       <div className="relative z-10 px-6 pb-6">
         <div className="max-w-6xl mx-auto">
           <div className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
-
             {/* Messages */}
             <div className="h-[600px] overflow-y-auto px-6 py-6 space-y-4">
               {messages.length === 1 && (
@@ -396,15 +411,26 @@ const ResearchAssistantChat = () => {
                       <Search className="h-12 w-12 text-white" />
                     </div>
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-4">Ready to Research</h3>
+                  <h3 className="text-2xl font-bold text-white mb-4">
+                    Ready to Research
+                  </h3>
                   <p className="text-gray-300 max-w-md mx-auto mb-6">
-                    Ask me about any topic and I'll provide comprehensive summaries from web sources and research papers.
+                    Ask me about any topic and I'll provide comprehensive
+                    summaries from web sources and research papers.
                   </p>
                   <div className="flex flex-wrap justify-center gap-2 text-sm">
-                    <span className="bg-white/10 text-purple-300 px-3 py-1 rounded-full">machine learning</span>
-                    <span className="bg-white/10 text-cyan-300 px-3 py-1 rounded-full">quantum computing</span>
-                    <span className="bg-white/10 text-indigo-300 px-3 py-1 rounded-full">climate change</span>
-                    <span className="bg-white/10 text-violet-300 px-3 py-1 rounded-full">CRISPR gene editing</span>
+                    <span className="bg-white/10 text-purple-300 px-3 py-1 rounded-full">
+                      machine learning
+                    </span>
+                    <span className="bg-white/10 text-cyan-300 px-3 py-1 rounded-full">
+                      quantum computing
+                    </span>
+                    <span className="bg-white/10 text-indigo-300 px-3 py-1 rounded-full">
+                      climate change
+                    </span>
+                    <span className="bg-white/10 text-violet-300 px-3 py-1 rounded-full">
+                      CRISPR gene editing
+                    </span>
                   </div>
                 </div>
               )}
@@ -419,7 +445,10 @@ const ResearchAssistantChat = () => {
                     </div>
                     <div className="bg-white/10 backdrop-blur-xl rounded-2xl px-6 py-4 border border-white/20">
                       <div className="flex items-center space-x-3">
-                        <Loader2 size={18} className="animate-spin text-cyan-400" />
+                        <Loader2
+                          size={18}
+                          className="animate-spin text-cyan-400"
+                        />
                         <span className="text-gray-200 font-medium">
                           Researching your topic...
                         </span>
@@ -480,7 +509,8 @@ const ResearchAssistantChat = () => {
 
               <div className="flex justify-center mt-4">
                 <p className="text-xs text-gray-400">
-                  Try asking about: "machine learning algorithms", "CRISPR gene editing", "renewable energy storage"
+                  Try asking about: "machine learning algorithms", "CRISPR gene
+                  editing", "renewable energy storage"
                 </p>
               </div>
             </div>
@@ -491,7 +521,9 @@ const ResearchAssistantChat = () => {
       {/* Footer */}
       <footer className="relative z-10 bg-white/5 backdrop-blur-sm border-t border-white/20 mt-8">
         <div className="max-w-7xl mx-auto px-6 py-8 flex items-center justify-center">
-          <p className="text-gray-300 text-center">Made with ❤️ and ☕ for researchers everywhere.</p>
+          <p className="text-gray-300 text-center">
+            Made with ❤️ and ☕ for researchers everywhere.
+          </p>
         </div>
       </footer>
 

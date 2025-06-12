@@ -1,11 +1,14 @@
 from duckduckgo_search import DDGS
+from langchain_community.tools import WikipediaQueryRun, DuckDuckGoSearchRun
+from langchain_community.utilities import WikipediaAPIWrapper
+from langchain.tools import Tool
 
-class WebSearchTool:
-    def run(self, query: str) -> str:
-        with DDGS() as ddgs:
-            results = ddgs.text(query)
-            top_results = results[:5]  # Limit to top 5 results
-            return "\n".join(
-                f"{r['title']} - {r['body']} ({r['href']})"
-                for r in top_results
-            )
+search = DuckDuckGoSearchRun()
+search_tool = Tool(
+    name="search",
+    func=search.run,
+    description="Search the web for information",
+)
+
+api_wrapper = WikipediaAPIWrapper(top_k_results=1, doc_content_chars_max=100)
+wiki_tool = WikipediaQueryRun(api_wrapper=api_wrapper)

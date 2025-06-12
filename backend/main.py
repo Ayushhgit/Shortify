@@ -22,7 +22,7 @@ from app.models.review import Review
 from app.routers import ai_solver
 from app.routers import export 
 from app.routers import handwriting
-from app.services import research_agent
+from app.routers import research_router
 
 
 logging.basicConfig(
@@ -69,7 +69,7 @@ app.include_router(cover_letter_router.router)
 app.include_router(ai_solver.router)
 app.include_router(export.router)
 app.include_router(handwriting.router)
-app.include_router(research_agent.router, prefix="/api")
+app.include_router(research_router.router, prefix="/api")
 
 @app.get("/", tags=["status"])
 async def root():

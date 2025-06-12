@@ -200,8 +200,17 @@ class APIResponse(BaseModel):
     success: bool
     message: str
     data: Optional[Any] = None
+
 class UserQuery(BaseModel):
     message: str
 
 class AgentResponse(BaseModel):
     reply: str
+
+class QueryRequest(BaseModel):
+    query: str
+
+class ResearchResponse(BaseModel):
+    topic: str
+    summary: str
+    sources: list[str]

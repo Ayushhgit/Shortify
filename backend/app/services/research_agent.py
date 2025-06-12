@@ -1,44 +1,50 @@
-from fastapi import HTTPException, APIRouter
-from pydantic import BaseModel
-from langchain_community.chat_models import ChatOpenAI
-from langchain.agents import initialize_agent, Tool
-from langchain.agents.agent_types import AgentType
-from app.utils.web_search import WebSearchTool
+from langchain_groq import ChatGroq
+from langchain.agents import Tool, AgentExecutor, create_tool_calling_agent
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import PydanticOutputParser
+from app.utils.web_search import search_tool, wiki_tool
 from app.utils.arvix_search import ArxivTool
+from app.models.schemas import ResearchResponse
 from dotenv import load_dotenv
 import os
 
 load_dotenv()
 
-llm = ChatOpenAI(
-    openai_api_key=os.getenv("GROQ_API_KEY"),
-    openai_api_base="https://api.groq.com/openai/v1",
-    model="llama3-70b-8192",  # or any other Groq-supported model
+# 1. Load Groq LLM (LLaMA3)
+llm = ChatGroq(
+    api_key=os.getenv("GROQ_API_KEY"),
+    model="llama3-70b-8192",
 )
 
-# Wrap your tools
-tools = [
-    Tool(name="Web Search", func=WebSearchTool().run, description="Useful for searching the web"),
-    Tool(name="Arxiv Search", func=ArxivTool().run, description="Finds papers on Arxiv"),
-]
+# 2. Setup output parser
+parser = PydanticOutputParser(pydantic_object=ResearchResponse)
 
-agent = initialize_agent(
-    tools=tools,
-    llm=llm,
-    agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-    verbose=True
-)
+# 3. Setup tools (must be LangChain Tool objects)
+tools = [search_tool, wiki_tool,]
 
-class QueryRequest(BaseModel):
-    query: str
+# 4. Prompt Template
+prompt = ChatPromptTemplate.from_messages([
+    ("system", 
+"""You are a highly intelligent and structured Research Assistant designed to help users understand and explore any research topic they provide.
 
-# Create router
-router = APIRouter()
+You have access to the following tools:
+- Web Search: Use this to find real-time or recent information.
+- Arxiv Search: Use this for technical, academic, or scientific research papers.
 
-@router.post("/agent/query")
-async def run_agent(req: QueryRequest):
-    try:
-        result = agent.run(req.query)
-        return {"result": result}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+Follow these strict instructions:
+1. Analyze the user's query step-by-step to decide which tool(s) to use.
+2. If the topic is academic, technical, or research-oriented, use Arxiv Search.
+3. If the topic is trending, general knowledge, or current affairs, use Web Search.
+4. Gather information, summarize it clearly, and extract relevant sources or citations.
+
+⚠️ You must respond ONLY with valid JSON using the format below:
+{format_instructions}
+"""),
+    ("placeholder", "{chat_history}"),
+    ("human", "{input}"),
+    ("placeholder", "{agent_scratchpad}")
+]).partial(format_instructions=parser.get_format_instructions())
+
+chain = prompt | llm | parser
+
+research_chain = chain
