@@ -32,6 +32,7 @@ const ResearchAssistantChat = () => {
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [userId] = useState("user_" + Math.random().toString(36).substr(2, 9));
+  const [sessionId] = useState("session_" + Math.random().toString(36).substr(2, 9));
 
   const navigate = useNavigate();
 
@@ -57,6 +58,7 @@ const ResearchAssistantChat = () => {
     };
 
     setMessages((prev) => [...prev, userMessage]);
+    const currentQuery = inputValue;
     setInputValue("");
     setIsLoading(true);
 
@@ -68,6 +70,7 @@ const ResearchAssistantChat = () => {
         },
         body: JSON.stringify({
           query: inputValue,
+          session_id: sessionId
         }),
       });
 
@@ -79,18 +82,10 @@ const ResearchAssistantChat = () => {
 
       const assistantMessage = {
         role: "assistant",
-        content: `
-          Topic: ${data.topic}
-
-          Summary: ${data.summary}
-
-          Sources:
-                  ${
-                      data.sources && data.sources.length > 0
-                      ? data.sources.map((src, i) => `- ${src}`).join("\n")
-                      : "No sources found."
-                      }`.trim(),
+        content: data.summary,  // Use the summary from ResearchResponse
         timestamp: new Date(),
+        sources: data.sources || [],
+        papers: data.papers || [],
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
@@ -111,12 +106,22 @@ const ResearchAssistantChat = () => {
 
   const clearChat = async () => {
     try {
-      await fetch(`/api/chat/history/${userId}`, { method: "DELETE" });
+      // Clear backend memory for this session
+      await fetch(`http://localhost:8000/api/research/clear-session`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          session_id: sessionId
+        }),
+      });
+
+      // Reset frontend messages
       setMessages([
         {
           role: "assistant",
-          content:
-            "Hi! I'm your research assistant. Ask me about any topic and I'll provide you with comprehensive summaries from web sources and research papers.",
+          content: "Hi! I'm your research assistant. Ask me about any topic and I'll provide you with comprehensive summaries from web sources and research papers.",
           timestamp: new Date(),
           sources: [],
           papers: [],
@@ -158,16 +163,14 @@ const ResearchAssistantChat = () => {
         className={`flex ${isUser ? "justify-end" : "justify-start"} mb-6`}
       >
         <div
-          className={`flex max-w-4xl ${
-            isUser ? "flex-row-reverse" : "flex-row"
-          }`}
+          className={`flex max-w-4xl ${isUser ? "flex-row-reverse" : "flex-row"
+            }`}
         >
           <div
-            className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
-              isUser
+            className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${isUser
                 ? "bg-gradient-to-r from-emerald-500 to-emerald-600 ml-3"
                 : "bg-gradient-to-r from-indigo-500 to-cyan-500 mr-3"
-            } shadow-lg`}
+              } shadow-lg`}
           >
             {isUser ? (
               <User size={18} className="text-white" />
@@ -177,11 +180,10 @@ const ResearchAssistantChat = () => {
           </div>
 
           <div
-            className={`rounded-2xl px-6 py-4 backdrop-blur-xl shadow-lg border ${
-              isUser
+            className={`rounded-2xl px-6 py-4 backdrop-blur-xl shadow-lg border ${isUser
                 ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white border-emerald-400/30"
                 : "bg-white/10 text-gray-100 border-white/20"
-            }`}
+              }`}
           >
             <div className="prose prose-sm max-w-none">
               {message.content.split("\n").map((line, i) => {

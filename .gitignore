@@ -37,6 +37,7 @@ backend/.env
 backend/.mypy_cache/
 backend/.pytest_cache/
 backend/*.sqlite3
+backend/outputs/
 
 # VS Code
 .vscode/
@@ -48,3 +49,4 @@ backend/*.sqlite3
 *.idea/
 
 uploads/
+outputs/

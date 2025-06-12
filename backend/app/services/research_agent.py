@@ -1,10 +1,11 @@
 # research_agent.py
 
+import threading
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain.memory import ConversationBufferMemory
-from langchain.memory.chat_message_histories import RedisChatMessageHistory
+from langchain_community.chat_message_histories import RedisChatMessageHistory
 from langchain.agents import AgentExecutor, create_tool_calling_agent
 from dotenv import load_dotenv
 import os
@@ -41,28 +42,28 @@ parser = PydanticOutputParser(pydantic_object=ResearchResponse)
 prompt = ChatPromptTemplate.from_messages([
     ("system", 
      f"""
-You are a focused Research Assistant. Your goal is to quickly find and summarize information about the user's query.
+You are a conversational Research Assistant. You maintain context across the conversation and can:
+- Continue discussing the same topic in depth
+- Answer follow-up questions
+- Clarify previous responses
+- Provide additional details when asked
 
-You have access to these tools:
-- wiki_tool: For general knowledge and encyclopedia information
-- search_tool: For real-time web search and current information  
-- arxiv_tool: For academic papers, technical research, and scientific literature
+Previous conversation context is available in chat_history.
+Use the conversation history to provide contextually relevant responses.
 
-IMPORTANT INSTRUCTIONS:
-1. Use ONLY ONE OR TWO tools maximum for each query
-2. For technical/academic topics like "attention mechanism", "transformers", "neural networks": Use arxiv_tool FIRST
-3. For general knowledge: Use wiki_tool
-4. For current events: Use search_tool
-5. After getting information from tools, immediately provide your final answer
-6. DO NOT use multiple tools unless absolutely necessary
-7. Keep your research focused and concise
+When the user asks follow-up questions, refer to previous responses and build upon them.
+If the user asks about a new topic, research it normally but acknowledge the topic change.
 
-Your response should be structured information, not JSON format.
-Provide a clear summary with the topic, key findings, and sources used.
+Your tools remain the same:
+- wiki_tool: For general knowledge
+- search_tool: For real-time web search  
+- arxiv_tool: For academic papers
+
+Keep responses conversational and build on previous context when relevant.
      """),
-    ("placeholder", "{{chat_history}}"),
-    ("human", "{{input}}"),
-    ("placeholder", "{{agent_scratchpad}}")
+    ("placeholder", "{chat_history}"),
+    ("human", "{input}"),
+    ("placeholder", "{agent_scratchpad}")
 ])
 
 # Create agent with tool calling - with fallback to ReAct agent
@@ -129,14 +130,14 @@ Use ONLY ONE tool per query to avoid loops.
         agent_executor = None
 
 # Redis-based Memory with error handling
-def get_memory():
+def get_memory(session_id: str = "default-session"):
     try:
         return ConversationBufferMemory(
             memory_key="chat_history",
             return_messages=True,
             chat_memory=RedisChatMessageHistory(
                 url=REDIS_URL,
-                session_id="research-session"
+                session_id=session_id  # Use dynamic session ID
             )
         )
     except Exception as e:
@@ -181,19 +182,14 @@ simple_chain = create_simple_research_chain()
 
 @contextmanager
 def timeout_context(seconds):
-    """Context manager to timeout operations"""
-    def timeout_handler(signum, frame):
-        raise TimeoutError(f"Operation timed out after {seconds} seconds")
-    
-    # Set the timeout handler
-    old_handler = signal.signal(signal.SIGALRM, timeout_handler)
-    signal.alarm(seconds)
-    
+    """Cross-platform timeout using threading.Timer (safe on Windows)"""
+    timer = threading.Timer(seconds, lambda: (_ for _ in ()).throw(TimeoutError(f"Operation timed out after {seconds} seconds")))
+    timer.start()
     try:
         yield
     finally:
-        signal.alarm(0)  # Cancel the alarm
-        signal.signal(signal.SIGALRM, old_handler)  # Restore old handler
+        timer.cancel()
+
 
 redis_memory = get_memory()
 
@@ -266,39 +262,27 @@ def run_simple_research_chain(user_input: str) -> ResearchResponse:
             summary=f"Research encountered an error: {str(e)}",
             sources=[]
         )
-def run_research_agent(user_input: str) -> ResearchResponse:
-    """
-    Run the research agent with multiple fallback strategies.
-    
-    Args:
-        user_input: The user's research query
-        
-    Returns:
-        ResearchResponse: Structured research results
-    """
-    
+def run_research_agent(user_input: str, session_id: str = "default-session") -> ResearchResponse:
     try:
-        # Strategy 1: Try agent executor if available (with timeout)
+        # Get session-specific memory
+        session_memory = get_memory(session_id)
+        
         if agent_executor:
             try:
                 logger.info(f"Using agent executor for query: {user_input}")
                 
-                # Use timeout to prevent infinite loops
-                with timeout_context(45):  # 45 second timeout
-                    # Get memory context
-                    memory_variables = redis_memory.load_memory_variables({})
+                with timeout_context(45):
+                    # Load conversation history
+                    memory_variables = session_memory.load_memory_variables({})
                     
-                    # Prepare input for agent
                     agent_input = {
                         "input": user_input,
                         **memory_variables
                     }
                     
-                    # Run the agent
                     result = agent_executor.invoke(agent_input)
                     agent_output = result.get("output", "")
                 
-                # Process the output
                 if agent_output and not agent_output.startswith("Agent stopped"):
                     research_response = ResearchResponse(
                         topic=user_input,
@@ -306,37 +290,25 @@ def run_research_agent(user_input: str) -> ResearchResponse:
                         sources=["Agent Research"]
                     )
                     
-                    # Save to memory
-                    try:
-                        redis_memory.save_context(
-                            {"input": user_input}, 
-                            {"output": research_response.summary}
-                        )
-                    except Exception as memory_error:
-                        logger.warning(f"Failed to save to memory: {memory_error}")
+                    # Save conversation to memory
+                    session_memory.save_context(
+                        {"input": user_input}, 
+                        {"output": research_response.summary}
+                    )
                     
-                    logger.info("Agent executor completed successfully")
                     return research_response
-                else:
-                    logger.warning("Agent returned empty or error response, trying simple chain")
                     
-            except TimeoutError:
-                logger.warning("Agent executor timed out, trying simple chain")
             except Exception as agent_error:
-                logger.warning(f"Agent executor failed: {agent_error}, trying simple chain")
+                logger.warning(f"Agent executor failed: {agent_error}")
         
-        # Strategy 2: Use simple research chain
-        logger.info(f"Using simple research chain for query: {user_input}")
+        # Fallback to simple chain...
         result = run_simple_research_chain(user_input)
         
-        # Save to memory if successful
-        try:
-            redis_memory.save_context(
-                {"input": user_input}, 
-                {"output": result.summary}
-            )
-        except Exception as memory_error:
-            logger.warning(f"Failed to save to memory: {memory_error}")
+        # Save to session memory
+        session_memory.save_context(
+            {"input": user_input}, 
+            {"output": result.summary}
+        )
         
         return result
         
