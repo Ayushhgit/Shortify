@@ -21,6 +21,7 @@ import CoverLetterGenerator from "./pages/CoverLetterGenerator";
 import AssignmentHelper from "./pages/AssignmentHelper";
 import ResearchAssistantChat from "./pages/ResearchAssistant";
 import LinkwiseAI from "./pages/LinkwiseAI";
+import EDAUploader from "./pages/EDAUploader";
 
 
 const LayoutWrapper = ({ children }) => {
@@ -38,6 +39,7 @@ const LayoutWrapper = ({ children }) => {
     "/Profile",
     "/settings",
     "/Settings",
+    "/features/EDA", 
     "/features/coverLetterGenerator",
     "/features/AssignmentHelper",
     "/features/ResearchAssistant",
@@ -79,6 +81,7 @@ function App() {
           <Route path="/features/AssignmentHelper" element={<AssignmentHelper />}/>
           <Route path="/features/ResearchAssistant"  element={<ResearchAssistantChat />}/>
           <Route path="/features/LinkwiseAI"  element={<LinkwiseAI />}/>
+          <Route path="/features/EDA"  element={<EDAUploader />}/>
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>
