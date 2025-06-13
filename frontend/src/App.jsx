@@ -20,6 +20,8 @@ import ArticleSummarizer from "./pages/ArticleSummarizer";
 import CoverLetterGenerator from "./pages/CoverLetterGenerator";
 import AssignmentHelper from "./pages/AssignmentHelper";
 import ResearchAssistantChat from "./pages/ResearchAssistant";
+import LinkwiseAI from "./pages/LinkwiseAI";
+
 
 const LayoutWrapper = ({ children }) => {
   const location = useLocation();
@@ -76,6 +78,7 @@ function App() {
           <Route path="/features/coverLetterGenerator" element={<CoverLetterGenerator />}/>
           <Route path="/features/AssignmentHelper" element={<AssignmentHelper />}/>
           <Route path="/features/ResearchAssistant"  element={<ResearchAssistantChat />}/>
+          <Route path="/features/LinkwiseAI"  element={<LinkwiseAI />}/>
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>

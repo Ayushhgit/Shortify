@@ -23,6 +23,8 @@ from app.routers import ai_solver
 from app.routers import export 
 from app.routers import handwriting
 from app.routers import research_router
+from app.routers import linkwise_router
+
 
 
 logging.basicConfig(
@@ -70,6 +72,7 @@ app.include_router(ai_solver.router)
 app.include_router(export.router)
 app.include_router(handwriting.router)
 app.include_router(research_router.router, prefix="/api")
+app.include_router(linkwise_router.router)
 
 @app.get("/", tags=["status"])
 async def root():
