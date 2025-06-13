@@ -10,15 +10,15 @@ import {
   User,
   Github,
   Menu,
-  X,
+  X,Edit, Droplets,Settings, Download,
   BookText,
   Pencil,
   Binoculars,
   Sparkles,
   Search,
-  ArrowRight,
+  ArrowRight, FileImage,
   Lightbulb,
-  Play,
+  Play,Upload, Palette,Paintbrush,
   Eye,
   Cpu,
   Brain,
@@ -122,19 +122,19 @@ export default function ShortifyPage() {
       case "home":
         return "AI Command Center";
       case "shorts":
-        return "Neural Shorts Forge";
+        return "YouTube Clips Forger";
       case "summarizer":
-        return "Video Intelligence Hub";
+        return "Video Summarizer";
       case "pdf":
         return "Document Mind Reader";
       case "resume":
-        return "Career Intelligence AI";
+        return "Resume Analyzer";
       case "article":
         return "Article Summarizer";
       case "coverLetter":
         return "Cover Letter Maker";
       case "assignment":
-        return "Assignment Maker";
+        return "Assignment Helper";
       case "research":
         return "Research Assistant";
       default:
@@ -153,21 +153,21 @@ export default function ShortifyPage() {
     {
       id: "shorts",
       icon: Youtube,
-      label: "Neural Shorts",
+      label: "YouTube Clipper",
       gradient: "from-red-500 to-pink-500",
       glow: "shadow-red-500/25",
     },
     {
       id: "summarizer",
       icon: Video,
-      label: "Video Intelligence",
+      label: "YouTube Summarizer",
       gradient: "from-purple-500 to-indigo-500",
       glow: "shadow-purple-500/25",
     },
     {
       id: "pdf",
       icon: FileText,
-      label: "Document AI",
+      label: "Document Summarizer",
       gradient: "from-emerald-500 to-teal-500",
       glow: "shadow-emerald-500/25",
     },
@@ -195,7 +195,7 @@ export default function ShortifyPage() {
     {
       id: "assignment",
       icon: Pencil,
-      label: "Assignment Maker",
+      label: "Assignment Helper",
       gradient: "from-yellow-500 via-orange-400 to-amber-200",
       glow: "shadow-violet-500/25",
     },
@@ -256,7 +256,7 @@ export default function ShortifyPage() {
     {
       title: "Article Summarizer",
       icon: Chrome,
-      desc: "Summarize long articles into clear, concise points using AI—perfect for quick reading, research, or content repurposing.",
+      desc: "Summarize long articles into clear, concise points using AI—perfect for quick reading, research, or content repurposing and supports multiple pages.",
       gradient: "from-pink-500 via-purple-600 to-orange-600",
       link: "/features/ArticleSummarizer",
       label: "Summarize Now",
@@ -277,11 +277,11 @@ export default function ShortifyPage() {
       bgPattern: "radar",
     },
     {
-      title: "Assignment Maker",
+      title: "Assignment Helper",
       icon: Pencil,
       desc: "Convert AI-generated answers into realistic handwritten assignments with ruled paper styling – perfect for fast, smart submissions.",
       gradient: "from-yellow-500 via-orange-400 to-amber-200",
-      link: "/features/assignmentMaker",
+      link: "/features/AssignmentHelper",
       label: "Try Now",
       badge: "LIVE",
       animation: "pulse",
@@ -292,7 +292,7 @@ export default function ShortifyPage() {
       icon: Binoculars,
       desc: "AI-powered assistant that searches research papers, summarizes concepts, and answers your academic queries using real citations.",
       gradient: "from-rose-500 via-cyan-600 to-fuchsia-600",
-      link: "/features/researchAssistant",
+      link: "/features/ResearchAssistant",
       label: "Explore",
       badge: "LIVE",
       animation: "radar",
@@ -335,26 +335,7 @@ export default function ShortifyPage() {
     },
   ];
 
-  const handleFeatureClick = (link) => {
-    // For dashboard navigation, switch to the appropriate tab
-    if (link === "/features/shorts-generator") {
-      setActiveTab("shorts");
-    } else if (link === "/features/summarizer") {
-      setActiveTab("summarizer");
-    } else if (link === "/features/pdf-summarizer") {
-      setActiveTab("pdf");
-    } else if (link === "/features/resumeAnalyzer") {
-      setActiveTab("resume");
-    } else if (link === "/features/ArticleSummarizer") {
-      setActiveTab("article");
-    } else if (link === "/features/coverLetterGenerator") {
-      setActiveTab("coverLetter");
-    } else {
-      // For external links, use window.location
-      window.location.href = link;
-    }
-  };
-
+ 
   return (
     <div className="flex h-screen bg-gray-950 text-white overflow-hidden relative">
       {/* Dynamic Mesh Background */}
@@ -1282,6 +1263,215 @@ export default function ShortifyPage() {
                   <button className="bg-gradient-to-r from-rose-400 via-cyan-600 to-fuchsia-400 hover:from-rose-500 hover:via-cyan-700 hover:to-fuchsia-500 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-emerald-500/25 flex items-center gap-3 mx-auto group">
                     <Search className="w-6 h-6 group-hover:scale-110 transition-transform" />
                     Start Research
+                    <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                </a>
+              </div>
+            </div>
+          )}
+
+          {/* Assignment Maker */}
+          {activeTab === "assignment" && (
+            <div className="max-w-4xl mx-auto space-y-8">
+              <div className="text-center mb-12">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-600/20 border border-orange-600/30 mb-6">
+                  <FileText className="w-5 h-5 text-yellow-400" />
+                  <span className="text-yellow-400 font-medium">
+                    ASSIGNMENT INTELLIGENCE
+                  </span>
+                </div>
+                <h2 className="text-4xl font-bold bg-gradient-to-r from-yellow-400 via-orange-400 to-rose-400 bg-clip-text text-transparent mb-4">
+                  AI-Powered Assignment Maker
+                </h2>
+                <p className="text-xl text-gray-400 leading-relaxed">
+                  Upload questions in any format and let AI solve them with
+                  customizable formatting, handwriting styles, and downloadable
+                  PDF outputs.
+                </p>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-8 mb-8">
+                <div className="bg-gradient-to-br from-yellow-600/10 to-orange-600/10 border border-yellow-600/20 rounded-3xl p-8">
+                  <h3 className="text-2xl font-bold text-yellow-400 mb-4 flex items-center gap-3">
+                    <Upload className="w-8 h-8" />
+                    Input Capabilities
+                  </h3>
+                  <ul className="space-y-4 text-gray-300">
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" />
+                      <span>
+                        PDF question paper recognition and parsing
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-orange-400 mt-0.5 flex-shrink-0" />
+                      <span>
+                        DOCX file processing with formatting preservation
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-rose-400 mt-0.5 flex-shrink-0" />
+                      <span>Direct text input with smart question detection</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" />
+                      <span>
+                        Image-based question extraction from photos
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="bg-gradient-to-br from-orange-600/10 to-rose-600/10 border border-orange-600/20 rounded-3xl p-8">
+                  <h3 className="text-2xl font-bold text-orange-400 mb-4 flex items-center gap-3">
+                    <Palette className="w-8 h-8" />
+                    Customization Options
+                  </h3>
+                  <ul className="space-y-4 text-gray-300">
+                    <li className="flex items-start gap-3">
+                      <Paintbrush className="w-5 h-5 text-orange-400 mt-0.5 flex-shrink-0" />
+                      <span>Multiple handwriting fonts and styles</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <FileImage className="w-5 h-5 text-rose-400 mt-0.5 flex-shrink-0" />
+                      <span>
+                        Blank, ruled, or graph paper backgrounds
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Droplets className="w-5 h-5 text-orange-400 mt-0.5 flex-shrink-0" />
+                      <span>Customizable ink colors and thickness</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Edit className="w-5 h-5 text-rose-400 mt-0.5 flex-shrink-0" />
+                      <span>Real-time editing and formatting controls</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Statistics Section */}
+              <div className="bg-gradient-to-br from-yellow-600/10 to-orange-600/10 border border-yellow-600/20 rounded-3xl p-8 mb-8">
+                <div className="grid md:grid-cols-4 gap-6 text-center">
+                  <div>
+                    <div className="text-3xl font-bold text-yellow-400 mb-2">
+                      95%
+                    </div>
+                    <div className="text-gray-400">Solution Accuracy</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-orange-400 mb-2">
+                      10x
+                    </div>
+                    <div className="text-gray-400">Faster Completion</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-rose-400 mb-2">
+                      5+
+                    </div>
+                    <div className="text-gray-400">Font Styles</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-yellow-400 mb-2">
+                      HD
+                    </div>
+                    <div className="text-gray-400">PDF Quality</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Assignment Process */}
+              <div className="bg-gradient-to-br from-orange-600/10 to-rose-600/10 border border-orange-600/20 rounded-3xl p-8 mb-8">
+                <h3 className="text-2xl font-bold text-orange-400 mb-6 flex items-center gap-3">
+                  <Cpu className="w-8 h-8" />
+                  Assignment Process
+                </h3>
+                <div className="grid md:grid-cols-4 gap-6">
+                  {[
+                    {
+                      step: "01",
+                      title: "Upload & Parse",
+                      desc: "AI extracts questions from PDF, DOCX, or text input",
+                      color: "yellow",
+                    },
+                    {
+                      step: "02",
+                      title: "Solve & Generate",
+                      desc: "Advanced AI provides accurate solutions with working",
+                      color: "orange",
+                    },
+                    {
+                      step: "03",
+                      title: "Format & Style",
+                      desc: "Choose fonts, colors, and paper styles for natural look",
+                      color: "rose",
+                    },
+                    {
+                      step: "04",
+                      title: "Edit & Download",
+                      desc: "Real-time editing with high-quality PDF export",
+                      color: "yellow",
+                    },
+                  ].map((item, idx) => (
+                    <div key={idx} className="text-center">
+                      <div
+                        className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-${item.color}-500 to-${item.color}-600 flex items-center justify-center text-white font-bold text-xl`}
+                      >
+                        {item.step}
+                      </div>
+                      <h4 className="text-lg font-bold text-white mb-2">
+                        {item.title}
+                      </h4>
+                      <p className="text-gray-400 text-sm">{item.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Features Grid */}
+              <div className="grid md:grid-cols-3 gap-6 mb-8">
+                <div className="bg-gradient-to-br from-yellow-600/10 to-orange-600/10 border border-yellow-600/20 rounded-2xl p-6 text-center">
+                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 flex items-center justify-center">
+                    <Download className="w-6 h-6 text-white" />
+                  </div>
+                  <h4 className="text-lg font-bold text-yellow-400 mb-2">
+                    Instant PDF Export
+                  </h4>
+                  <p className="text-gray-400 text-sm">
+                    Download completed assignments as high-quality PDFs ready for submission
+                  </p>
+                </div>
+
+                <div className="bg-gradient-to-br from-orange-600/10 to-rose-600/10 border border-orange-600/20 rounded-2xl p-6 text-center">
+                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-orange-500 to-rose-500 flex items-center justify-center">
+                    <Zap className="w-6 h-6 text-white" />
+                  </div>
+                  <h4 className="text-lg font-bold text-orange-400 mb-2">
+                    Smart Recognition
+                  </h4>
+                  <p className="text-gray-400 text-sm">
+                    Advanced OCR technology recognizes complex mathematical equations and diagrams
+                  </p>
+                </div>
+
+                <div className="bg-gradient-to-br from-rose-600/10 to-yellow-600/10 border border-rose-600/20 rounded-2xl p-6 text-center">
+                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-rose-500 to-yellow-500 flex items-center justify-center">
+                    <Settings className="w-6 h-6 text-white" />
+                  </div>
+                  <h4 className="text-lg font-bold text-rose-400 mb-2">
+                    Live Customization
+                  </h4>
+                  <p className="text-gray-400 text-sm">
+                    Real-time preview with instant font, color, and layout adjustments
+                  </p>
+                </div>
+              </div>
+
+              <div className="text-center">
+                <a href="/features/AssignmentMaker">
+                  <button className="bg-gradient-to-r from-yellow-400 via-orange-600 to-rose-400 hover:from-yellow-500 hover:via-orange-700 hover:to-rose-500 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-yellow-500/25 flex items-center gap-3 mx-auto group">
+                    <FileText className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                    Finish Assignment
                     <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
                   </button>
                 </a>

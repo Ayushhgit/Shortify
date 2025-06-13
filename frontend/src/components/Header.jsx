@@ -120,7 +120,7 @@ export default function Header() {
         {/* Mobile Menu Button */}
         <div className="md:hidden">
           <button onClick={() => setMobileNavOpen(!mobileNavOpen)}>
-            {mobileNavOpen ? <X className="h-6 w-6 text-gray-800" /> : <Menu className="h-6 w-6 text-gray-800" />}
+            {mobileNavOpen ? <X className="h-6 w-6 text-white-800" /> : <Menu className="h-6 w-6 text-white-500"  />}
           </button>
         </div>
 
