@@ -22,6 +22,7 @@ export default function Header() {
         { label: "Cove Letter Generator", path: "/features/coverLetterGenerator" },
         { label: "Assignment Helper", path: "/features/AssignmentHelper" },
         { label: "Research Assistant", path: "/features/ResearchAssistant" },
+        { label: "Data Analyzer", path: "/features/EDA" },
         { label: "LinkedIn Helper", path: "/features/LinkwiseAI" },
       ],
     },
