@@ -214,6 +214,12 @@ const LinkwiseAI = () => {
             };
 
             const result = await makeAPICall('/generate-content', payload);
+            console.log('API Response:', result); // Add this line
+
+            if (!result.headlines || !result.about_sections || !result.posts) {
+                throw new Error('Invalid response format from server');
+            }
+
             setResults({ type: 'content', data: result });
 
             setTimeout(() => {
@@ -714,7 +720,7 @@ const LinkwiseAI = () => {
                                         LinkedIn Headlines
                                     </h3>
                                     <div className="space-y-3">
-                                        {results.data.headlines.map((headline, index) => (
+                                        {(results.data.headlines || []).map((headline, index) => (
                                             <div key={index} className="p-4 bg-purple-50 rounded-lg border border-purple-200">
                                                 <p className="text-gray-800 font-medium mb-3">{headline}</p>
                                                 <div className="flex gap-2">
@@ -742,7 +748,7 @@ const LinkwiseAI = () => {
                                         About Sections
                                     </h3>
                                     <div className="space-y-4">
-                                        {results.data.about_sections.map((about, index) => (
+                                        {(results.data.about_sections || []).map((about, index) => (
                                             <div key={index} className="p-4 bg-blue-50 rounded-lg border border-blue-200">
                                                 <div className="text-sm text-blue-600 font-medium mb-2">Version {index + 1}</div>
                                                 <p className="text-gray-800 whitespace-pre-wrap mb-3">{about}</p>
@@ -771,7 +777,7 @@ const LinkwiseAI = () => {
                                         LinkedIn Posts
                                     </h3>
                                     <div className="space-y-4">
-                                        {results.data.posts.map((post, index) => (
+                                        {(results.data.posts || []).map((post, index) => (
                                             <div key={index} className="p-4 bg-green-50 rounded-lg border border-green-200">
                                                 <div className="text-sm text-green-600 font-medium mb-2">Post {index + 1}</div>
                                                 <p className="text-gray-800 whitespace-pre-wrap mb-3">{post}</p>
