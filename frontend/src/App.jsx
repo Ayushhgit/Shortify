@@ -41,6 +41,7 @@ const LayoutWrapper = ({ children }) => {
     "/features/coverLetterGenerator",
     "/features/AssignmentHelper",
     "/features/ResearchAssistant",
+    "/features/LinkwiseAI",
     "/",
     
   ];

@@ -237,8 +237,8 @@ const ResumeAnalyzer = () => {
           <div className="flex items-center space-x-2">
             {[
               { icon: Home, href: "/shortify" },
-              { icon: User, href: "/Profile" },
-              { icon: Settings, href: "/Settings" },
+              { icon: User, href: "/profile" },
+              { icon: Settings, href: "/settings" },
             ].map((item, index) => (
               <button
                 key={index}

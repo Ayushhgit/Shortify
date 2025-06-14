@@ -14,8 +14,12 @@ import {
     Award,
     ChevronRight,
     ExternalLink,
-    CheckCircle
+    CheckCircle,
+    Home,
+    Settings,
+    Brain
 } from 'lucide-react';
+import { useNavigate } from "react-router-dom";
 
 const LinkwiseAI = () => {
     const [activeTab, setActiveTab] = useState('analyzer');
@@ -42,6 +46,8 @@ const LinkwiseAI = () => {
     });
 
     const [formErrors, setFormErrors] = useState({});
+
+    const navigate = useNavigate();
 
     const resultRef = useRef(null);
 
@@ -255,6 +261,12 @@ const LinkwiseAI = () => {
     };
 
     const ScoreDisplay = ({ score }) => {
+        const validScore = Math.min(Math.max(score || 0, 0), 100);
+        const normalizedRadius = 45;
+        const circumference = normalizedRadius * 2 * Math.PI;
+        const strokeDasharray = `${circumference} ${circumference}`;
+        const strokeDashoffset = circumference - (validScore / 100) * circumference;
+
         const getScoreColor = (score) => {
             if (score >= 80) return 'text-green-600 bg-green-100';
             if (score >= 60) return 'text-yellow-600 bg-yellow-100';
@@ -299,539 +311,630 @@ const LinkwiseAI = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-            {/* Header */}
-            <div className="bg-white shadow-sm border-b">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                                    <Users className="w-6 h-6 text-white" />
-                                </div>
-                                Linkwise AI
-                            </h1>
-                            <p className="text-gray-600 mt-1">Optimize your LinkedIn presence with AI-powered insights</p>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-500">
-                            <Sparkles className="w-4 h-4" />
-                            <span>Powered by Advanced AI</span>
-                        </div>
-                    </div>
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-cyan-900 to-slate-900 relative overflow-hidden">
+            {/* Animated Background */}
+            <div className="absolute inset-0 overflow-hidden">
+                <div className="absolute -inset-10 opacity-30">
+                    <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500 rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
+                    <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
+                    <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-teal-500 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                {/* Tab Navigation */}
-                <div className="bg-white rounded-xl shadow-sm p-2 mb-8">
-                    <div className="flex space-x-1">
-                        {tabs.map((tab) => {
-                            const Icon = tab.icon;
-                            return (
-                                <button
-                                    key={tab.id}
-                                    onClick={() => {
-                                        setActiveTab(tab.id);
-                                        setResults(null);
-                                        setError('');
-                                        setFormErrors({});
-                                    }}
-                                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium transition-all ${activeTab === tab.id
-                                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md'
-                                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                                        }`}
-                                >
-                                    <Icon className="w-5 h-5" />
-                                    {tab.label}
-                                </button>
-                            );
-                        })}
+            {/* Header */}
+            <header className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] max-w-7xl rounded-2xl bg-white/20 backdrop-blur-xl shadow-2xl border border-white/30">
+                <div className="flex justify-between items-center h-16 px-6">
+                    <div className="flex items-center">
+                        <div className="relative">
+                            <Users className="h-8 w-8 text-emerald-400 mr-3" />
+                            <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></div>
+                        </div>
+                        <span className="text-xl font-bold text-white">
+                            Link<span className="text-emerald-400">wise</span>AI
+                        </span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        {[
+                            { icon: Home, href: "/shortify" },
+                            { icon: User, href: "/profile" },
+                            { icon: Settings, href: "/settings" },
+                        ].map((item, index) => (
+                            <button
+                                key={index}
+                                className="p-3 rounded-xl hover:bg-white/20 transition-all duration-300 hover:scale-110 backdrop-blur-sm border border-white/10"
+                                onClick={() => navigate(item.href)}
+                            >
+                                <item.icon className="h-5 w-5 text-white/80 hover:text-white" />
+                            </button>
+                        ))}
                     </div>
                 </div>
+            </header>
 
-                {/* Error Display */}
-                {error && (
-                    <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-                        <div className="flex items-center">
-                            <div className="text-red-600 text-sm">{error}</div>
+            {/* Main Content */}
+            <div className="relative z-10 pt-32 pb-12 px-6">
+                <div className="max-w-6xl mx-auto">
+                    {/* Hero Section */}
+                    <div className="text-center mb-16">
+                        <div className="inline-flex items-center px-4 py-2 rounded-full bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 text-sm font-medium mb-6">
+                            <Sparkles className="w-4 h-4 mr-2" />
+                            AI-Powered LinkedIn Optimization
                         </div>
+                        <h1 className="text-6xl font-bold text-white mb-6 leading-tight">
+                            Optimize Your
+                            <span className="block bg-gradient-to-r from-cyan-400 to-indigo-400 bg-clip-text text-transparent">
+                                LinkedIn Presence
+                            </span>
+                        </h1>
+                        <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+                            Get AI-powered insights to enhance your LinkedIn profile and generate compelling content
+                        </p>
                     </div>
-                )}
 
-                {/* General Form Error */}
-                {formErrors.general && (
-                    <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-                        <div className="flex items-center">
-                            <div className="text-red-600 text-sm">{formErrors.general}</div>
-                        </div>
-                    </div>
-                )}
-
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {/* Input Form */}
-                    <div className="bg-white rounded-xl shadow-sm p-6">
-                        {activeTab === 'analyzer' && (
-                            <div>
-                                <div className="flex items-center gap-3 mb-6">
-                                    <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                                        <User className="w-5 h-5 text-blue-600" />
-                                    </div>
-                                    <h2 className="text-xl font-semibold text-gray-900">Analyze Your Profile</h2>
-                                </div>
-
-                                <form onSubmit={handleProfileAnalysis} className="space-y-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            LinkedIn Profile URL
-                                        </label>
-                                        <input
-                                            type="url"
-                                            value={profileForm.linkedin_url}
-                                            onChange={(e) => handleProfileInputChange('linkedin_url', e.target.value)}
-                                            placeholder="https://linkedin.com/in/your-profile"
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                        />
-                                        {formErrors.linkedin_url && (
-                                            <p className="text-red-600 text-xs mt-1">{formErrors.linkedin_url}</p>
-                                        )}
-                                        <p className="text-xs text-gray-500 mt-1">OR fill in the details manually below</p>
-                                    </div>
-
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
-                                            <input
-                                                type="text"
-                                                value={profileForm.name}
-                                                onChange={(e) => handleProfileInputChange('name', e.target.value)}
-                                                placeholder="Your full name"
-                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                            />
-                                        </div>
-
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-2">Headline</label>
-                                            <input
-                                                type="text"
-                                                value={profileForm.headline}
-                                                onChange={(e) => handleProfileInputChange('headline', e.target.value)}
-                                                placeholder="Your current headline"
-                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">About Section</label>
-                                        <textarea
-                                            rows={3}
-                                            value={profileForm.about}
-                                            onChange={(e) => handleProfileInputChange('about', e.target.value)}
-                                            placeholder="Your current about section..."
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Experience</label>
-                                        <textarea
-                                            rows={3}
-                                            value={profileForm.experience}
-                                            onChange={(e) => handleProfileInputChange('experience', e.target.value)}
-                                            placeholder="Your work experience and achievements..."
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Skills</label>
-                                        <input
-                                            type="text"
-                                            value={profileForm.skills}
-                                            onChange={(e) => handleProfileInputChange('skills', e.target.value)}
-                                            placeholder="JavaScript, React, Node.js, etc. (comma-separated)"
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                        />
-                                    </div>
-
+                    {/* Tab Navigation */}
+                    <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-2 mb-8 max-w-2xl mx-auto border border-white/20">
+                        <div className="flex space-x-1">
+                            {tabs.map((tab) => {
+                                const Icon = tab.icon;
+                                return (
                                     <button
-                                        type="submit"
-                                        disabled={loading}
-                                        className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-6 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                        key={tab.id}
+                                        onClick={() => {
+                                            setActiveTab(tab.id);
+                                            setResults(null);
+                                            setError('');
+                                            setFormErrors({});
+                                        }}
+                                        className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all ${activeTab === tab.id
+                                            ? 'bg-gradient-to-r from-cyan-500 to-indigo-500 text-white shadow-lg'
+                                            : 'text-gray-300 hover:text-white hover:bg-white/10'
+                                            }`}
                                     >
-                                        {loading ? (
-                                            <div className="flex items-center justify-center gap-2">
-                                                <RefreshCw className="w-4 h-4 animate-spin" />
-                                                Analyzing...
-                                            </div>
-                                        ) : (
-                                            <div className="flex items-center justify-center gap-2">
-                                                <Target className="w-4 h-4" />
-                                                Analyze Profile
-                                            </div>
-                                        )}
+                                        <Icon className="w-5 h-5" />
+                                        {tab.label}
                                     </button>
-                                </form>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    {/* Error Display */}
+                    {error && (
+                        <div className="bg-rose-500/20 border border-rose-500/30 rounded-2xl p-4 mb-6 max-w-4xl mx-auto">
+                            <div className="flex items-center">
+                                <div className="text-rose-300 text-sm">{error}</div>
                             </div>
-                        )}
+                        </div>
+                    )}
 
-                        {activeTab === 'generator' && (
-                            <div>
-                                <div className="flex items-center gap-3 mb-6">
-                                    <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                                        <Sparkles className="w-5 h-5 text-purple-600" />
-                                    </div>
-                                    <h2 className="text-xl font-semibold text-gray-900">Generate Content</h2>
-                                </div>
+                    {/* General Form Error */}
+                    {formErrors.general && (
+                        <div className="bg-rose-500/20 border border-rose-500/30 rounded-2xl p-4 mb-6 max-w-4xl mx-auto">
+                            <div className="flex items-center">
+                                <div className="text-rose-300 text-sm">{formErrors.general}</div>
+                            </div>
+                        </div>
+                    )}
 
-                                <form onSubmit={handleContentGeneration} className="space-y-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Skills</label>
-                                        <input
-                                            type="text"
-                                            value={contentForm.skills}
-                                            onChange={(e) => handleContentInputChange('skills', e.target.value)}
-                                            placeholder="JavaScript, React, Leadership, etc. (comma-separated)"
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                                        />
-                                        {formErrors.skills && (
-                                            <p className="text-red-600 text-xs mt-1">{formErrors.skills}</p>
-                                        )}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
+                        {/* Input Form */}
+                        <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20">
+                            {activeTab === 'analyzer' && (
+                                <div>
+                                    <div className="flex items-center gap-3 mb-8">
+                                        <div className="w-12 h-12 bg-gradient-to-r from-cyan-500 to-indigo-500 rounded-2xl flex items-center justify-center">
+                                            <User className="w-6 h-6 text-white" />
+                                        </div>
+                                        <h2 className="text-2xl font-bold text-white">Analyze Your Profile</h2>
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <form onSubmit={handleProfileAnalysis} className="space-y-6">
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-2">Current Role</label>
+                                            <label className="block text-sm font-medium text-gray-300 mb-3">
+                                                LinkedIn Profile URL
+                                            </label>
+                                            <input
+                                                type="url"
+                                                value={profileForm.linkedin_url}
+                                                onChange={(e) => handleProfileInputChange('linkedin_url', e.target.value)}
+                                                placeholder="https://linkedin.com/in/your-profile"
+                                                className="w-full px-4 py-4 bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent"
+                                            />
+                                            {formErrors.linkedin_url && (
+                                                <p className="text-rose-400 text-xs mt-2">{formErrors.linkedin_url}</p>
+                                            )}
+                                            <p className="text-xs text-gray-400 mt-2">OR fill in the details manually below</p>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-300 mb-3">Name</label>
+                                                <input
+                                                    type="text"
+                                                    value={profileForm.name}
+                                                    onChange={(e) => handleProfileInputChange('name', e.target.value)}
+                                                    placeholder="Your full name"
+                                                    className="w-full px-4 py-4 bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-300 mb-3">Headline</label>
+                                                <input
+                                                    type="text"
+                                                    value={profileForm.headline}
+                                                    onChange={(e) => handleProfileInputChange('headline', e.target.value)}
+                                                    placeholder="Your current headline"
+                                                    className="w-full px-4 py-4 bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-300 mb-3">About Section</label>
+                                            <textarea
+                                                rows={4}
+                                                value={profileForm.about}
+                                                onChange={(e) => handleProfileInputChange('about', e.target.value)}
+                                                placeholder="Your current about section..."
+                                                className="w-full px-4 py-4 bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent resize-none"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-300 mb-3">Experience</label>
+                                            <textarea
+                                                rows={4}
+                                                value={profileForm.experience}
+                                                onChange={(e) => handleProfileInputChange('experience', e.target.value)}
+                                                placeholder="Your work experience and achievements..."
+                                                className="w-full px-4 py-4 bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent resize-none"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-300 mb-3">Skills</label>
                                             <input
                                                 type="text"
-                                                value={contentForm.role}
-                                                onChange={(e) => handleContentInputChange('role', e.target.value)}
-                                                placeholder="Software Engineer, Product Manager, etc."
-                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                                                value={profileForm.skills}
+                                                onChange={(e) => handleProfileInputChange('skills', e.target.value)}
+                                                placeholder="JavaScript, React, Node.js, etc. (comma-separated)"
+                                                className="w-full px-4 py-4 bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent"
                                             />
-                                            {formErrors.role && (
-                                                <p className="text-red-600 text-xs mt-1">{formErrors.role}</p>
+                                        </div>
+
+                                        <button
+                                            type="submit"
+                                            disabled={loading}
+                                            className="w-full bg-gradient-to-r from-cyan-500 to-indigo-500 text-white py-4 px-6 rounded-2xl font-bold hover:from-cyan-600 hover:to-indigo-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+                                        >
+                                            {loading ? (
+                                                <div className="flex items-center justify-center gap-3">
+                                                    <RefreshCw className="w-5 h-5 animate-spin" />
+                                                    Analyzing...
+                                                </div>
+                                            ) : (
+                                                <div className="flex items-center justify-center gap-3">
+                                                    <Target className="w-5 h-5" />
+                                                    Analyze Profile
+                                                </div>
+                                            )}
+                                        </button>
+                                    </form>
+                                </div>
+                            )}
+
+                            {activeTab === 'generator' && (
+                                <div>
+                                    <div className="flex items-center gap-3 mb-8">
+                                        <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center">
+                                            <Sparkles className="w-6 h-6 text-white" />
+                                        </div>
+                                        <h2 className="text-2xl font-bold text-white">Generate Content</h2>
+                                    </div>
+
+                                    <form onSubmit={handleContentGeneration} className="space-y-6">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-300 mb-3">Skills</label>
+                                            <input
+                                                type="text"
+                                                value={contentForm.skills}
+                                                onChange={(e) => handleContentInputChange('skills', e.target.value)}
+                                                placeholder="JavaScript, React, Leadership, etc. (comma-separated)"
+                                                className="w-full px-4 py-4 bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
+                                            />
+                                            {formErrors.skills && (
+                                                <p className="text-rose-400 text-xs mt-2">{formErrors.skills}</p>
                                             )}
                                         </div>
 
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-300 mb-3">Current Role</label>
+                                                <input
+                                                    type="text"
+                                                    value={contentForm.role}
+                                                    onChange={(e) => handleContentInputChange('role', e.target.value)}
+                                                    placeholder="Software Engineer, Product Manager, etc."
+                                                    className="w-full px-4 py-4 bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
+                                                />
+                                                {formErrors.role && (
+                                                    <p className="text-rose-400 text-xs mt-2">{formErrors.role}</p>
+                                                )}
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-300 mb-3">Tone</label>
+                                                <select
+                                                    value={contentForm.tone}
+                                                    onChange={(e) => handleContentInputChange('tone', e.target.value)}
+                                                    className="w-full px-4 py-4 bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent appearance-none cursor-pointer"
+                                                >
+                                                    <option value="professional" className="bg-gray-900 text-white">Professional</option>
+                                                    <option value="friendly" className="bg-gray-900 text-white">Friendly</option>
+                                                    <option value="technical" className="bg-gray-900 text-white">Technical</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-2">Tone</label>
-                                            <select
-                                                value={contentForm.tone}
-                                                onChange={(e) => handleContentInputChange('tone', e.target.value)}
-                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                                            >
-                                                <option value="professional">Professional</option>
-                                                <option value="friendly">Friendly</option>
-                                                <option value="technical">Technical</option>
-                                            </select>
+                                            <label className="block text-sm font-medium text-gray-300 mb-3">Career Goal</label>
+                                            <textarea
+                                                rows={4}
+                                                value={contentForm.career_goal}
+                                                onChange={(e) => handleContentInputChange('career_goal', e.target.value)}
+                                                placeholder="Describe your career aspirations and goals..."
+                                                className="w-full px-4 py-4 bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent resize-none"
+                                            />
+                                            {formErrors.career_goal && (
+                                                <p className="text-rose-400 text-xs mt-2">{formErrors.career_goal}</p>
+                                            )}
+                                        </div>
+
+                                        <button
+                                            type="submit"
+                                            disabled={loading}
+                                            className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-4 px-6 rounded-2xl font-bold hover:from-indigo-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+                                        >
+                                            {loading ? (
+                                                <div className="flex items-center justify-center gap-3">
+                                                    <RefreshCw className="w-5 h-5 animate-spin" />
+                                                    Generating...
+                                                </div>
+                                            ) : (
+                                                <div className="flex items-center justify-center gap-3">
+                                                    <Sparkles className="w-5 h-5" />
+                                                    Generate Content
+                                                </div>
+                                            )}
+                                        </button>
+                                    </form>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Results Display */}
+                        <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20" ref={resultRef}>
+                            {!results && !loading && (
+                                <div className="text-center py-16">
+                                    <div className="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                                        {activeTab === 'analyzer' ? (
+                                            <Target className="w-10 h-10 text-white/60" />
+                                        ) : (
+                                            <FileText className="w-10 h-10 text-white/60" />
+                                        )}
+                                    </div>
+                                    <h3 className="text-2xl font-bold text-white mb-4">
+                                        {activeTab === 'analyzer' ? 'Ready to Analyze' : 'Ready to Generate'}
+                                    </h3>
+                                    <p className="text-gray-300 text-lg">
+                                        {activeTab === 'analyzer'
+                                            ? 'Fill in your profile details to get AI-powered optimization suggestions'
+                                            : 'Provide your information to generate compelling LinkedIn content'
+                                        }
+                                    </p>
+                                </div>
+                            )}
+
+                            {loading && (
+                                <div className="text-center py-16">
+                                    <div className="w-20 h-20 bg-gradient-to-r from-cyan-500 to-indigo-500 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+                                        <Brain className="w-10 h-10 text-white animate-pulse" />
+                                    </div>
+                                    <h3 className="text-2xl font-bold text-white mb-4">Processing...</h3>
+                                    <p className="text-gray-300 text-lg">AI is analyzing your information</p>
+
+                                    {/* Loading Progress */}
+                                    <div className="mt-8 space-y-4">
+                                        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                                            <div className="space-y-4">
+                                                {[
+                                                    "Extracting key information...",
+                                                    "Analyzing profile elements...",
+                                                    "Comparing with best practices...",
+                                                    "Generating recommendations...",
+                                                ].map((text, index) => (
+                                                    <div key={index} className="flex items-center space-x-3">
+                                                        <div
+                                                            className={`w-4 h-4 rounded-full ${index < 2
+                                                                ? "bg-cyan-400"
+                                                                : index === 2
+                                                                    ? "bg-cyan-400 animate-pulse"
+                                                                    : "bg-gray-600"
+                                                                }`}
+                                                        ></div>
+                                                        <span className="text-gray-300">{text}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {results?.type === 'analysis' && (
+                                <div className="space-y-8">
+                                    <div className="flex items-center gap-3 mb-8">
+                                        <div className="w-12 h-12 bg-gradient-to-r from-cyan-500 to-indigo-500 rounded-2xl flex items-center justify-center">
+                                            <CheckCircle className="w-6 h-6 text-white" />
+                                        </div>
+                                        <h2 className="text-2xl font-bold text-white">Profile Analysis Results</h2>
+                                    </div>
+
+                                    {/* Score Display */}
+                                    <div className="flex justify-center mb-8">
+                                        <ScoreDisplay score={results.data.score} />
+                                    </div>
+
+                                    {/* Strengths */}
+                                    <div className="bg-cyan-500/10 backdrop-blur-sm rounded-2xl p-6 border border-cyan-500/30">
+                                        <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
+                                            <Award className="w-5 h-5 text-cyan-400" />
+                                            Strengths
+                                        </h3>
+                                        <div className="space-y-3">
+                                            {results.data.strengths.map((strength, index) => (
+                                                <div key={index} className="flex items-start gap-3 p-4 bg-white/5 rounded-xl border border-cyan-500/20">
+                                                    <CheckCircle className="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" />
+                                                    <span className="text-gray-200">{strength}</span>
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
 
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Career Goal</label>
-                                        <textarea
-                                            rows={3}
-                                            value={contentForm.career_goal}
-                                            onChange={(e) => handleContentInputChange('career_goal', e.target.value)}
-                                            placeholder="Describe your career aspirations and goals..."
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                                        />
-                                        {formErrors.career_goal && (
-                                            <p className="text-red-600 text-xs mt-1">{formErrors.career_goal}</p>
-                                        )}
-                                    </div>
-
-                                    <button
-                                        type="submit"
-                                        disabled={loading}
-                                        className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 px-6 rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                                    >
-                                        {loading ? (
-                                            <div className="flex items-center justify-center gap-2">
-                                                <RefreshCw className="w-4 h-4 animate-spin" />
-                                                Generating...
-                                            </div>
-                                        ) : (
-                                            <div className="flex items-center justify-center gap-2">
-                                                <Sparkles className="w-4 h-4" />
-                                                Generate Content
-                                            </div>
-                                        )}
-                                    </button>
-                                </form>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Results Display */}
-                    <div className="bg-white rounded-xl shadow-sm p-6" ref={resultRef}>
-                        {!results && !loading && (
-                            <div className="text-center py-12">
-                                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    {activeTab === 'analyzer' ? (
-                                        <Target className="w-8 h-8 text-gray-400" />
-                                    ) : (
-                                        <FileText className="w-8 h-8 text-gray-400" />
-                                    )}
-                                </div>
-                                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                                    {activeTab === 'analyzer' ? 'Ready to Analyze' : 'Ready to Generate'}
-                                </h3>
-                                <p className="text-gray-500">
-                                    {activeTab === 'analyzer'
-                                        ? 'Fill in your profile details to get AI-powered optimization suggestions'
-                                        : 'Provide your information to generate compelling LinkedIn content'
-                                    }
-                                </p>
-                            </div>
-                        )}
-
-                        {loading && (
-                            <div className="text-center py-12">
-                                <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
-                                    <RefreshCw className="w-8 h-8 text-white animate-spin" />
-                                </div>
-                                <h3 className="text-lg font-medium text-gray-900 mb-2">Processing...</h3>
-                                <p className="text-gray-500">AI is analyzing your information</p>
-                            </div>
-                        )}
-
-                        {results?.type === 'analysis' && (
-                            <div>
-                                <div className="flex items-center gap-3 mb-6">
-                                    <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                                        <CheckCircle className="w-5 h-5 text-green-600" />
-                                    </div>
-                                    <h2 className="text-xl font-semibold text-gray-900">Profile Analysis Results</h2>
-                                </div>
-
-                                {/* Score Display */}
-                                <div className="mb-8">
-                                    <ScoreDisplay score={results.data.score} />
-                                </div>
-
-                                {/* Strengths */}
-                                <div className="mb-6">
-                                    <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                        <Award className="w-5 h-5 text-green-600" />
-                                        Strengths
-                                    </h3>
-                                    <div className="space-y-2">
-                                        {results.data.strengths.map((strength, index) => (
-                                            <div key={index} className="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
-                                                <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                                                <span className="text-gray-700">{strength}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* Weaknesses */}
-                                <div className="mb-6">
-                                    <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                        <TrendingUp className="w-5 h-5 text-orange-600" />
-                                        Areas for Improvement
-                                    </h3>
-                                    <div className="space-y-2">
-                                        {results.data.weaknesses.map((weakness, index) => (
-                                            <div key={index} className="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
-                                                <ChevronRight className="w-5 h-5 text-orange-600 mt-0.5 flex-shrink-0" />
-                                                <span className="text-gray-700">{weakness}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* Suggestions */}
-                                <div>
-                                    <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                        <Sparkles className="w-5 h-5 text-blue-600" />
-                                        AI Suggestions
-                                    </h3>
-                                    <div className="space-y-3">
-                                        {results.data.suggestions.map((suggestion, index) => (
-                                            <div key={index} className="p-4 bg-blue-50 rounded-lg border-l-4 border-blue-600">
-                                                <p className="text-gray-700">{suggestion}</p>
-                                                <div className="flex gap-2 mt-3">
-                                                    <button
-                                                        onClick={() => handleCopy(suggestion, `suggestion-${index}`)}
-                                                        className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 font-medium"
-                                                    >
-                                                        {copiedIndex === `suggestion-${index}` ? (
-                                                            <CheckCircle className="w-3 h-3" />
-                                                        ) : (
-                                                            <Copy className="w-3 h-3" />
-                                                        )}
-                                                        {copiedIndex === `suggestion-${index}` ? 'Copied!' : 'Copy'}
-                                                    </button>
+                                    {/* Weaknesses */}
+                                    <div className="bg-amber-500/10 backdrop-blur-sm rounded-2xl p-6 border border-amber-500/30">
+                                        <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
+                                            <TrendingUp className="w-5 h-5 text-amber-400" />
+                                            Areas for Improvement
+                                        </h3>
+                                        <div className="space-y-3">
+                                            {results.data.weaknesses.map((weakness, index) => (
+                                                <div key={index} className="flex items-start gap-3 p-4 bg-white/5 rounded-xl border border-amber-500/20">
+                                                    <ChevronRight className="w-5 h-5 text-amber-400 mt-0.5 flex-shrink-0" />
+                                                    <span className="text-gray-200">{weakness}</span>
                                                 </div>
-                                            </div>
-                                        ))}
+                                            ))}
+                                        </div>
                                     </div>
-                                </div>
 
-                                {/* Action Buttons */}
-                                <div className="flex gap-3 mt-8">
-                                    <button
-                                        onClick={() => handleDownload(
-                                            `Profile Analysis Results\n\nScore: ${results.data.score}/100\n\nStrengths:\n${results.data.strengths.map(s => `• ${s}`).join('\n')}\n\nAreas for Improvement:\n${results.data.weaknesses.map(w => `• ${w}`).join('\n')}\n\nSuggestions:\n${results.data.suggestions.map(s => `• ${s}`).join('\n')}`,
-                                            'linkedin-profile-analysis.txt'
-                                        )}
-                                        className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-                                    >
-                                        <Download className="w-4 h-4" />
-                                        Download Report
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            setResults(null);
-                                            setProfileForm({
-                                                linkedin_url: '',
-                                                name: '',
-                                                headline: '',
-                                                about: '',
-                                                experience: '',
-                                                skills: ''
-                                            });
-                                        }}
-                                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                                    >
-                                        <RefreshCw className="w-4 h-4" />
-                                        New Analysis
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-
-                        {results?.type === 'content' && (
-                            <div>
-                                <div className="flex items-center gap-3 mb-6">
-                                    <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                                        <Sparkles className="w-5 h-5 text-purple-600" />
-                                    </div>
-                                    <h2 className="text-xl font-semibold text-gray-900">Generated Content</h2>
-                                </div>
-
-                                {/* Headlines */}
-                                <div className="mb-8">
-                                    <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                                        <Briefcase className="w-5 h-5 text-purple-600" />
-                                        LinkedIn Headlines
-                                    </h3>
-                                    <div className="space-y-3">
-                                        {(results.data.headlines || []).map((headline, index) => (
-                                            <div key={index} className="p-4 bg-purple-50 rounded-lg border border-purple-200">
-                                                <p className="text-gray-800 font-medium mb-3">{headline}</p>
-                                                <div className="flex gap-2">
-                                                    <button
-                                                        onClick={() => handleCopy(headline, `headline-${index}`)}
-                                                        className="flex items-center gap-1 text-xs text-purple-600 hover:text-purple-700 font-medium px-2 py-1 bg-white rounded"
-                                                    >
-                                                        {copiedIndex === `headline-${index}` ? (
-                                                            <CheckCircle className="w-3 h-3" />
-                                                        ) : (
-                                                            <Copy className="w-3 h-3" />
-                                                        )}
-                                                        {copiedIndex === `headline-${index}` ? 'Copied!' : 'Copy'}
-                                                    </button>
+                                    {/* Suggestions */}
+                                    <div className="bg-indigo-500/10 backdrop-blur-sm rounded-2xl p-6 border border-indigo-500/30">
+                                        <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
+                                            <Sparkles className="w-5 h-5 text-indigo-400" />
+                                            AI Suggestions
+                                        </h3>
+                                        <div className="space-y-4">
+                                            {results.data.suggestions.map((suggestion, index) => (
+                                                <div key={index} className="p-4 bg-white/5 rounded-xl border border-indigo-500/20 border-l-4 border-l-indigo-400">
+                                                    <p className="text-gray-200 mb-3">{suggestion}</p>
+                                                    <div className="flex gap-2">
+                                                        <button
+                                                            onClick={() => handleCopy(suggestion, `suggestion-${index}`)}
+                                                            className="flex items-center gap-2 text-xs text-indigo-300 hover:text-indigo-200 font-medium px-3 py-1 bg-white/10 rounded-lg transition-colors"
+                                                        >
+                                                            {copiedIndex === `suggestion-${index}` ? (
+                                                                <CheckCircle className="w-3 h-3" />
+                                                            ) : (
+                                                                <Copy className="w-3 h-3" />
+                                                            )}
+                                                            {copiedIndex === `suggestion-${index}` ? 'Copied!' : 'Copy'}
+                                                        </button>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        ))}
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Action Buttons */}
+                                    <div className="flex flex-col sm:flex-row gap-3 pt-6">
+                                        <button
+                                            onClick={() => handleDownload(
+                                                `Profile Analysis Results\n\nScore: ${results.data.score}/100\n\nStrengths:\n${results.data.strengths.map(s => `• ${s}`).join('\n')}\n\nAreas for Improvement:\n${results.data.weaknesses.map(w => `• ${w}`).join('\n')}\n\nSuggestions:\n${results.data.suggestions.map(s => `• ${s}`).join('\n')}`,
+                                                'linkedin-profile-analysis.txt'
+                                            )}
+                                            className="flex items-center justify-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-sm text-white rounded-2xl hover:bg-white/20 transition-all duration-300 border border-white/20 hover:scale-105"
+                                        >
+                                            <Download className="w-4 h-4" />
+                                            Download Report
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                setResults(null);
+                                                setProfileForm({
+                                                    linkedin_url: '',
+                                                    name: '',
+                                                    headline: '',
+                                                    about: '',
+                                                    experience: '',
+                                                    skills: ''
+                                                });
+                                            }}
+                                            className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-indigo-500 text-white rounded-2xl hover:from-cyan-600 hover:to-indigo-600 transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+                                        >
+                                            <RefreshCw className="w-4 h-4" />
+                                            New Analysis
+                                        </button>
                                     </div>
                                 </div>
+                            )}
 
-                                {/* About Sections */}
-                                <div className="mb-8">
-                                    <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                                        <FileText className="w-5 h-5 text-blue-600" />
-                                        About Sections
-                                    </h3>
-                                    <div className="space-y-4">
-                                        {(results.data.about_sections || []).map((about, index) => (
-                                            <div key={index} className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                                                <div className="text-sm text-blue-600 font-medium mb-2">Version {index + 1}</div>
-                                                <p className="text-gray-800 whitespace-pre-wrap mb-3">{about}</p>
-                                                <div className="flex gap-2">
-                                                    <button
-                                                        onClick={() => handleCopy(about, `about-${index}`)}
-                                                        className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 font-medium px-2 py-1 bg-white rounded"
-                                                    >
-                                                        {copiedIndex === `about-${index}` ? (
-                                                            <CheckCircle className="w-3 h-3" />
-                                                        ) : (
-                                                            <Copy className="w-3 h-3" />
-                                                        )}
-                                                        {copiedIndex === `about-${index}` ? 'Copied!' : 'Copy'}
-                                                    </button>
+                            {results?.type === 'content' && (
+                                <div className="space-y-8">
+                                    <div className="flex items-center gap-3 mb-8">
+                                        <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center">
+                                            <Sparkles className="w-6 h-6 text-white" />
+                                        </div>
+                                        <h2 className="text-2xl font-bold text-white">Generated Content</h2>
+                                    </div>
+
+                                    {/* Headlines */}
+                                    <div className="bg-purple-500/10 backdrop-blur-sm rounded-2xl p-6 border border-purple-500/30">
+                                        <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
+                                            <Briefcase className="w-5 h-5 text-purple-400" />
+                                            LinkedIn Headlines
+                                        </h3>
+                                        <div className="space-y-4">
+                                            {(results.data.headlines || []).map((headline, index) => (
+                                                <div key={index} className="p-4 bg-white/5 rounded-xl border border-purple-500/20">
+                                                    <p className="text-gray-200 font-medium mb-3">{headline}</p>
+                                                    <div className="flex gap-2">
+                                                        <button
+                                                            onClick={() => handleCopy(headline, `headline-${index}`)}
+                                                            className="flex items-center gap-2 text-xs text-purple-300 hover:text-purple-200 font-medium px-3 py-1 bg-white/10 rounded-lg transition-colors"
+                                                        >
+                                                            {copiedIndex === `headline-${index}` ? (
+                                                                <CheckCircle className="w-3 h-3" />
+                                                            ) : (
+                                                                <Copy className="w-3 h-3" />
+                                                            )}
+                                                            {copiedIndex === `headline-${index}` ? 'Copied!' : 'Copy'}
+                                                        </button>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        ))}
+                                            ))}
+                                        </div>
                                     </div>
-                                </div>
 
-                                {/* Posts */}
-                                <div>
-                                    <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                                        <MessageSquare className="w-5 h-5 text-green-600" />
-                                        LinkedIn Posts
-                                    </h3>
-                                    <div className="space-y-4">
-                                        {(results.data.posts || []).map((post, index) => (
-                                            <div key={index} className="p-4 bg-green-50 rounded-lg border border-green-200">
-                                                <div className="text-sm text-green-600 font-medium mb-2">Post {index + 1}</div>
-                                                <p className="text-gray-800 whitespace-pre-wrap mb-3">{post}</p>
-                                                <div className="flex gap-2">
-                                                    <button
-                                                        onClick={() => handleCopy(post, `post-${index}`)}
-                                                        className="flex items-center gap-1 text-xs text-green-600 hover:text-green-700 font-medium px-2 py-1 bg-white rounded"
-                                                    >
-                                                        {copiedIndex === `post-${index}` ? (
-                                                            <CheckCircle className="w-3 h-3" />
-                                                        ) : (
-                                                            <Copy className="w-3 h-3" />
-                                                        )}
-                                                        {copiedIndex === `post-${index}` ? 'Copied!' : 'Copy'}
-                                                    </button>
+                                    {/* About Sections */}
+                                    <div className="bg-cyan-500/10 backdrop-blur-sm rounded-2xl p-6 border border-cyan-500/30">
+                                        <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
+                                            <FileText className="w-5 h-5 text-cyan-400" />
+                                            About Sections
+                                        </h3>
+                                        <div className="space-y-4">
+                                            {(results.data.about_sections || []).map((about, index) => (
+                                                <div key={index} className="p-4 bg-white/5 rounded-xl border border-cyan-500/20">
+                                                    <div className="text-sm text-cyan-400 font-medium mb-2">Version {index + 1}</div>
+                                                    <p className="text-gray-200 whitespace-pre-wrap mb-3">{about}</p>
+                                                    <div className="flex gap-2">
+                                                        <button
+                                                            onClick={() => handleCopy(about, `about-${index}`)}
+                                                            className="flex items-center gap-2 text-xs text-cyan-300 hover:text-cyan-200 font-medium px-3 py-1 bg-white/10 rounded-lg transition-colors"
+                                                        >
+                                                            {copiedIndex === `about-${index}` ? (
+                                                                <CheckCircle className="w-3 h-3" />
+                                                            ) : (
+                                                                <Copy className="w-3 h-3" />
+                                                            )}
+                                                            {copiedIndex === `about-${index}` ? 'Copied!' : 'Copy'}
+                                                        </button>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        ))}
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Posts */}
+                                    <div className="bg-emerald-500/10 backdrop-blur-sm rounded-2xl p-6 border border-emerald-500/30">
+                                        <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
+                                            <MessageSquare className="w-5 h-5 text-emerald-400" />
+                                            LinkedIn Posts
+                                        </h3>
+                                        <div className="space-y-4">
+                                            {(results.data.posts || []).map((post, index) => (
+                                                <div key={index} className="p-4 bg-white/5 rounded-xl border border-emerald-500/20">
+                                                    <div className="text-sm text-emerald-400 font-medium mb-2">Post {index + 1}</div>
+                                                    <p className="text-gray-200 whitespace-pre-wrap mb-3">{post}</p>
+                                                    <div className="flex gap-2">
+                                                        <button
+                                                            onClick={() => handleCopy(post, `post-${index}`)}
+                                                            className="flex items-center gap-2 text-xs text-emerald-300 hover:text-emerald-200 font-medium px-3 py-1 bg-white/10 rounded-lg transition-colors"
+                                                        >
+                                                            {copiedIndex === `post-${index}` ? (
+                                                                <CheckCircle className="w-3 h-3" />
+                                                            ) : (
+                                                                <Copy className="w-3 h-3" />
+                                                            )}
+                                                            {copiedIndex === `post-${index}` ? 'Copied!' : 'Copy'}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Action Buttons */}
+                                    <div className="flex flex-col sm:flex-row gap-3 pt-6">
+                                        <button
+                                            onClick={() => handleDownload(
+                                                `LinkedIn Content Generated\n\nHeadlines:\n${results.data.headlines.map((h, i) => `${i + 1}. ${h}`).join('\n')}\n\nAbout Sections:\n${results.data.about_sections.map((a, i) => `Version ${i + 1}:\n${a}`).join('\n\n')}\n\nPosts:\n${results.data.posts.map((p, i) => `Post ${i + 1}:\n${p}`).join('\n\n')}`,
+                                                'linkedin-generated-content.txt'
+                                            )}
+                                            className="flex items-center justify-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-sm text-white rounded-2xl hover:bg-white/20 transition-all duration-300 border border-white/20 hover:scale-105"
+                                        >
+                                            <Download className="w-4 h-4" />
+                                            Download All Content
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                setResults(null);
+                                                setContentForm({
+                                                    skills: '',
+                                                    role: '',
+                                                    career_goal: '',
+                                                    tone: 'professional'
+                                                });
+                                            }}
+                                            className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-2xl hover:from-indigo-600 hover:to-purple-600 transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+                                        >
+                                            <RefreshCw className="w-4 h-4" />
+                                            Generate New Content
+                                        </button>
                                     </div>
                                 </div>
-
-                                {/* Action Buttons */}
-                                <div className="flex gap-3 mt-8">
-                                    <button
-                                        onClick={() => handleDownload(
-                                            `LinkedIn Content Generated\n\nHeadlines:\n${results.data.headlines.map((h, i) => `${i + 1}. ${h}`).join('\n')}\n\nAbout Sections:\n${results.data.about_sections.map((a, i) => `Version ${i + 1}:\n${a}`).join('\n\n')}\n\nPosts:\n${results.data.posts.map((p, i) => `Post ${i + 1}:\n${p}`).join('\n\n')}`,
-                                            'linkedin-generated-content.txt'
-                                        )}
-                                        className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-                                    >
-                                        <Download className="w-4 h-4" />
-                                        Download All Content
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            setResults(null);
-                                            setContentForm({
-                                                skills: '',
-                                                role: '',
-                                                career_goal: '',
-                                                tone: 'professional'
-                                            });
-                                        }}
-                                        className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-                                    >
-                                        <RefreshCw className="w-4 h-4" />
-                                        Generate New Content
-                                    </button>
-                                </div>
-                            </div>
-                        )}
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
+
+            {/* Custom Styles */}
+            <style jsx>{`
+        @keyframes blob {
+          0% {
+            transform: translate(0px, 0px) scale(1);
+          }
+          33% {
+            transform: translate(30px, -50px) scale(1.1);
+          }
+          66% {
+            transform: translate(-20px, 20px) scale(0.9);
+          }
+          100% {
+            transform: translate(0px, 0px) scale(1);
+          }
+        }
+        .animate-blob {
+          animation: blob 7s infinite;
+        }
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+        .animation-delay-4000 {
+          animation-delay: 4s;
+        }
+      `}</style>
         </div>
     );
 };
