@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { ChevronDown, ChevronUp, Menu, X, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-
 export default function Header() {
   const [openDropdown, setOpenDropdown] = useState(null); // for desktop
   const [hideTimeout, setHideTimeout] = useState(null);
@@ -14,16 +13,31 @@ export default function Header() {
     {
       name: "Features",
       dropdown: [
-        { label: "YouTube Shorts Generator", path: "/features/shorts-generator" },
-        { label: "PDF Summarizer", path: "/features/pdf-summarizer" },
-        { label: "Video Summarizer", path: "/features/summarizer" },
-        { label: "Resume Analyzer", path: "/features/ResumeAnalyzer" },
-        { label: "Article Summarizer", path: "/features/ArticleSummarizer" },
-        { label: "Cove Letter Generator", path: "/features/coverLetterGenerator" },
-        { label: "Assignment Helper", path: "/features/AssignmentHelper" },
-        { label: "Research Assistant", path: "/features/ResearchAssistant" },
-        { label: "Data Analyzer", path: "/features/EDA" },
-        { label: "LinkedIn Helper", path: "/features/LinkwiseAI" },
+        {
+          category: "YOUTUBE TOOLS",
+          items: [
+            { label: "YouTube Clipper", path: "/features/shorts-generator" },
+            { label: "YT-Video Summarizer", path: "/features/summarizer" },
+          ]
+        },
+        {
+          category: "DOCUMENT TOOLS",
+          items: [
+            { label: "PDF Summarizer", path: "/features/pdf-summarizer" },
+            { label: "Article Summarizer", path: "/features/ArticleSummarizer" },
+            { label: "Resume Analyzer", path: "/features/ResumeAnalyzer" },
+            { label: "Cover Letter Generator", path: "/features/coverLetterGenerator" },
+          ]
+        },
+        {
+          category: "PRODUCTIVITY TOOLS",
+          items: [
+            { label: "Assignment Helper", path: "/features/AssignmentHelper" },
+            { label: "Research Assistant", path: "/features/ResearchAssistant" },
+            { label: "Data Analyzer", path: "/features/EDA" },
+            { label: "LinkedIn Helper", path: "/features/LinkwiseAI" },
+          ]
+        }
       ],
     },
     {
@@ -69,6 +83,92 @@ export default function Header() {
     };
   }, [mobileNavOpen]);
 
+  const renderDesktopDropdown = (item) => {
+    if (item.name === "Features") {
+      return (
+        <div className="absolute top-full left-0 mt-2 w-[600px] bg-white shadow-lg rounded-md border border-gray-100 py-4 z-50">
+          <div className="grid grid-cols-3 gap-6 px-4">
+            {item.dropdown.map((section, sectionIndex) => (
+              <div key={sectionIndex} className="space-y-3">
+                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                  {section.category}
+                </h3>
+                <div className="space-y-2">
+                  {section.items.map((option) => (
+                    <button
+                      key={option.label}
+                      onClick={() => handleSelect(option.path)}
+                      className="w-full text-left px-2 py-1.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600 rounded-md transition duration-200"
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    } else {
+      // Regular dropdown for other nav items
+      return (
+        <div className="absolute top-full left-0 mt-2 w-44 bg-white shadow-lg rounded-md border border-gray-100 py-1 z-50 text-sm">
+          {item.dropdown.map((option) => (
+            <button
+              key={option.label}
+              onClick={() => handleSelect(option.path)}
+              className="w-full text-left px-3 py-1.5 text-gray-700 hover:bg-gray-100 hover:text-green-600 transition duration-200"
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      );
+    }
+  };
+
+  const renderMobileDropdown = (item) => {
+    if (item.name === "Features") {
+      return (
+        <div className="ml-3 space-y-3">
+          {item.dropdown.map((section, sectionIndex) => (
+            <div key={sectionIndex}>
+              <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                {section.category}
+              </h4>
+              <div className="space-y-2 ml-2">
+                {section.items.map((option) => (
+                  <button
+                    key={option.label}
+                    onClick={() => handleSelect(option.path)}
+                    className="block text-left text-gray-600 text-sm hover:text-green-500 transition"
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    } else {
+      // Regular mobile dropdown for other nav items
+      return (
+        <div className="ml-3 space-y-2">
+          {item.dropdown.map((option) => (
+            <button
+              key={option.label}
+              onClick={() => handleSelect(option.path)}
+              className="block text-left text-gray-600 text-sm hover:text-green-500 transition"
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      );
+    }
+  };
+
   return (
     <header className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] max-w-7xl rounded-full bg-gray-800/10 backdrop-blur-lg shadow-xl border border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
@@ -96,19 +196,7 @@ export default function Header() {
                   {item.name}
                   <ChevronDown className="ml-1 h-4 w-4" />
                 </button>
-                {openDropdown === item.name && (
-                  <div className="absolute top-full left-0 mt-2 w-44 bg-white shadow-lg rounded-md border border-gray-100 py-1 z-50 text-sm">
-                    {item.dropdown.map((option) => (
-                      <button
-                        key={option.label}
-                        onClick={() => handleSelect(option.path)}
-                        className="w-full text-left px-3 py-1.5 text-gray-700 hover:bg-gray-100 hover:text-green-600 transition duration-200"
-                      >
-                        {option.label}
-                      </button>
-                    ))}
-                  </div>
-                )}
+                {openDropdown === item.name && renderDesktopDropdown(item)}
               </div>
             </div>
           ))}
@@ -151,19 +239,7 @@ export default function Header() {
                   <ChevronDown className="w-4 h-4" />
                 )}
               </button>
-              {expandedMobileSection === item.name && (
-                <div className="ml-3 space-y-2">
-                  {item.dropdown.map((option) => (
-                    <button
-                      key={option.label}
-                      onClick={() => handleSelect(option.path)}
-                      className="block text-left text-gray-600 text-sm hover:text-green-500 transition"
-                    >
-                      {option.label}
-                    </button>
-                  ))}
-                </div>
-              )}
+              {expandedMobileSection === item.name && renderMobileDropdown(item)}
             </div>
           ))}
           <button onClick={() => handleSelect("/pricing")} className="w-full text-left text-gray-800 font-semibold py-2 hover:text-green-500">

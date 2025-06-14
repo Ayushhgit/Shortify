@@ -453,7 +453,7 @@ export default function ShortifyPage() {
               <div className="flex-1" />
               {user ? (
                 user.emailVerified ? (
-                  <a href="/Profile">
+                  <a href="/profile">
                     <button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white py-3 px-6 rounded-xl flex items-center gap-2 transition-all duration-300 shadow-lg hover:shadow-xl">
                       <User size={16} />
                       <span className="font-medium">Profile</span>
