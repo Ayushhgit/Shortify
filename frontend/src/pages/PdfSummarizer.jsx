@@ -452,34 +452,29 @@ export default function PremiumPdfSummarizer() {
       </div>
 
       {/* Premium Glassmorphic Header */}
-      <header className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] max-w-6xl">
-        <div className="rounded-2xl bg-gray-900/80 backdrop-blur-2xl shadow-2xl border border-gray-700/50 px-8 py-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl blur opacity-75"></div>
-                <div className="relative bg-gradient-to-r from-emerald-500 to-blue-600 p-2 rounded-xl">
-                  <Sparkles className="h-6 w-6 text-white" />
-                </div>
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent">
-                  SummAIze
-                </h1>
-                <p className="text-xs text-gray-400 font-medium">AI-Powered Document Intelligence</p>
-              </div>
+      {/* Header */}
+      <header className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] max-w-7xl rounded-2xl bg-white/20 backdrop-blur-xl shadow-2xl border border-white/30">
+        <div className="flex justify-between items-center h-16 px-6">
+          <div className="flex items-center">
+            <div className="relative">
+              <Sparkles className="h-8 w-8 text-purple-400 mr-3" />
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-purple-400 rounded-full animate-pulse"></div>
             </div>
-            <div className="flex items-center gap-2">
-              {[
-                { icon: Home, label: "Home", href: "/shortify" },
-                { icon: User, label: "Profile", href: "/Profile" },
-                { icon: Settings, label: "Settings", href: "/Settings" }
-              ].map(({ icon: Icon, label, href }) => (
-                <button key={label} className="group p-3 rounded-xl hover:bg-gray-800/60 transition-all duration-300 hover:shadow-lg">
-                  <Icon className="h-5 w-5 text-gray-400 group-hover:text-emerald-400 transition-colors" onClick={() => navigate(href)} />
+            <span className="text-xl font-bold text-white">
+              Summ<span className="text-purple-400">AIze</span>
+            </span>
+          </div>
+          <div className="flex items-center space-x-2">
+            {[{ icon: Home, path: "/shortify" }, { icon: User, path: "/profile" }, { icon: Settings, path: "/settings" }].map(
+              (item, index) => (
+                <button
+                  key={index}
+                  className="p-3 rounded-xl hover:bg-white/20 transition-all duration-300 hover:scale-110 backdrop-blur-sm border border-white/10"
+                  onClick={() => navigate(item.path)}>
+                  <item.icon className="h-5 w-5 text-white/80 hover:text-white" />
                 </button>
-              ))}
-            </div>
+              )
+            )}
           </div>
         </div>
       </header>
