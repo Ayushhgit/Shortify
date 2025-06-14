@@ -34,6 +34,9 @@ const AssignmentHelper = () => {
     });
     const [renderedImage, setRenderedImage] = useState(null);
     const [isRendering, setIsRendering] = useState(false);
+    const [isEditingAnswer, setIsEditingAnswer] = useState(false);
+    const [editedAnswer, setEditedAnswer] = useState("");
+    const [allRenderedImages, setAllRenderedImages] = useState([]);
 
 
     const navigate = useNavigate();
@@ -264,7 +267,8 @@ const AssignmentHelper = () => {
             }
 
             setIsRendering(true);
-            const textToRender = result.answer + "\n\n" + result.explanation;
+            // Use the current answer (which might be edited)
+            const textToRender = result.answer + "\n\n" + (result.explanation || "");
 
             console.log("Sending text to handwriting:", textToRender);
 
@@ -275,20 +279,39 @@ const AssignmentHelper = () => {
                 },
                 body: JSON.stringify({
                     text: textToRender,
-                    ...handwritingConfig  // Use user's configuration
+                    ...handwritingConfig
                 }),
             });
 
             if (response.ok) {
                 const data = await response.json();
-                const filename = data.image_path.split('/').pop();
 
-                // Display the rendered image immediately
-                const imageUrl = `http://localhost:8000/outputs/${filename}`;
-                setRenderedImage(imageUrl);
+                // Handle both single and multiple pages
+                let imageFilenames = [];
 
-                setImagePaths(prev => [...prev, filename]);
-                displayToast("Handwriting image rendered successfully!");
+                if (data.image_paths && Array.isArray(data.image_paths)) {
+                    // Multiple pages
+                    imageFilenames = data.image_paths.map(path => path.split('/').pop());
+
+                    // Display the first page immediately
+                    const firstImageUrl = `http://localhost:8000/outputs/${imageFilenames[0]}`;
+                    setRenderedImage(firstImageUrl);
+
+                    displayToast(`Handwriting rendered successfully! ${data.total_pages} pages created.`);
+                } else {
+                    // Single page (backward compatibility)
+                    const filename = data.image_path.split('/').pop();
+                    imageFilenames = [filename];
+
+                    const imageUrl = `http://localhost:8000/outputs/${filename}`;
+                    setRenderedImage(imageUrl);
+
+                    displayToast("Handwriting image rendered successfully!");
+                }
+
+                // Update image paths for PDF generation
+                setImagePaths(imageFilenames);
+
             } else {
                 const errorData = await response.json();
                 throw new Error(errorData.detail || "Handwriting rendering failed");
@@ -298,7 +321,7 @@ const AssignmentHelper = () => {
             displayToast(`Handwriting rendering failed: ${error.message}`, "error");
         } finally {
             setIsRendering(false);
-        }
+        };
     };
 
     // 3. Fix: Update generatePDF function
@@ -359,8 +382,12 @@ const AssignmentHelper = () => {
         setUploadedFile(null);
         setCapturedImage(null);
         setResult(null);
-        setRenderedImage(null); // Add this line
-        setImagePaths([]);      // Add this line
+        setRenderedImage(null);
+        setImagePaths([]);
+        setAllRenderedImages([]); // Clear all rendered images
+        setIsEditingAnswer(false); // Reset edit state
+        setEditedAnswer(""); // Clear edited answer
+        setAiResponseText(""); // Clear AI response text
     };
 
     const Toast = ({ show, message, type, onClose }) => {
@@ -721,13 +748,74 @@ const AssignmentHelper = () => {
 
                             {/* Answer */}
                             <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-green-400/30">
-                                <div className="flex items-center space-x-3 mb-4">
-                                    <div className="p-3 bg-green-500/20 rounded-xl">
-                                        <CheckCircle className="w-6 h-6 text-green-400" />
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center space-x-3">
+                                        <div className="p-3 bg-green-500/20 rounded-xl">
+                                            <CheckCircle className="w-6 h-6 text-green-400" />
+                                        </div>
+                                        <h3 className="text-2xl font-bold text-white">Answer</h3>
                                     </div>
-                                    <h3 className="text-2xl font-bold text-white">Answer</h3>
+                                    <button
+                                        onClick={() => {
+                                            if (isEditingAnswer) {
+                                                // Save the edited answer
+                                                setResult(prev => ({
+                                                    ...prev,
+                                                    answer: editedAnswer,
+                                                    explanation: editedAnswer // Update explanation too
+                                                }));
+                                                setAiResponseText(editedAnswer);
+                                                setIsEditingAnswer(false);
+                                            } else {
+                                                // Start editing
+                                                setEditedAnswer(result.answer);
+                                                setIsEditingAnswer(true);
+                                            }
+                                        }}
+                                        className="px-4 py-2 bg-blue-500/20 text-blue-300 rounded-xl hover:bg-blue-500/30 transition-all duration-300 flex items-center space-x-2"
+                                    >
+                                        <Edit3 className="w-4 h-4" />
+                                        <span>{isEditingAnswer ? 'Save' : 'Edit'}</span>
+                                    </button>
                                 </div>
-                                <p className="text-gray-300 text-lg leading-relaxed">{result.answer}</p>
+
+                                {isEditingAnswer ? (
+                                    <div className="space-y-4">
+                                        <textarea
+                                            value={editedAnswer}
+                                            onChange={(e) => setEditedAnswer(e.target.value)}
+                                            className="w-full h-64 bg-white/5 border border-white/20 rounded-xl p-4 text-gray-300 placeholder-gray-500 focus:outline-none focus:border-blue-400 resize-none"
+                                            placeholder="Edit your answer here..."
+                                        />
+                                        <div className="flex space-x-3">
+                                            <button
+                                                onClick={() => {
+                                                    setResult(prev => ({
+                                                        ...prev,
+                                                        answer: editedAnswer,
+                                                        explanation: editedAnswer
+                                                    }));
+                                                    setAiResponseText(editedAnswer);
+                                                    setIsEditingAnswer(false);
+                                                }}
+                                                className="px-4 py-2 bg-green-500/20 text-green-300 rounded-lg hover:bg-green-500/30 transition-all duration-300"
+                                            >
+                                                Save Changes
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    setEditedAnswer(result.answer);
+                                                    setIsEditingAnswer(false);
+                                                }}
+                                                className="px-4 py-2 bg-red-500/20 text-red-300 rounded-lg hover:bg-red-500/30 transition-all duration-300"
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <p className="text-gray-300 text-lg leading-relaxed whitespace-pre-wrap">{result.answer}</p>
+                                )}
                             </div>
 
                             {/* Steps */}
@@ -947,15 +1035,37 @@ const AssignmentHelper = () => {
                                 {/* Rendered Image Display */}
                                 {renderedImage && (
                                     <div className="space-y-4">
-                                        <h4 className="text-xl font-bold text-white text-center">Rendered Handwriting</h4>
-                                        <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
-                                            <img
-                                                src={renderedImage}
-                                                alt="Rendered Handwriting"
-                                                className="w-full max-w-4xl mx-auto rounded-xl shadow-2xl"
-                                                style={{ maxHeight: '800px', objectFit: 'contain' }}
-                                            />
-                                        </div>
+                                        <h4 className="text-xl font-bold text-white text-center">
+                                            Rendered Handwriting {imagePaths.length > 1 ? `(${imagePaths.length} pages)` : ''}
+                                        </h4>
+
+                                        {/* Show all pages if multiple */}
+                                        {imagePaths.length > 1 ? (
+                                            <div className="space-y-4">
+                                                {imagePaths.map((filename, index) => (
+                                                    <div key={index} className="bg-white/5 rounded-2xl p-4 border border-white/10">
+                                                        <h5 className="text-lg font-semibold text-white mb-2 text-center">
+                                                            Page {index + 1}
+                                                        </h5>
+                                                        <img
+                                                            src={`http://localhost:8000/outputs/${filename}`}
+                                                            alt={`Rendered Handwriting Page ${index + 1}`}
+                                                            className="w-full max-w-4xl mx-auto rounded-xl shadow-2xl"
+                                                            style={{ maxHeight: '800px', objectFit: 'contain' }}
+                                                        />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
+                                                <img
+                                                    src={renderedImage}
+                                                    alt="Rendered Handwriting"
+                                                    className="w-full max-w-4xl mx-auto rounded-xl shadow-2xl"
+                                                    style={{ maxHeight: '800px', objectFit: 'contain' }}
+                                                />
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </div>
