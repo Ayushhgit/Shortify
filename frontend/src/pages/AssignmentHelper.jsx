@@ -23,6 +23,17 @@ const AssignmentHelper = () => {
     const [imagePaths, setImagePaths] = useState([]);
     const [textToRender, setTextToRender] = useState("");
     const [aiResponseText, setAiResponseText] = useState("");
+    const [showHandwritingOptions, setShowHandwritingOptions] = useState(false);
+    const [handwritingConfig, setHandwritingConfig] = useState({
+        paper_type: 'ruled',
+        ink_color: 'blue',
+        font_size: 'medium',
+        font_style: 'QECarolineMutiboko',
+        line_spacing: 1.3,
+        margin: 100
+    });
+    const [renderedImage, setRenderedImage] = useState(null);
+    const [isRendering, setIsRendering] = useState(false);
 
 
     const navigate = useNavigate();
@@ -247,13 +258,12 @@ const AssignmentHelper = () => {
 
     const renderHandwritingImage = async () => {
         try {
-            // Check if we have result data
             if (!result || !result.answer) {
                 displayToast("Please solve the assignment first!", "error");
                 return;
             }
 
-            // Use the result data instead of aiResponseText
+            setIsRendering(true);
             const textToRender = result.answer + "\n\n" + result.explanation;
 
             console.log("Sending text to handwriting:", textToRender);
@@ -264,13 +274,8 @@ const AssignmentHelper = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    text: textToRender,  // Use the combined text
-                    paper_type: 'ruled',
-                    ink_color: 'blue',
-                    font_size: 'medium',
-                    font_style: 'QECarolineMutiboko',
-                    line_spacing: 1.3,
-                    margin: 100
+                    text: textToRender,
+                    ...handwritingConfig  // Use user's configuration
                 }),
             });
 
@@ -278,7 +283,10 @@ const AssignmentHelper = () => {
                 const data = await response.json();
                 const filename = data.image_path.split('/').pop();
 
-                // FIX: Add the filename to imagePaths array
+                // Display the rendered image immediately
+                const imageUrl = `http://localhost:8000/outputs/${filename}`;
+                setRenderedImage(imageUrl);
+
                 setImagePaths(prev => [...prev, filename]);
                 displayToast("Handwriting image rendered successfully!");
             } else {
@@ -288,6 +296,8 @@ const AssignmentHelper = () => {
         } catch (error) {
             console.error(error);
             displayToast(`Handwriting rendering failed: ${error.message}`, "error");
+        } finally {
+            setIsRendering(false);
         }
     };
 
@@ -349,6 +359,8 @@ const AssignmentHelper = () => {
         setUploadedFile(null);
         setCapturedImage(null);
         setResult(null);
+        setRenderedImage(null); // Add this line
+        setImagePaths([]);      // Add this line
     };
 
     const Toast = ({ show, message, type, onClose }) => {
@@ -770,21 +782,7 @@ const AssignmentHelper = () => {
                             {/* Updated Action Buttons */}
                             <div className="flex flex-col items-center space-y-4">
                                 {/* First row - Render handwriting */}
-                                <div className="flex justify-center space-x-4">
-                                    <button
-                                        onClick={renderHandwritingImage}
-                                        disabled={!result}
-                                        className={`px-8 py-3 rounded-xl font-semibold transition-all duration-300 ${result
-                                                ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:scale-105"
-                                                : "bg-gray-500 text-gray-300 cursor-not-allowed"
-                                            }`}
-                                    >
-                                        <div className="flex items-center space-x-2">
-                                            <Edit3 className="w-5 h-5" />
-                                            <span>Render Handwriting</span>
-                                        </div>
-                                    </button>
-                                </div>
+
 
                                 {/* Second row - Export options (show only if images are rendered) */}
                                 {imagePaths.length > 0 && (
@@ -813,6 +811,153 @@ const AssignmentHelper = () => {
                                         </div>
                                     </button>
                                 </div>
+                            </div>
+
+                            {/* Handwriting Configuration Panel */}
+                            <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20">
+                                <div className="flex items-center justify-between mb-6">
+                                    <div className="flex items-center space-x-3">
+                                        <div className="p-3 bg-purple-500/20 rounded-xl">
+                                            <Edit3 className="w-6 h-6 text-purple-400" />
+                                        </div>
+                                        <h3 className="text-2xl font-bold text-white">Handwriting Options</h3>
+                                    </div>
+                                    <button
+                                        onClick={() => setShowHandwritingOptions(!showHandwritingOptions)}
+                                        className="px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-all duration-300"
+                                    >
+                                        {showHandwritingOptions ? 'Hide Options' : 'Show Options'}
+                                    </button>
+                                </div>
+
+                                {showHandwritingOptions && (
+                                    <div className="grid md:grid-cols-2 gap-6 mb-6">
+                                        {/* Paper Type */}
+                                        <div className="space-y-2">
+                                            <label className="text-white font-semibold">Paper Type</label>
+                                            <select
+                                                value={handwritingConfig.paper_type}
+                                                onChange={(e) => setHandwritingConfig({ ...handwritingConfig, paper_type: e.target.value })}
+                                                className="w-full p-3 rounded-xl bg-white/10 text-white border border-white/20 focus:border-purple-400 focus:outline-none"
+                                            >
+                                                <option value="ruled" className="bg-gray-800">Ruled Paper</option>
+                                                <option value="plain" className="bg-gray-800">Plain Paper</option>
+                                            </select>
+                                        </div>
+
+                                        {/* Ink Color */}
+                                        <div className="space-y-2">
+                                            <label className="text-white font-semibold">Ink Color</label>
+                                            <select
+                                                value={handwritingConfig.ink_color}
+                                                onChange={(e) => setHandwritingConfig({ ...handwritingConfig, ink_color: e.target.value })}
+                                                className="w-full p-3 rounded-xl bg-white/10 text-white border border-white/20 focus:border-purple-400 focus:outline-none"
+                                            >
+                                                <option value="blue" className="bg-gray-800">Blue</option>
+                                                <option value="black" className="bg-gray-800">Black</option>
+                                                <option value="red" className="bg-gray-800">Red</option>
+                                                <option value="green" className="bg-gray-800">Green</option>
+                                            </select>
+                                        </div>
+
+                                        {/* Font Size */}
+                                        <div className="space-y-2">
+                                            <label className="text-white font-semibold">Font Size</label>
+                                            <select
+                                                value={handwritingConfig.font_size}
+                                                onChange={(e) => setHandwritingConfig({ ...handwritingConfig, font_size: e.target.value })}
+                                                className="w-full p-3 rounded-xl bg-white/10 text-white border border-white/20 focus:border-purple-400 focus:outline-none"
+                                            >
+                                                <option value="small" className="bg-gray-800">Small</option>
+                                                <option value="medium" className="bg-gray-800">Medium</option>
+                                                <option value="large" className="bg-gray-800">Large</option>
+                                                <option value="xlarge" className="bg-gray-800">Extra Large</option>
+                                            </select>
+                                        </div>
+
+                                        {/* Font Style */}
+                                        <div className="space-y-2">
+                                            <label className="text-white font-semibold">Font Style</label>
+                                            <select
+                                                value={handwritingConfig.font_style}
+                                                onChange={(e) => setHandwritingConfig({ ...handwritingConfig, font_style: e.target.value })}
+                                                className="w-full p-3 rounded-xl bg-white/10 text-white border border-white/20 focus:border-purple-400 focus:outline-none"
+                                            >
+                                                <option value="QECarolineMutiboko" className="bg-gray-800">Caroline</option>
+                                                <option value="kalam-Regular" className="bg-gray-800">Kalam</option>
+                                                <option value="QEDaveMergens" className="bg-gray-800">QEDaveMergens</option>
+                                                <option value="QEGarrettWMoretz" className="bg-gray-800">QEGarrettWMoretz</option>
+                                                <option value="QEGHHughes" className="bg-gray-800">QEGHHughes</option>
+                                                <option value="QEHerbertCooper" className="bg-gray-800">QEHerbertCooper</option>
+                                                <option value="QERuthStafford" className="bg-gray-800">QERuthStafford</option>
+                                            </select>
+                                        </div>
+
+                                        {/* Line Spacing */}
+                                        <div className="space-y-2">
+                                            <label className="text-white font-semibold">Line Spacing: {handwritingConfig.line_spacing}</label>
+                                            <input
+                                                type="range"
+                                                min="1.0"
+                                                max="2.5"
+                                                step="0.1"
+                                                value={handwritingConfig.line_spacing}
+                                                onChange={(e) => setHandwritingConfig({ ...handwritingConfig, line_spacing: parseFloat(e.target.value) })}
+                                                className="w-full accent-purple-500"
+                                            />
+                                        </div>
+
+                                        {/* Margin */}
+                                        <div className="space-y-2">
+                                            <label className="text-white font-semibold">Margin: {handwritingConfig.margin}px</label>
+                                            <input
+                                                type="range"
+                                                min="50"
+                                                max="200"
+                                                step="10"
+                                                value={handwritingConfig.margin}
+                                                onChange={(e) => setHandwritingConfig({ ...handwritingConfig, margin: parseInt(e.target.value) })}
+                                                className="w-full accent-purple-500"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Render Button */}
+                                <div className="flex justify-center mb-6">
+                                    <button
+                                        onClick={renderHandwritingImage}
+                                        disabled={!result || isRendering}
+                                        className={`px-8 py-3 rounded-xl font-semibold transition-all duration-300 ${result && !isRendering
+                                            ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:scale-105"
+                                            : "bg-gray-500 text-gray-300 cursor-not-allowed"
+                                            }`}
+                                    >
+                                        <div className="flex items-center space-x-2">
+                                            {isRendering ? (
+                                                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                            ) : (
+                                                <Edit3 className="w-5 h-5" />
+                                            )}
+                                            <span>{isRendering ? 'Rendering...' : 'Render Handwriting'}</span>
+                                        </div>
+                                    </button>
+                                </div>
+
+                                {/* Rendered Image Display */}
+                                {renderedImage && (
+                                    <div className="space-y-4">
+                                        <h4 className="text-xl font-bold text-white text-center">Rendered Handwriting</h4>
+                                        <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
+                                            <img
+                                                src={renderedImage}
+                                                alt="Rendered Handwriting"
+                                                className="w-full max-w-4xl mx-auto rounded-xl shadow-2xl"
+                                                style={{ maxHeight: '800px', objectFit: 'contain' }}
+                                            />
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     )}

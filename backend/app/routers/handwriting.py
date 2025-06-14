@@ -11,6 +11,18 @@ import numpy as np
 router = APIRouter(prefix="/render", tags=["Handwriting Rendering"])
 
 # Configuration
+
+FONT_STYLES = {
+    "QECarolineMutiboko": "QECarolineMutiboko.ttf",
+    "kalam-Regular": "kalam-Regular.ttf",
+    "QEDaveMergens":"QEDaveMergens.ttf",
+    "QEGarrettWMoretz":"QEGarrettWMoretz.ttf",
+    "QEGHHughes":"QEGHHughes.ttf",
+    "QEHerbertCooper":"QEHerbertCooper.ttf",
+    "QERuthStafford":"QERuthStafford.ttf",
+    # Add more fonts as needed
+}
+
 FONT_SIZES = {
     "small": 20,
     "medium": 30,
@@ -76,12 +88,16 @@ async def render_handwriting(request: Dict):
         
         # Load font
         try:
-            font_path = f"fonts/{font_style}.ttf"
+            font_filename = FONT_STYLES.get(font_style, "kalam-Regular.ttf")
+            font_path = f"fonts/{font_filename}"
             font = ImageFont.truetype(font_path, font_size_px)
         except:
-            # Fallback to default font
+        # Fallback to default font
             font_path = "fonts/kalam-Regular.ttf"
-            font = ImageFont.truetype(font_path, font_size_px)
+            try:
+                font = ImageFont.truetype(font_path, font_size_px)
+            except:
+                font = ImageFont.load_default()
         
         # Create paper
         paper_width = 210 * 5  # A4 width in pixels at ~300 DPI
