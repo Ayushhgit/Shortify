@@ -8,17 +8,26 @@ import {
   FileText,
   Zap,
   User,
+  BarChart3,
   Github,
   Menu,
-  X,Edit, Droplets,Settings, Download,
+  X,
+  Edit,
+  Droplets,
+  Settings,
+  Download,
   BookText,
   Pencil,
   Binoculars,
   Sparkles,
   Search,
-  ArrowRight, FileImage,
+  ArrowRight,
+  FileImage,
   Lightbulb,
-  Play,Upload, Palette,Paintbrush,
+  Play,
+  Upload,
+  Palette,
+  Paintbrush,
   Eye,
   Cpu,
   Brain,
@@ -137,6 +146,8 @@ export default function ShortifyPage() {
         return "Assignment Helper";
       case "research":
         return "Research Assistant";
+      case "autoeda":
+        return "Dataset Analyzer";
       default:
         return "Shortify";
     }
@@ -204,6 +215,13 @@ export default function ShortifyPage() {
       icon: Binoculars,
       label: "Research Assistant",
       gradient: "from-rose-500 via-cyan-600 to-fuchsia-600",
+      glow: "shadow-violet-500/25",
+    },
+    {
+      id: "autoeda",
+      icon: BarChart3,
+      label: "Dataset Analyzer",
+      gradient: "from-blue-500 via-cyan-600 to-purple-600",
       glow: "shadow-violet-500/25",
     },
   ];
@@ -298,6 +316,17 @@ export default function ShortifyPage() {
       animation: "radar",
       bgPattern: "radar",
     },
+    {
+      title: "Auto EDA",
+      icon: BarChart3,
+      desc: "Intelligent data exploration that automatically generates insights, visualizations, and statistical summaries from your datasets with zero manual effort.",
+      gradient: "from-blue-500 via-cyan-600 to-purple-600",
+      link: "/features/EDA",
+      label: "Analyze",
+      badge: "LIVE",
+      animation: "pulse",
+      bgPattern: "grid",
+    },
   ];
 
   const stats = [
@@ -335,7 +364,6 @@ export default function ShortifyPage() {
     },
   ];
 
- 
   return (
     <div className="flex h-screen bg-gray-950 text-white overflow-hidden relative">
       {/* Dynamic Mesh Background */}
@@ -1299,9 +1327,7 @@ export default function ShortifyPage() {
                   <ul className="space-y-4 text-gray-300">
                     <li className="flex items-start gap-3">
                       <CheckCircle className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" />
-                      <span>
-                        PDF question paper recognition and parsing
-                      </span>
+                      <span>PDF question paper recognition and parsing</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <CheckCircle className="w-5 h-5 text-orange-400 mt-0.5 flex-shrink-0" />
@@ -1311,13 +1337,13 @@ export default function ShortifyPage() {
                     </li>
                     <li className="flex items-start gap-3">
                       <CheckCircle className="w-5 h-5 text-rose-400 mt-0.5 flex-shrink-0" />
-                      <span>Direct text input with smart question detection</span>
+                      <span>
+                        Direct text input with smart question detection
+                      </span>
                     </li>
                     <li className="flex items-start gap-3">
                       <CheckCircle className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" />
-                      <span>
-                        Image-based question extraction from photos
-                      </span>
+                      <span>Image-based question extraction from photos</span>
                     </li>
                   </ul>
                 </div>
@@ -1334,9 +1360,7 @@ export default function ShortifyPage() {
                     </li>
                     <li className="flex items-start gap-3">
                       <FileImage className="w-5 h-5 text-rose-400 mt-0.5 flex-shrink-0" />
-                      <span>
-                        Blank, ruled, or graph paper backgrounds
-                      </span>
+                      <span>Blank, ruled, or graph paper backgrounds</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Droplets className="w-5 h-5 text-orange-400 mt-0.5 flex-shrink-0" />
@@ -1438,7 +1462,8 @@ export default function ShortifyPage() {
                     Instant PDF Export
                   </h4>
                   <p className="text-gray-400 text-sm">
-                    Download completed assignments as high-quality PDFs ready for submission
+                    Download completed assignments as high-quality PDFs ready
+                    for submission
                   </p>
                 </div>
 
@@ -1450,7 +1475,8 @@ export default function ShortifyPage() {
                     Smart Recognition
                   </h4>
                   <p className="text-gray-400 text-sm">
-                    Advanced OCR technology recognizes complex mathematical equations and diagrams
+                    Advanced OCR technology recognizes complex mathematical
+                    equations and diagrams
                   </p>
                 </div>
 
@@ -1462,7 +1488,8 @@ export default function ShortifyPage() {
                     Live Customization
                   </h4>
                   <p className="text-gray-400 text-sm">
-                    Real-time preview with instant font, color, and layout adjustments
+                    Real-time preview with instant font, color, and layout
+                    adjustments
                   </p>
                 </div>
               </div>
@@ -1473,6 +1500,141 @@ export default function ShortifyPage() {
                     <FileText className="w-6 h-6 group-hover:scale-110 transition-transform" />
                     Finish Assignment
                     <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                </a>
+              </div>
+            </div>
+          )}
+
+          {/*Auto EDA */}
+          {activeTab === "autoeda" && (
+            <div className="max-w-4xl mx-auto space-y-8">
+              <div className="text-center mb-12">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/20 border border-blue-500/30 mb-6">
+                  <BarChart3 className="w-5 h-5 text-blue-400" />
+                  <span className="text-blue-400 font-medium">
+                    AUTO EDA INTELLIGENCE
+                  </span>
+                </div>
+                <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent mb-4">
+                  Automated Exploratory Data Analysis
+                </h2>
+                <p className="text-xl text-gray-400 leading-relaxed">
+                  Advanced AI automatically discovers patterns, anomalies, and
+                  insights hidden within your datasets with zero manual effort.
+                </p>
+              </div>
+
+              <div className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-3xl p-8 mb-8">
+                <div className="grid md:grid-cols-3 gap-6 text-center">
+                  <div>
+                    <div className="text-3xl font-bold text-blue-400 mb-2">
+                      5+
+                    </div>
+                    <div className="text-gray-400">Auto Visualizations</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-cyan-400 mb-2">
+                      90%
+                    </div>
+                    <div className="text-gray-400">Analysis Time Saved</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-purple-400 mb-2">
+                      100+
+                    </div>
+                    <div className="text-gray-400">Rows Processed</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6 mb-8">
+                <div className="bg-gradient-to-br from-blue-500/5 to-cyan-500/5 border border-blue-500/10 rounded-2xl p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <TrendingUp className="w-6 h-6 text-blue-400" />
+                    <h3 className="text-xl font-semibold text-gray-200">
+                      Statistical Insights
+                    </h3>
+                  </div>
+                  <p className="text-gray-400 mb-4">
+                    Comprehensive statistical summaries, distribution analysis,
+                    and correlation matrices generated instantly.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">
+                      Descriptive Stats
+                    </span>
+                    <span className="px-3 py-1 bg-cyan-500/20 text-cyan-300 rounded-full text-sm">
+                      Correlations
+                    </span>
+                    <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">
+                      Distributions
+                    </span>
+                  </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-purple-500/5 to-pink-500/5 border border-purple-500/10 rounded-2xl p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Zap className="w-6 h-6 text-purple-400" />
+                    <h3 className="text-xl font-semibold text-gray-200">
+                      Smart Visualizations
+                    </h3>
+                  </div>
+                  <p className="text-gray-400 mb-4">
+                    AI automatically selects optimal chart types and creates
+                    publication-ready visualizations for every variable.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">
+                      Histograms
+                    </span>
+                    <span className="px-3 py-1 bg-pink-500/20 text-pink-300 rounded-full text-sm">
+                      Scatter Plots
+                    </span>
+                    <span className="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">
+                      Heatmaps
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-r from-blue-500/10 via-cyan-500/10 to-purple-500/10 border border-blue-500/20 rounded-2xl p-6 mb-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <Brain className="w-6 h-6 text-cyan-400" />
+                  <h3 className="text-xl font-semibold text-gray-200">
+                    AI-Powered Insights
+                  </h3>
+                </div>
+                <div className="grid md:grid-cols-2 gap-4 text-gray-400">
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 flex-shrink-0"></div>
+                    <span>
+                      Automatic outlier detection and anomaly identification
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-cyan-400 rounded-full mt-2 flex-shrink-0"></div>
+                    <span>
+                      Data quality assessment and missing value analysis
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-purple-400 rounded-full mt-2 flex-shrink-0"></div>
+                    <span>Feature importance ranking and selection</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-pink-400 rounded-full mt-2 flex-shrink-0"></div>
+                    <span>Automated hypothesis generation and testing</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="text-center">
+                <a href="/features/auto-eda">
+                  <button className="bg-gradient-to-r from-blue-500 via-cyan-500 to-purple-500 hover:from-blue-600 hover:via-cyan-600 hover:to-purple-600 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-blue-500/25 flex items-center gap-3 mx-auto">
+                    <BarChart3 className="w-6 h-6" />
+                    Start Auto EDA
+                    <Zap className="w-6 h-6" />
                   </button>
                 </a>
               </div>

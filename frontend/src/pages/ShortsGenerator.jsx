@@ -3,18 +3,20 @@ import {
   Home,
   Settings,
   User,
-  Video,
+  Video,ArrowRight, Clock,AlertCircle,
   Check,
+  Sparkles,RotateCcw,Shield,
   Download,
   Share,
   Link as LinkIcon,
   X,
+  Zap,
   Loader2,
   PlayCircle,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import Toast from "../components/Toast";
-import { getToken } from '../firebase';
+import { getToken } from "../firebase";
 
 export default function ShortsGenerator() {
   const [url, setUrl] = useState("");
@@ -37,7 +39,8 @@ export default function ShortsGenerator() {
   };
 
   const isValidYouTubeUrl = (url) => {
-    const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[\w-]{11}.*$/;
+    const youtubeRegex =
+      /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[\w-]{11}.*$/;
     return youtubeRegex.test(url);
   };
 
@@ -48,9 +51,10 @@ export default function ShortsGenerator() {
 
   // Extract YouTube video ID from URL
   const extractVideoId = (url) => {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const regExp =
+      /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     const match = url.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : null;
+    return match && match[2].length === 11 ? match[2] : null;
   };
 
   // Fetch YouTube video metadata using oEmbed
@@ -83,7 +87,7 @@ export default function ShortsGenerator() {
         channelName: "YouTube Channel",
         duration: "N/A",
         publishDate: new Date().toLocaleDateString(),
-        thumbnailUrl: "/assets/yt.webp"
+        thumbnailUrl: "/assets/yt.webp",
       };
     }
   };
@@ -103,7 +107,7 @@ export default function ShortsGenerator() {
       80: "Creating short clips...",
       90: "Finalizing output...",
       95: "Almost there...",
-      100: "Processing complete!"
+      100: "Processing complete!",
     };
 
     // Find the closest message
@@ -122,7 +126,10 @@ export default function ShortsGenerator() {
       const idToken = await getToken();
       if (!idToken) {
         console.error("User not authenticated");
-        displayToast("Authentication failed. Please try logging in again.", "error");
+        displayToast(
+          "Authentication failed. Please try logging in again.",
+          "error"
+        );
         return;
       }
 
@@ -146,40 +153,46 @@ export default function ShortsGenerator() {
 
       // Ensure URL has protocol
       let formattedUrl = url.trim();
-      if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
-        formattedUrl = 'https://' + formattedUrl;
+      if (
+        !formattedUrl.startsWith("http://") &&
+        !formattedUrl.startsWith("https://")
+      ) {
+        formattedUrl = "https://" + formattedUrl;
       }
 
       // Fetch video metadata in parallel with processing
       const metadataPromise = fetchVideoMetadata(formattedUrl);
 
       // Debug logging
-      console.log('Original URL:', url);
-      console.log('Formatted URL:', formattedUrl);
-      console.log('Is valid YouTube URL:', isValidYouTubeUrl(formattedUrl));
+      console.log("Original URL:", url);
+      console.log("Formatted URL:", formattedUrl);
+      console.log("Is valid YouTube URL:", isValidYouTubeUrl(formattedUrl));
 
       // Request body structure - simplified to match what server expects
       const requestBody = {
         url: formattedUrl,
         use_whisper: true,
-        use_gpt: true
+        use_gpt: true,
       };
 
-      console.log('Request body:', JSON.stringify(requestBody, null, 2));
+      console.log("Request body:", JSON.stringify(requestBody, null, 2));
 
       // Initial progress
       setProcessingProgress(5);
       setProcessingMessage(getProgressMessage(5));
 
       // Step 1: Send URL to backend
-      const response = await fetch("http://localhost:8000/api/shorts/generate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${idToken}`,
-        },
-        body: JSON.stringify(requestBody)
-      });
+      const response = await fetch(
+        "http://localhost:8000/api/shorts/generate",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${idToken}`,
+          },
+          body: JSON.stringify(requestBody),
+        }
+      );
 
       setProcessingProgress(10);
       setProcessingMessage(getProgressMessage(10));
@@ -188,20 +201,22 @@ export default function ShortsGenerator() {
         let errorMessage = `HTTP error! status: ${response.status}`;
         try {
           const errorData = await response.json();
-          console.log('Error data:', errorData);  // Log full error for debugging
+          console.log("Error data:", errorData); // Log full error for debugging
 
           // Handle Pydantic validation errors
           if (errorData.detail) {
             if (Array.isArray(errorData.detail)) {
-              errorMessage = errorData.detail.map(err => `${err.loc?.join('.')} ${err.msg}`).join(', ');
-            } else if (typeof errorData.detail === 'string') {
+              errorMessage = errorData.detail
+                .map((err) => `${err.loc?.join(".")} ${err.msg}`)
+                .join(", ");
+            } else if (typeof errorData.detail === "string") {
               errorMessage = errorData.detail;
             } else {
               errorMessage = JSON.stringify(errorData.detail);
             }
           }
         } catch (e) {
-          console.error('Failed to parse error response');
+          console.error("Failed to parse error response");
         }
         throw new Error(errorMessage);
       }
@@ -217,7 +232,9 @@ export default function ShortsGenerator() {
       let pollCount = 0;
 
       while (status !== "completed") {
-        const pollRes = await fetch(`http://localhost:8000/api/shorts/status/${task_id}`);
+        const pollRes = await fetch(
+          `http://localhost:8000/api/shorts/status/${task_id}`
+        );
 
         if (!pollRes.ok) {
           throw new Error(`HTTP error! status: ${pollRes.status}`);
@@ -232,7 +249,7 @@ export default function ShortsGenerator() {
           setProcessingMessage(getProgressMessage(statusData.progress));
         } else {
           // Estimate progress based on time elapsed
-          const estimatedProgress = Math.min(15 + (pollCount * 5), 90);
+          const estimatedProgress = Math.min(15 + pollCount * 5, 90);
           setProcessingProgress(estimatedProgress);
           setProcessingMessage(getProgressMessage(estimatedProgress));
         }
@@ -314,10 +331,11 @@ export default function ShortsGenerator() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex-col bg-gradient-to-br from-slate-900 via-gray-900 to-black">
       {/* Add CSS animations */}
-      <style dangerouslySetInnerHTML={{
-        __html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
           @keyframes fade-in {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -332,140 +350,308 @@ export default function ShortsGenerator() {
           .animate-slide-up {
             animation: slide-up 0.5s ease-out forwards;
           }
-        `
-      }} />
+        `,
+        }}
+      />
+
+      {/*Background animation */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-emerald-500/20 to-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div
+          className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-violet-500/20 to-purple-500/20 rounded-full blur-3xl animate-pulse"
+          style={{ animationDelay: "2s" }}
+        ></div>
+        <div
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-500/15 to-pink-500/15 rounded-full blur-3xl animate-pulse"
+          style={{ animationDelay: "4s" }}
+        ></div>
+      </div>
 
       {/* Header */}
-      <header className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] max-w-7xl rounded-full bg-white/70 backdrop-blur-lg shadow-xl border border-gray-200 px-6">
-        <div className="flex justify-between items-center h-16">
+      <header className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] max-w-7xl rounded-2xl bg-white/20 backdrop-blur-xl shadow-2xl border border-white/30">
+        <div className="flex justify-between items-center h-16 px-6">
           <div className="flex items-center">
-            <Video className="h-8 w-8 text-indigo-500 mr-2" />
-            <span className="text-xl font-bold text-gray-900">
-              Short<span className="text-indigo-500">ify</span>
+            <div className="relative">
+              <Video className="h-8 w-8 text-purple-400 mr-3" />
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-purple-400 rounded-full animate-pulse"></div>
+            </div>
+            <span className="text-xl font-bold text-white">
+              Short<span className="text-purple-400">ify</span>
             </span>
           </div>
-          <div className="flex items-center space-x-4">
-            <a href="/shortify">
-              <button className="p-2 rounded-full hover:bg-indigo-100 hover:border-2 border-bold transition">
-                <Home className="h-5 w-5 text-gray-600" />
+          <div className="flex items-center space-x-2">
+            {[
+              { icon: Home, path: "/shortify" },
+              { icon: User, path: "/profile" },
+              { icon: Settings, path: "/settings" },
+            ].map((item, index) => (
+              <button
+                key={index}
+                className="p-3 rounded-xl hover:bg-white/20 transition-all duration-300 hover:scale-110 backdrop-blur-sm border border-white/10"
+                onClick={() => navigate(item.path)}
+              >
+                <item.icon className="h-5 w-5 text-white/80 hover:text-white" />
               </button>
-            </a>
-            <Link to="/Profile">
-              <button className="p-2 rounded-full hover:bg-indigo-100 hover:border-2 border-bold transition">
-                <User className="h-5 w-5 text-gray-600" />
-              </button>
-            </Link>
-            <Link to="/Settings">
-              <button className="p-2 rounded-full hover:bg-indigo-100 hover:border-2 border-bold transition">
-                <Settings className="h-5 w-5 text-gray-600" />
-              </button>
-            </Link>
+            ))}
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className={`flex-1 flex ${submitted ? "flex-col pt-24" : "items-center justify-center"} px-4 sm:px-6 lg:px-8`}>
+      <main
+        className={`flex-1 flex ${
+          submitted ? "flex-col pt-24" : "items-center justify-center"
+        } px-4 sm:px-6 lg:px-8`}
+      >
         <div className={`max-w-7xl mx-auto w-full ${submitted ? "" : "py-30"}`}>
           <div className="w-full">
             {/* Heading */}
-            <div className="text-center mb-10">
-              <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-gray-900">
-                Short<span className="text-indigo-500">ify</span>
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-gray-800/50 to-gray-900/50 border border-emerald-500/30 rounded-full px-4 py-2 mb-6">
+                <Zap className="h-4 w-4 text-emerald-400" />
+                <span className="text-sm font-medium text-emerald-300">
+                  Powered by Advanced AI
+                </span>
+              </div>
+              <h1 className="text-6xl sm:text-7xl font-bold text-white tracking-tight mb-6">
+                Short
+                <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+                  ify
+                </span>
               </h1>
-              <p className="mt-3 text-lg text-gray-600">
-                Convert YouTube videos into scroll-stopping Shorts
+              <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
+                Experience the future of content with smart clip detection, 
+                instant highlights, and engagement-boosting edits.
               </p>
             </div>
 
             {/* Step Indicator */}
             <div className="flex justify-center items-center mb-10">
-              <div className={`flex items-center ${url ? "text-indigo-500" : "text-gray-500"}`}>
-                <div className={`rounded-full h-8 w-8 flex items-center justify-center border-2 ${url ? "border-indigo-500 bg-indigo-100" : "border-gray-300"}`}>
+              <div
+                className={`flex items-center ${
+                  url ? "text-indigo-500" : "text-gray-500"
+                }`}
+              >
+                <div
+                  className={`rounded-full h-8 w-8 flex items-center justify-center border-2 ${
+                    url ? "border-indigo-500 bg-indigo-100" : "border-gray-300"
+                  }`}
+                >
                   {url ? <Check className="h-5 w-5" /> : "1"}
                 </div>
                 <span className="ml-2 font-medium">Paste URL</span>
               </div>
               <div className="h-1 w-12 mx-4 bg-gray-200"></div>
-              <div className={`flex items-center ${submitted ? "text-indigo-500" : "text-gray-500"}`}>
-                <div className={`rounded-full h-8 w-8 flex items-center justify-center border-2 ${submitted ? "border-indigo-500 bg-indigo-100" : "border-gray-300"}`}>
+              <div
+                className={`flex items-center ${
+                  submitted ? "text-indigo-500" : "text-gray-500"
+                }`}
+              >
+                <div
+                  className={`rounded-full h-8 w-8 flex items-center justify-center border-2 ${
+                    submitted
+                      ? "border-indigo-500 bg-indigo-100"
+                      : "border-gray-300"
+                  }`}
+                >
                   {submitted ? <Check className="h-5 w-5" /> : "2"}
                 </div>
                 <span className="ml-2 font-medium">Generate</span>
               </div>
               <div className="h-1 w-12 mx-4 bg-gray-200"></div>
               <div className="flex items-center text-gray-500">
-                <div className="rounded-full h-8 w-8 flex items-center justify-center border-2 border-gray-300">3</div>
+                <div className="rounded-full h-8 w-8 flex items-center justify-center border-2 border-gray-300">
+                  3
+                </div>
                 <span className="ml-2 font-medium">Download</span>
               </div>
             </div>
 
             {/* Input Section */}
-            <div className="max-w-xl mx-auto mb-8">
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                    <LinkIcon className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    type="text"
-                    value={url}
-                    onChange={handleUrlChange}
-                    onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-                    placeholder="Paste YouTube URL here..."
-                    className={`block w-full pl-10 pr-10 py-3 border ${inputError ? "border-red-300" : "border-gray-300"
-                      } rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 bg-white`}
-                  />
-                  {url && (
-                    <button
-                      type="button"
-                      onClick={() => setUrl("")}
-                      className="absolute inset-y-0 right-0 flex items-center pr-3"
-                    >
-                      <X className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                    </button>
-                  )}
-                </div>
-
-                {inputError && (
-                  <p className="text-sm text-red-600 mt-1">{inputError}</p>
-                )}
-
-                <div className="flex justify-center gap-2">
-                  <button
-                    type="submit"
-                    disabled={isProcessing}
-                    className={`flex items-center justify-center px-5 py-3 rounded-xl font-medium transition ${isProcessing
-                        ? "bg-gray-300 cursor-not-allowed"
-                        : "bg-indigo-500 hover:bg-indigo-600 text-white"
-                      }`}
-                  >
-                    {isProcessing ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Processing...
-                      </>
-                    ) : (
-                      "Submit"
-                    )}
-                  </button>
-                  {submitted && !isProcessing && (
-                    <button
-                      type="button"
-                      onClick={handleReset}
-                      className="px-5 py-3 border border-red-500 text-red-500 rounded-xl hover:bg-red-50 transition"
-                    >
-                      Reset
-                    </button>
-                  )}
-                </div>
-
-                {/* Progress Bar */}
-                {isProcessing && (
-                  <ProgressBar progress={processingProgress} message={processingMessage} />
-                )}
-              </form>
+            <div className="max-w-2xl mx-auto mb-16">
+  <form onSubmit={handleSubmit} className="space-y-6">
+    {/* Input Container */}
+    <div className="relative group">
+      {/* Animated background glow */}
+      <div className="absolute -inset-1 bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-cyan-500/20 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+      
+      <div className="relative bg-white/95 backdrop-blur-sm border border-white/20 rounded-2xl shadow-2xl overflow-hidden">
+        {/* Input field */}
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-6 pointer-events-none">
+            <div className="p-2 bg-gradient-to-br from-purple-100 to-blue-100 rounded-lg">
+              <LinkIcon className="h-5 w-5 text-purple-600" />
             </div>
+          </div>
+          
+          <input
+            type="text"
+            value={url}
+            onChange={handleUrlChange}
+            onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+            placeholder="Paste your YouTube URL here..."
+            className={`block w-full pl-20 pr-16 py-5 text-lg bg-transparent border-0 focus:ring-0 focus:outline-none placeholder-gray-500 text-gray-900 ${
+              inputError ? "text-red-600" : ""
+            }`}
+          />
+          
+          {/* Clear button */}
+          {url && (
+            <button
+              type="button"
+              onClick={() => setUrl("")}
+              className="absolute inset-y-0 right-0 flex items-center pr-6 group/clear"
+            >
+              <div className="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                <X className="h-5 w-5 text-gray-400 group-hover/clear:text-gray-600" />
+              </div>
+            </button>
+          )}
+        </div>
+        
+        {/* Animated border bottom */}
+        <div className={`h-1 bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 transform origin-left transition-transform duration-300 ${
+          url ? "scale-x-100" : "scale-x-0"
+        }`}></div>
+      </div>
+    </div>
+
+    {/* Error message */}
+    {inputError && (
+      <div className="flex items-center gap-2 text-red-500 bg-red-50 px-4 py-3 rounded-xl border border-red-200">
+        <AlertCircle className="h-4 w-4 flex-shrink-0" />
+        <p className="text-sm font-medium">{inputError}</p>
+      </div>
+    )}
+
+    {/* Action buttons */}
+    <div className="flex justify-center gap-4">
+      <button
+        type="submit"
+        disabled={isProcessing}
+        className={`group relative overflow-hidden px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 ${
+          isProcessing
+            ? "bg-gray-300 cursor-not-allowed text-gray-500"
+            : "bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-600 hover:from-purple-700 hover:via-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105"
+        }`}
+      >
+        {/* Button background animation */}
+        {!isProcessing && (
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-400 via-blue-400 to-cyan-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+        )}
+        
+        <div className="relative flex items-center justify-center gap-3">
+          {isProcessing ? (
+            <>
+              <div className="relative">
+                <Loader2 className="h-5 w-5 animate-spin" />
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-blue-400 rounded-full animate-pulse opacity-50"></div>
+              </div>
+              <span>Processing Magic...</span>
+            </>
+          ) : (
+            <>
+              <Zap className="h-5 w-5 group-hover:animate-pulse" />
+              <span>Generate Shorts</span>
+              <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />
+            </>
+          )}
+        </div>
+      </button>
+
+      {/* Reset button */}
+      {submitted && !isProcessing && (
+        <button
+          type="button"
+          onClick={handleReset}
+          className="group px-6 py-4 border-2 border-red-300 text-red-600 rounded-2xl hover:bg-red-50 hover:border-red-400 transition-all duration-300 font-semibold flex items-center gap-2"
+        >
+          <RotateCcw className="h-4 w-4 group-hover:rotate-180 transition-transform duration-500" />
+          Reset
+        </button>
+      )}
+    </div>
+
+    {/* Enhanced Progress Bar */}
+    {isProcessing && (
+      <div className="mt-8 space-y-4">
+        {/* Progress container */}
+        <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg">
+          {/* Progress header */}
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <div className="w-3 h-3 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full animate-pulse"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full animate-ping opacity-50"></div>
+              </div>
+              <span className="text-sm font-medium text-gray-700">
+                {processingMessage}
+              </span>
+            </div>
+            <span className="text-sm font-bold text-gray-600">
+              {processingProgress}%
+            </span>
+          </div>
+          
+          {/* Progress bar */}
+          <div className="relative h-3 bg-gray-200 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 rounded-full transition-all duration-500 ease-out relative"
+              style={{ width: `${processingProgress}%` }}
+            >
+              {/* Moving shine effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse"></div>
+            </div>
+          </div>
+          
+          {/* Processing steps */}
+          <div className="mt-4 grid grid-cols-3 gap-2 text-xs">
+            <div className={`text-center p-2 rounded-lg transition-colors duration-300 ${
+              processingProgress >= 33 ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"
+            }`}>
+              <div className="flex items-center justify-center gap-1">
+                {processingProgress >= 33 ? <Check className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
+                <span>Analyzing</span>
+              </div>
+            </div>
+            <div className={`text-center p-2 rounded-lg transition-colors duration-300 ${
+              processingProgress >= 66 ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"
+            }`}>
+              <div className="flex items-center justify-center gap-1">
+                {processingProgress >= 66 ? <Check className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
+                <span>Creating</span>
+              </div>
+            </div>
+            <div className={`text-center p-2 rounded-lg transition-colors duration-300 ${
+              processingProgress >= 100 ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"
+            }`}>
+              <div className="flex items-center justify-center gap-1">
+                {processingProgress >= 100 ? <Check className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
+                <span>Finalizing</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+  </form>
+  
+  {/* Trust indicators */}
+  <div className="mt-12 flex justify-center items-center gap-8 text-sm text-gray-500">
+    <div className="flex items-center gap-2">
+      <Shield className="h-4 w-4 text-green-500" />
+      <span>Secure Processing</span>
+    </div>
+    <div className="flex items-center gap-2">
+      <Zap className="h-4 w-4 text-yellow-500" />
+      <span>Lightning Fast</span>
+    </div>
+    <div className="flex items-center gap-2">
+      <Check className="h-4 w-4 text-blue-500" />
+      <span>HD Quality</span>
+    </div>
+  </div>
+</div>
 
             {/* Video Details Section (appears after processing) */}
             {videoDetails && submitted && (
@@ -545,8 +731,12 @@ export default function ShortsGenerator() {
                         src={`http://localhost:8000${clip.url}`}
                       />
                       <div className="mt-3 text-sm text-gray-700">
-                        <div>⏱ {clip.start} - {clip.end}</div>
-                        <div>🎯 Confidence: {(clip.confidence * 100).toFixed(1)}%</div>
+                        <div>
+                          ⏱ {clip.start} - {clip.end}
+                        </div>
+                        <div>
+                          🎯 Confidence: {(clip.confidence * 100).toFixed(1)}%
+                        </div>
                       </div>
                       <div className="flex justify-between mt-2 text-xs text-gray-500">
                         <a
@@ -558,8 +748,13 @@ export default function ShortsGenerator() {
                         </a>
                         <button
                           onClick={() => {
-                            navigator.clipboard.writeText(`http://localhost:8000${clip.url}`);
-                            displayToast("Link copied to clipboard!", "success");
+                            navigator.clipboard.writeText(
+                              `http://localhost:8000${clip.url}`
+                            );
+                            displayToast(
+                              "Link copied to clipboard!",
+                              "success"
+                            );
                           }}
                           className="hover:text-indigo-600"
                         >
@@ -574,39 +769,163 @@ export default function ShortsGenerator() {
 
             {/* How It Works Section */}
             {!submitted && (
-              <div className="max-w-4xl mx-auto mt-16">
-                <h2 className="text-2xl font-bold text-center mb-8">
-                  How It Works
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                  <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 text-center">
-                    <div className="bg-indigo-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">
-                      <LinkIcon className="h-6 w-6 text-indigo-600" />
+              <div className="max-w-6xl mx-auto mt-20">
+                <div className="text-center mb-16">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-500/30 mb-6">
+                    <Sparkles className="w-4 h-4 text-indigo-400" />
+                    <span className="text-indigo-400 font-medium text-sm uppercase tracking-wide">
+                      Simple Process
+                    </span>
+                  </div>
+                  <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 via-indigo-900 to-purple-900 dark:from-white dark:via-indigo-100 dark:to-purple-100 bg-clip-text text-transparent mb-4">
+                    How It Works
+                  </h2>
+                  <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                    Transform your long-form content into viral shorts in just
+                    three simple steps
+                  </p>
+                </div>
+
+                <div className="relative">
+                  {/* Connection Line */}
+                  <div className="hidden md:block absolute top-24 left-1/2 transform -translate-x-1/2 w-full max-w-4xl">
+                    <div className="flex justify-between items-center px-8">
+                      <div className="w-32 h-0.5 bg-gradient-to-r from-transparent via-indigo-300 to-indigo-400"></div>
+                      <div className="w-32 h-0.5 bg-gradient-to-r from-indigo-400 via-purple-400 to-purple-300"></div>
                     </div>
-                    <h3 className="font-semibold text-lg mb-2">Paste Link</h3>
-                    <p className="text-gray-600">
-                      Simply paste any YouTube video URL to get started
-                    </p>
                   </div>
 
-                  <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 text-center">
-                    <div className="bg-indigo-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">
-                      <Loader2 className="h-6 w-6 text-indigo-600" />
-                    </div>
-                    <h3 className="font-semibold text-lg mb-2">AI Processing</h3>
-                    <p className="text-gray-600">
-                      Our AI analyzes the video and creates engaging short clips
-                    </p>
-                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
+                    {/* Step 1 */}
+                    <div className="group relative">
+                      <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-800 text-center hover:shadow-2xl hover:scale-105 transition-all duration-300">
+                        {/* Step Number */}
+                        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                          <div className="bg-gradient-to-r from-indigo-500 to-indigo-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold shadow-lg">
+                            1
+                          </div>
+                        </div>
 
-                  <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 text-center">
-                    <div className="bg-indigo-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">
-                      <Check className="h-6 w-6 text-indigo-600" />
+                        {/* Icon */}
+                        <div className="relative mb-6">
+                          <div className="bg-gradient-to-br from-indigo-100 to-indigo-200 dark:from-indigo-900/50 dark:to-indigo-800/50 rounded-2xl w-16 h-16 flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300">
+                            <LinkIcon className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
+                          </div>
+                          {/* Floating particles */}
+                          <div className="absolute top-0 right-0 w-2 h-2 bg-indigo-400 rounded-full animate-ping"></div>
+                        </div>
+
+                        <h3 className="font-bold text-xl mb-3 text-gray-900 dark:text-white">
+                          Paste Your Link
+                        </h3>
+                        <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                          Simply paste any YouTube video URL and our AI will
+                          instantly analyze your content for the best moments
+                        </p>
+
+                        {/* Decorative element */}
+                        <div className="mt-6 flex justify-center">
+                          <div className="flex space-x-1">
+                            <div className="w-2 h-1 bg-indigo-300 rounded-full"></div>
+                            <div className="w-4 h-1 bg-indigo-400 rounded-full"></div>
+                            <div className="w-2 h-1 bg-indigo-300 rounded-full"></div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <h3 className="font-semibold text-lg mb-2">Get Shorts</h3>
-                    <p className="text-gray-600">
-                      Download ready-to-upload shorts for any platform
-                    </p>
+
+                    {/* Step 2 */}
+                    <div className="group relative">
+                      <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-800 text-center hover:shadow-2xl hover:scale-105 transition-all duration-300">
+                        {/* Step Number */}
+                        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                          <div className="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold shadow-lg">
+                            2
+                          </div>
+                        </div>
+
+                        {/* Icon */}
+                        <div className="relative mb-6">
+                          <div className="bg-gradient-to-br from-purple-100 to-purple-200 dark:from-purple-900/50 dark:to-purple-800/50 rounded-2xl w-16 h-16 flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300">
+                            <Zap className="h-8 w-8 text-purple-600 dark:text-purple-400" />
+                          </div>
+                          {/* Animated sparkles */}
+                          <div className="absolute -top-1 -right-1 w-3 h-3">
+                            <Sparkles className="w-3 h-3 text-purple-400 animate-pulse" />
+                          </div>
+                        </div>
+
+                        <h3 className="font-bold text-xl mb-3 text-gray-900 dark:text-white">
+                          AI Magic Processing
+                        </h3>
+                        <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                          Our advanced AI analyzes your video, identifies viral
+                          moments, and creates engaging short clips
+                          automatically
+                        </p>
+
+                        {/* Processing indicator */}
+                        <div className="mt-6 flex justify-center">
+                          <div className="flex space-x-1">
+                            <div className="w-2 h-1 bg-purple-300 rounded-full animate-pulse"></div>
+                            <div
+                              className="w-2 h-1 bg-purple-400 rounded-full animate-pulse"
+                              style={{ animationDelay: "0.2s" }}
+                            ></div>
+                            <div
+                              className="w-2 h-1 bg-purple-500 rounded-full animate-pulse"
+                              style={{ animationDelay: "0.4s" }}
+                            ></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Step 3 */}
+                    <div className="group relative">
+                      <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-800 text-center hover:shadow-2xl hover:scale-105 transition-all duration-300">
+                        {/* Step Number */}
+                        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                          <div className="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold shadow-lg">
+                            3
+                          </div>
+                        </div>
+
+                        {/* Icon */}
+                        <div className="relative mb-6">
+                          <div className="bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900/50 dark:to-green-800/50 rounded-2xl w-16 h-16 flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300">
+                            <Download className="h-8 w-8 text-green-600 dark:text-green-400" />
+                          </div>
+                          {/* Success indicator */}
+                          <div className="absolute -bottom-1 -right-1">
+                            <Check className="w-4 h-4 text-green-500 bg-white dark:bg-gray-900 rounded-full p-0.5" />
+                          </div>
+                        </div>
+
+                        <h3 className="font-bold text-xl mb-3 text-gray-900 dark:text-white">
+                          Download & Share
+                        </h3>
+                        <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                          Get your perfectly crafted shorts ready for TikTok,
+                          Instagram, YouTube, and all major platforms
+                        </p>
+
+                        {/* Platform indicators */}
+                        <div className="mt-6 flex justify-center">
+                          <div className="flex space-x-1">
+                            <div className="w-2 h-1 bg-green-300 rounded-full animate-pulse"></div>
+                            <div
+                              className="w-2 h-1 bg-green-400 rounded-full animate-pulse"
+                              style={{ animationDelay: "0.2s" }}
+                            ></div>
+                            <div
+                              className="w-2 h-1 bg-green-500 rounded-full animate-pulse"
+                              style={{ animationDelay: "0.4s" }}
+                            ></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -616,13 +935,13 @@ export default function ShortsGenerator() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white flex items-center border-t border-gray-200 mt-auto">
-        <div className="max-w-7xl mx-auto px-126 py-6 flex justify-between items-center w-full">
-          <p className="text-sm text-gray-600">
-            &copy; 2025 Shortify. All rights reserved.
-          </p>
+      <div className="h-16 flex items-center justify-center border-t border-gray-900 bg-gray-950/90 backdrop-blur-xl mt-16">
+        <div className="flex items-center gap-2 text-gray-400">
+          <Sparkles className="w-4 h-4" />
+          <span className="text-sm">Made with ❤️ and ☕.</span>
+          <Sparkles className="w-4 h-4" />
         </div>
-      </footer>
+      </div>
 
       {/* Toast */}
       <Toast
@@ -666,11 +985,12 @@ export default function ShortsGenerator() {
         }
 
         @keyframes pulse {
-          0%, 100% {
+          0%,
+          100% {
             opacity: 1;
           }
           50% {
-            opacity: .5;
+            opacity: 0.5;
           }
         }
       `}</style>
