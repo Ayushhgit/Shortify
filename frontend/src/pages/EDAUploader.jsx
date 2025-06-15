@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Upload, FileText, BarChart3, Download, AlertCircle, CheckCircle, Database, TrendingUp, Sparkles, Search, Home, User, Settings } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
+import Toast from "../components/Toast";
+import { getToken } from "../firebase";
 import Plot from 'react-plotly.js';
 
 const EDAUploader = () => {
@@ -11,9 +13,18 @@ const EDAUploader = () => {
   const [reportLoading, setReportLoading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [step, setStep] = useState(1);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState("success");
   const [animateResult, setAnimateResult] = useState(false);
 
   const navigate = useNavigate();
+
+  const displayToast = (message, type = "success") => {
+    setToastMessage(message);
+    setToastType(type);
+    setShowToast(true);
+  };
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
@@ -69,6 +80,15 @@ const EDAUploader = () => {
     formData.append('file', file);
 
     try {
+      const idToken = await getToken();
+      if (!idToken) {
+        console.error("User not authenticated");
+        displayToast(
+          "Authentication failed. Please try logging in again.",
+          "error"
+        );
+        return;
+      }
       const response = await fetch('http://localhost:8000/eda/analyze', {
         method: 'POST',
         body: formData,
@@ -658,6 +678,13 @@ const EDAUploader = () => {
           )}
         </div>
       </div>
+      {/* Toast */}
+      <Toast
+        show={showToast}
+        message={toastMessage}
+        type={toastType}
+        onClose={() => setShowToast(false)}
+      />
     </div>
   );
 };

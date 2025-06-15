@@ -6,6 +6,7 @@ import {
     ArrowRight, RotateCcw, ImageIcon
 } from "lucide-react";
 import Toast from "../components/Toast";
+import { getToken } from '../firebase';
 import { useNavigate } from "react-router-dom";
 
 const AssignmentHelper = () => {
@@ -37,6 +38,11 @@ const AssignmentHelper = () => {
     const [isEditingAnswer, setIsEditingAnswer] = useState(false);
     const [editedAnswer, setEditedAnswer] = useState("");
     const [allRenderedImages, setAllRenderedImages] = useState([]);
+    const displayToast = (message, type = "success") => {
+    setToastMessage(message);
+    setToastType(type);
+    setShowToast(true);
+  };
 
 
     const navigate = useNavigate();
@@ -68,12 +74,6 @@ const AssignmentHelper = () => {
         }
     ];
 
-    const displayToast = (message, type = "success") => {
-        setToastMessage(message);
-        setToastType(type);
-        setShowToast(true);
-        setTimeout(() => setShowToast(false), 3000);
-    };
 
     const handleDrag = (e) => {
         e.preventDefault();
@@ -125,6 +125,13 @@ const AssignmentHelper = () => {
     };
 
     const handleSubmit = async () => {
+        const idToken = await getToken();
+        if (!idToken) {
+            console.error("User not authenticated");
+            displayToast("Authentication failed. Please try logging in again.", "error");
+            return;
+        }
+
         if (!inputMethod) {
             displayToast("Please select an input method", "error");
             return;
@@ -388,20 +395,6 @@ const AssignmentHelper = () => {
         setIsEditingAnswer(false); // Reset edit state
         setEditedAnswer(""); // Clear edited answer
         setAiResponseText(""); // Clear AI response text
-    };
-
-    const Toast = ({ show, message, type, onClose }) => {
-        if (!show) return null;
-
-        return (
-            <div className="fixed top-4 right-4 z-50 animate-slideInRight">
-                <div className={`px-6 py-4 rounded-lg shadow-lg ${type === 'success' ? 'bg-green-500' : 'bg-red-500'
-                    } text-white flex items-center space-x-2`}>
-                    {type === 'success' ? <CheckCircle className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
-                    <span>{message}</span>
-                </div>
-            </div>
-        );
     };
 
     return (

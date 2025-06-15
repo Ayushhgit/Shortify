@@ -1,39 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Home, Settings, User, Upload, FileText, X, Check, Loader2, Download, Sparkles, Zap, Clock, BarChart3, Eye, Copy, Share2, MessageCircle, Send } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import Toast from "../components/Toast";
 import { getToken } from '../firebase';
 
-// Premium Toast Component
-const Toast = ({ show, message, type, onClose }) => {
-  useEffect(() => {
-    if (show) {
-      const timer = setTimeout(() => {
-        onClose();
-      }, 4000);
-      return () => clearTimeout(timer);
-    }
-  }, [show, onClose]);
-
-  if (!show) return null;
-
-  return (
-    <div className="fixed top-24 right-6 z-50 animate-in slide-in-from-right duration-300">
-      <div className={`rounded-xl px-6 py-4 shadow-2xl backdrop-blur-xl border max-w-sm ${type === "success"
-        ? "bg-emerald-50/90 border-emerald-200 text-emerald-800"
-        : "bg-red-50/90 border-red-200 text-red-800"
-        }`}>
-        <div className="flex items-center gap-3">
-          {type === "success" ? (
-            <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-          ) : (
-            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-          )}
-          <p className="font-medium">{message}</p>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 // Chat Component
 const ChatWithDocument = ({ documentContent, isVisible, onClose }) => {

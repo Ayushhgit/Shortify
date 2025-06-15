@@ -17,6 +17,8 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import Toast from "../components/Toast";
+import { getToken } from '../firebase';
 
 const ResearchAssistantChat = () => {
   const [messages, setMessages] = useState([
@@ -33,21 +35,27 @@ const ResearchAssistantChat = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [userId] = useState("user_" + Math.random().toString(36).substr(2, 9));
   const [sessionId] = useState("session_" + Math.random().toString(36).substr(2, 9));
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState("success");
 
   const navigate = useNavigate();
+  const displayToast = (message, type = "success") => {
+    setToastMessage(message);
+    setToastType(type);
+    setShowToast(true);
+  };
 
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
   const sendMessage = async (e) => {
+    const idToken = await getToken();
+    if (!idToken) {
+      console.error("User not authenticated");
+      displayToast("Authentication failed. Please try logging in again.", "error");
+      return;
+    }
     e.preventDefault();
     if (!inputValue.trim() || isLoading) return;
 
@@ -168,8 +176,8 @@ const ResearchAssistantChat = () => {
         >
           <div
             className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${isUser
-                ? "bg-gradient-to-r from-emerald-500 to-emerald-600 ml-3"
-                : "bg-gradient-to-r from-indigo-500 to-cyan-500 mr-3"
+              ? "bg-gradient-to-r from-emerald-500 to-emerald-600 ml-3"
+              : "bg-gradient-to-r from-indigo-500 to-cyan-500 mr-3"
               } shadow-lg`}
           >
             {isUser ? (
@@ -181,8 +189,8 @@ const ResearchAssistantChat = () => {
 
           <div
             className={`rounded-2xl px-6 py-4 backdrop-blur-xl shadow-lg border ${isUser
-                ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white border-emerald-400/30"
-                : "bg-white/10 text-gray-100 border-white/20"
+              ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white border-emerald-400/30"
+              : "bg-white/10 text-gray-100 border-white/20"
               }`}
           >
             <div className="prose prose-sm max-w-none">
@@ -528,6 +536,13 @@ const ResearchAssistantChat = () => {
           </p>
         </div>
       </footer>
+      {/* Toast */}
+      <Toast
+        show={showToast}
+        message={toastMessage}
+        type={toastType}
+        onClose={() => setShowToast(false)}
+      />
 
       <style jsx>{`
         .line-clamp-2 {

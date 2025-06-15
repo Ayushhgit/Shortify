@@ -20,6 +20,8 @@ import {
     Brain
 } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
+import Toast from "../components/Toast";
+import { getToken } from '../firebase';
 
 const LinkwiseAI = () => {
     const [activeTab, setActiveTab] = useState('analyzer');
@@ -27,6 +29,15 @@ const LinkwiseAI = () => {
     const [results, setResults] = useState(null);
     const [error, setError] = useState('');
     const [copiedIndex, setCopiedIndex] = useState(null);
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState("");
+    const [toastType, setToastType] = useState("success");
+
+    const displayToast = (message, type = "success") => {
+        setToastMessage(message);
+        setToastType(type);
+        setShowToast(true);
+    };
 
     // Form states
     const [profileForm, setProfileForm] = useState({
@@ -105,6 +116,12 @@ const LinkwiseAI = () => {
         setError('');
 
         try {
+            const idToken = await getToken();
+            if (!idToken) {
+                console.error("User not authenticated");
+                displayToast("Authentication failed. Please try logging in again.", "error");
+                return;
+            }
             // Clean and prepare the payload - ONLY include non-empty fields
             const cleanPayload = {};
 
@@ -218,6 +235,13 @@ const LinkwiseAI = () => {
                 ...contentForm,
                 skills: contentForm.skills.split(',').map(s => s.trim())
             };
+
+            const idToken = await getToken();
+            if (!idToken) {
+                console.error("User not authenticated");
+                displayToast("Authentication failed. Please try logging in again.", "error");
+                return;
+            }
 
             const result = await makeAPICall('/generate-content', payload);
             console.log('API Response:', result); // Add this line
@@ -908,6 +932,13 @@ const LinkwiseAI = () => {
                     </div>
                 </div>
             </div>
+
+            <Toast
+                show={showToast}
+                message={toastMessage}
+                type={toastType}
+                onClose={() => setShowToast(false)}
+            />
 
             {/* Custom Styles */}
             <style jsx>{`

@@ -16,46 +16,19 @@ import {
   Send,
 } from "lucide-react";
 import { getToken } from '../firebase';
-import  { useNavigate } from "react-router-dom";
+import Toast from "../components/Toast";
+import { useNavigate } from "react-router-dom";
 
 // Toast Component
-const Toast = ({ show, message, type, onClose }) => {
-  useEffect(() => {
-    if (show) {
-      const timer = setTimeout(() => {
-        onClose();
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [show, onClose]);
-
-  if (!show) return null;
-
-  return (
-    <div className="fixed top-4 right-4 z-50 animate-slideIn">
-      <div className={`px-6 py-4 rounded-lg shadow-lg border ${
-        type === 'success' 
-          ? 'bg-green-600 border-green-500 text-white' 
-          : 'bg-red-600 border-red-500 text-white'
-      }`}>
-        <div className="flex items-center">
-          {type === 'success' ? (
-            <Check className="h-5 w-5 mr-2" />
-          ) : (
-            <X className="h-5 w-5 mr-2" />
-          )}
-          <span>{message}</span>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 // Chat Component
 const ChatWithDocument = ({ documentContent, isVisible, onClose }) => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState("success");
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -76,6 +49,11 @@ const ChatWithDocument = ({ documentContent, isVisible, onClose }) => {
 
     try {
       const idToken = await getToken();
+      if (!idToken) {
+        console.error("User not authenticated");
+        displayToast("Authentication failed. Please try logging in again.", "error");
+        return;
+      }
 
       const response = await fetch("http://localhost:8000/api/article/chat-simple", {
         method: "POST",
@@ -85,7 +63,7 @@ const ChatWithDocument = ({ documentContent, isVisible, onClose }) => {
         },
         body: JSON.stringify({
           message: userMessage,
-          article_content: documentContent  
+          article_content: documentContent
         }),
       });
 
@@ -238,6 +216,12 @@ export default function ArticleSummarizer() {
   };
 
   const handleSubmit = async (event) => {
+    const idToken = await getToken();
+    if (!idToken) {
+      console.error("User not authenticated");
+      displayToast("Authentication failed. Please try logging in again.", "error");
+      return;
+    }
     event.preventDefault();
 
     if (!articleUrl.trim()) {
@@ -353,7 +337,7 @@ export default function ArticleSummarizer() {
             </span>
           </div>
           <div className="flex items-center space-x-2">
-            {[{ icon: Home , path:"/"}, { icon: User , path:"/profile"}, { icon: Settings, path:"/settings"}].map(
+            {[{ icon: Home, path: "/" }, { icon: User, path: "/profile" }, { icon: Settings, path: "/settings" }].map(
               (item, index) => (
                 <button
                   key={index}
@@ -431,8 +415,8 @@ export default function ArticleSummarizer() {
                   onClick={handleSubmit}
                   disabled={isProcessing}
                   className={`group relative px-8 py-4 rounded-2xl font-bold text-white transition-all duration-300 hover:scale-105 hover:shadow-2xl ${isProcessing
-                      ? "bg-gray-600/50 cursor-not-allowed"
-                      : "bg-gradient-to-r from-indigo-500 to-cyan-500"
+                    ? "bg-gray-600/50 cursor-not-allowed"
+                    : "bg-gradient-to-r from-indigo-500 to-cyan-500"
                     }`}
                 >
                   <div className="flex items-center space-x-3">
@@ -534,7 +518,7 @@ export default function ArticleSummarizer() {
                     <MessageCircle className="h-4 w-4 mr-2" />
                     Chat with Article
                   </button>
-                  
+
                   <div className="flex space-x-4">
                     <button
                       className="flex items-center px-6 py-3 text-white border-2 border-white/30 hover:bg-white/20 rounded-xl transition-all duration-300 font-medium backdrop-blur-sm"

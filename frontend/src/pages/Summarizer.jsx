@@ -7,6 +7,8 @@ import {
 } from "lucide-react";
 import Toast from "../components/Toast";
 import { useNavigate } from "react-router-dom";
+import { getToken } from "../firebase";
+
 
 export default function YouTubeSummarizer() {
   const [showToast, setShowToast] = useState(false);
@@ -44,36 +46,47 @@ export default function YouTubeSummarizer() {
   };
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    if (!youtubeUrl.trim()) {
-      setInputError("Please enter a YouTube URL");
-      return;
-    }
-
-    if (!isValidYouTubeUrl(youtubeUrl)) {
-      setInputError("Please enter a valid YouTube URL");
-      return;
-    }
-
     try {
+      if (event) event.preventDefault();
+
+      const idToken = await getToken();
+      if (!idToken) {
+        console.error("User not authenticated");
+        displayToast(
+          "Authentication failed. Please try logging in again.",
+          "error"
+        );
+        return; // ⛔ Stop execution if not authenticated
+      }
+
+      if (!youtubeUrl.trim()) {
+        setInputError("Please enter a YouTube URL");
+        return;
+      }
+
+      if (!isValidYouTubeUrl(youtubeUrl)) {
+        setInputError("Please enter a valid YouTube URL");
+        return;
+      }
+
       setIsProcessing(true);
 
-      const response = await fetch('http://localhost:8000/api/ytSummary/summarize', {
-        method: 'POST',
+      const response = await fetch("http://localhost:8000/api/ytSummary/summarize", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
+          // Include ID token if backend expects it (optional):
+          // 'Authorization': `Bearer ${idToken}`,
         },
         body: JSON.stringify({
-          url: youtubeUrl
+          url: youtubeUrl,
         }),
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ detail: 'Unknown error' }));
-        console.error('Server error:', errorData);
+        const errorData = await response.json().catch(() => ({ detail: "Unknown error" }));
+        console.error("Server error:", errorData);
         displayToast(`Error: ${errorData.detail || response.status}`, "error");
-        setIsProcessing(false);
         return;
       }
 
@@ -85,17 +98,17 @@ export default function YouTubeSummarizer() {
           channelName: data.videoDetails.channelName,
           duration: data.videoDetails.duration,
           publishDate: data.videoDetails.publishDate,
-          thumbnailUrl: data.videoDetails.thumbnailUrl
+          thumbnailUrl: data.videoDetails.thumbnailUrl,
         });
       }
 
       setSummary(data.summary);
       displayToast("Video summarized successfully!");
-      setIsProcessing(false);
     } catch (error) {
+      console.error("Error:", error);
+      displayToast("Failed to summarize", "error");
+    } finally {
       setIsProcessing(false);
-      console.error("Network/Parse error:", error);
-      displayToast("Network error. Please try again.", "error");
     }
   };
 

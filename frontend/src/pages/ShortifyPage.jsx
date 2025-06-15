@@ -1495,7 +1495,7 @@ export default function ShortifyPage() {
               </div>
 
               <div className="text-center">
-                <a href="/features/AssignmentMaker">
+                <a href="/features/AssignmentHelper">
                   <button className="bg-gradient-to-r from-yellow-400 via-orange-600 to-rose-400 hover:from-yellow-500 hover:via-orange-700 hover:to-rose-500 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-yellow-500/25 flex items-center gap-3 mx-auto group">
                     <FileText className="w-6 h-6 group-hover:scale-110 transition-transform" />
                     Finish Assignment
@@ -1630,7 +1630,7 @@ export default function ShortifyPage() {
               </div>
 
               <div className="text-center">
-                <a href="/features/auto-eda">
+                <a href="/features/EDA">
                   <button className="bg-gradient-to-r from-blue-500 via-cyan-500 to-purple-500 hover:from-blue-600 hover:via-cyan-600 hover:to-purple-600 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-blue-500/25 flex items-center gap-3 mx-auto">
                     <BarChart3 className="w-6 h-6" />
                     Start Auto EDA

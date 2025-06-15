@@ -18,6 +18,7 @@ import {
   File,
 } from "lucide-react";
 import Toast from "../components/Toast";
+import { getToken } from '../firebase';
 import { useNavigate } from "react-router-dom";
 
 export default function CoverLetterGenerator() {
@@ -175,6 +176,13 @@ export default function CoverLetterGenerator() {
   };
 
   const handleSubmit = async (e) => {
+    const idToken = await getToken();
+    if (!idToken) {
+      console.error("User not authenticated");
+      displayToast("Authentication failed. Please try logging in again.", "error");
+      return;
+    }
+
     e.preventDefault();
 
     if (!validateForm()) {
@@ -297,7 +305,7 @@ export default function CoverLetterGenerator() {
             </span>
           </div>
           <div className="flex items-center space-x-2">
-            {[{ icon: Home, path:"/shortify" }, { icon: User, path:"/profile" }, { icon: Settings, path:"/settings" }].map(
+            {[{ icon: Home, path: "/shortify" }, { icon: User, path: "/profile" }, { icon: Settings, path: "/settings" }].map(
               (item, index) => (
                 <button
                   key={index}
