@@ -9,7 +9,6 @@ import {
   Zap,
   User,
   BarChart3,
-  Github,
   Menu,
   X,
   Edit,
@@ -28,7 +27,7 @@ import {
   Upload,
   Palette,
   Paintbrush,
-  Eye,
+  Eye,Coffee,
   Cpu,
   Brain,
   Rocket,
@@ -363,6 +362,7 @@ export default function ShortifyPage() {
       bgColor: "bg-purple-500/10",
     },
   ];
+  
 
   return (
     <div className="flex h-screen bg-gray-950 text-white overflow-hidden relative">
@@ -473,10 +473,10 @@ export default function ShortifyPage() {
           <div className="p-6 border-t border-gray-800">
             <div className="flex items-center gap-3 mb-4">
               <a
-                href="https://github.com/Ayushhgit"
+                href="https://buymeacoffee.com/"
                 className="p-3 rounded-xl bg-gray-800 hover:bg-gray-700 transition-colors border border-gray-700 hover:border-gray-600"
               >
-                <Github size={18} className="text-gray-300" />
+                <Coffee size={18} className="text-gray-300" />
               </a>
               <div className="flex-1" />
               {user ? (

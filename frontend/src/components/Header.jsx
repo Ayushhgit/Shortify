@@ -52,7 +52,7 @@ export default function Header() {
       name: "Resources",
       dropdown: [
         { label: "Blog", path: "/resources/blog" },
-        { label: "Project-GitHub", path: "https://github.com/ayushhgit/Shortify" },
+        { label: "Buy Me a Coffee", path: "https://buymeacoffee.com" },
         { label: "Tutorials", path: "/shortify" },
       ],
     },

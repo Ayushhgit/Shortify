@@ -16,6 +16,7 @@ import { Typewriter } from "react-simple-typewriter";
 import { useNavigate } from "react-router-dom";
 import Toast from "../components/Toast.jsx";
 import { getAuth } from "firebase/auth";
+import FeaturedToolsSection from "../components/FeaturedToolsSection.jsx";
 
 const ShortifyLanding = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -310,6 +311,10 @@ const ShortifyLanding = () => {
         </div>
       </section>
 
+            <div className="flex flex-col">
+             <FeaturedToolsSection />
+          </div>
+          
       {/* Features Section */}
       <section className="relative py-32 px-6">
         <div className="max-w-7xl mx-auto">
