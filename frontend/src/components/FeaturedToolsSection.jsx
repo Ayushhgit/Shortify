@@ -162,17 +162,14 @@ const FeaturedToolsSection = () => {
         }
 
         .animate-scroll-left {
-          animation: scroll-left 10s linear infinite;
+          animation: scroll-left 5s linear infinite;
         }
 
         .animate-scroll-right {
-          animation: scroll-right 10s linear infinite;
+          animation: scroll-right 5s linear infinite;
         }
 
-        .animate-scroll-left:hover,
-        .animate-scroll-right:hover {
-          animation-play-state: paused;
-        }
+        
 
         .glass-effect {
           background: rgba(255, 255, 255, 0.25);
