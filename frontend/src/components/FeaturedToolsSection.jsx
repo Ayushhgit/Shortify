@@ -1,80 +1,92 @@
 import React from 'react';
+import {
+  FileText,
+  Video,
+  Youtube,
+  BarChart3,
+  Target,
+  Search,
+  BookText,
+  FileImage,
+  Settings,
+  Edit
+} from "lucide-react";
 
 const FeaturedToolsSection = () => {
   const topRowTools = [
     { 
-      icon: "📝", 
+      icon: FileText, 
       name: 'Resume Analyzer', 
-      bgColor: 'bg-blue-500/10',
-      iconBg: 'bg-blue-500/20'
+      bgColor: 'bg-blue-500',
+      iconBg: 'bg-blue-500'
     },
     { 
-      icon: "📊", 
+      icon: Video, 
       name: 'YouTube Clipper', 
-      bgColor: 'bg-purple-500/10',
-      iconBg: 'bg-purple-500/20'
+      bgColor: 'bg-purple-500',
+      iconBg: 'bg-purple-500'
     },
     { 
-      icon: "🎨", 
+      icon: Youtube, 
       name: 'Youtube Summarizer', 
-      bgColor: 'bg-green-500/10',
-      iconBg: 'bg-green-500/20'
+      bgColor: 'bg-green-500',
+      iconBg: 'bg-green-500'
     },
     { 
-      icon: "🔄", 
+      icon: BarChart3, 
       name: 'Auto EDA Tool', 
-      bgColor: 'bg-orange-500/10',
-      iconBg: 'bg-orange-500/20'
+      bgColor: 'bg-orange-500',
+      iconBg: 'bg-orange-500'
     },
     { 
-      icon: "🎯", 
+      icon: Target, 
       name: 'Assignment Helper', 
-      bgColor: 'bg-red-500/10',
-      iconBg: 'bg-red-500/20'
+      bgColor: 'bg-red-500',
+      iconBg: 'bg-red-500'
     },
   ];
 
   const bottomRowTools = [
     { 
-      icon: "🐦", 
+      icon: Search, 
       name: 'Research Assistant', 
-      bgColor: 'bg-blue-500/10',
-      iconBg: 'bg-blue-500/20'
+      bgColor: 'bg-blue-500',
+      iconBg: 'bg-blue-500'
     },
     { 
-      icon: "🎨", 
+      icon: BookText, 
       name: 'Document Summarizer', 
-      bgColor: 'bg-purple-500/10',
-      iconBg: 'bg-purple-500/20'
+      bgColor: 'bg-purple-500',
+      iconBg: 'bg-purple-500'
     },
     { 
-      icon: "🎭", 
+      icon: FileImage, 
       name: 'Article Summarizer', 
-      bgColor: 'bg-green-500/10',
-      iconBg: 'bg-green-500/20'
+      bgColor: 'bg-green-500',
+      iconBg: 'bg-green-500'
     },
     { 
-      icon: "🔧", 
-      name: 'Linkdin Builder', 
-      bgColor: 'bg-indigo-500/10',
-      iconBg: 'bg-indigo-500/20'
+      icon: Settings, 
+      name: 'LinkedIn Builder', 
+      bgColor: 'bg-indigo-500',
+      iconBg: 'bg-indigo-500'
     },
     { 
-      icon: "📊", 
+      icon: Edit, 
       name: 'Cover Letter Generator', 
-      bgColor: 'bg-teal-500/10',
-      iconBg: 'bg-teal-500/20'
+      bgColor: 'bg-teal-500',
+      iconBg: 'bg-teal-500'
     }
   ];
 
-  const ToolCard = ({ icon, name, bgColor, iconBg }) => (
+  const ToolCard = ({ icon: Icon, name, bgColor, iconBg }) => (
     <div className={`flex-shrink-0 ${bgColor} backdrop-blur-md backdrop-saturate-150 rounded-2xl p-6 mx-3 min-w-[240px] border border-white/20 hover:border-white/40 hover:shadow-lg hover:shadow-black/5 transition-all duration-300 cursor-pointer group glass-effect`}>
       <div className="flex items-center gap-4">
-        <div className={`${iconBg} backdrop-blur-sm w-12 h-12 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform duration-300 border border-white/10`}>
-          {icon}
+        <div className={`${iconBg} backdrop-blur-sm w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 border border-white/10`}>
+          <Icon size={20} className="text-white" />
         </div>
         <div className="text-left">
-          <h3 className="font-semibold text-gray-800 text-base leading-tight">{name}</h3>
+          <h3 className="font-semibold text-white text-base leading-tight">{name}</h3>
         </div>
       </div>
     </div>
@@ -92,7 +104,7 @@ const FeaturedToolsSection = () => {
             <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center shadow-lg">
               <div className="w-2 h-2 bg-white rounded-full"></div>
             </div>
-            <h2 className="text-4xl font-bold bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">Featured Tools</h2>
+            <h2 className="text-4xl font-bold bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent">Featured Tools</h2>
             <div className="w-6 h-6 bg-gradient-to-r from-purple-500 to-teal-500 rounded-full flex items-center justify-center shadow-lg">
               <div className="w-2 h-2 bg-white rounded-full"></div>
             </div>
