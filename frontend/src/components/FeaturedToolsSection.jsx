@@ -81,9 +81,9 @@ const FeaturedToolsSection = () => {
   );
 
   return (
-    <section className="py-16 bg-black overflow-hidden relative">
+    <section className="py-16 overflow-hidden relative">
       {/* Background decoration */}
-      <div className="absolute inset-0 bg-black"></div>
+      <div className="absolute inset-0 "></div>
       
       <div className="max-w-7xl mx-auto px-4 relative">
         {/* Header */}
