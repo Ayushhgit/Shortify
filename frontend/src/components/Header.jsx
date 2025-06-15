@@ -173,7 +173,7 @@ export default function Header() {
     <header className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] max-w-7xl rounded-full bg-gray-800/10 backdrop-blur-lg shadow-xl border border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-extrabold text-white-900">
-          <a href='/'>Short<span className="text-green-400">ify</span></a>
+          <a href='/'>Clari<span className="text-green-400">AI</span></a>
         </h1>
 
         {/* Desktop Menu */}
@@ -218,7 +218,7 @@ export default function Header() {
         <a href="/shortify" className="hidden md:inline-block">
           <button className="bg-green-500 hover:bg-green-400 text-white font-semibold py-2.5 px-6 rounded-full flex items-center transition-all duration-200 shadow-md hover:shadow-lg">
             <Zap className="mr-2 h-5 w-5" />
-            Try Shortify Now
+            Try ClariAI Now
           </button>
         </a>
       </div>
@@ -248,7 +248,7 @@ export default function Header() {
           <a href="/shortify">
             <button className="w-full mt-3 bg-green-500 hover:bg-green-400 text-white font-semibold py-2.5 rounded-full transition-all duration-200 shadow-md hover:shadow-lg flex justify-center items-center">
               <Zap className="mr-2 h-5 w-5" />
-              Try Shortify Now
+              Try ClariAI Now
             </button>
           </a>
         </div>

@@ -14,7 +14,7 @@ import {
   Loader2,
   PlayCircle,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Toast from "../components/Toast";
 import { getToken } from "../firebase";
 
@@ -31,6 +31,8 @@ export default function ShortsGenerator() {
   const [clips, setClips] = useState([]);
   const [processingProgress, setProcessingProgress] = useState(0);
   const [processingMessage, setProcessingMessage] = useState("");
+
+  const navigate = useNavigate();
 
   const displayToast = (message, type = "success") => {
     setToastMessage(message);

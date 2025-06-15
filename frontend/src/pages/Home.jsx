@@ -94,18 +94,26 @@ const ShortifyLanding = () => {
         setFeedback("");
         setHovered(0);
       } else {
-        displayToast(data.detail || "Failed to submit review. Please try again.", "error");
+        displayToast(
+          data.detail || "Failed to submit review. Please try again.",
+          "error"
+        );
       }
     } catch (err) {
       console.error("Error submitting review:", err);
-      displayToast("Something went wrong while submitting your review.", "error");
+      displayToast(
+        "Something went wrong while submitting your review.",
+        "error"
+      );
     }
   };
 
   // Enhanced review form component (optional improvement)
   const ReviewForm = () => (
     <div className="mt-10 max-w-xl mx-auto bg-white/5 backdrop-blur-lg border border-white/10 p-8 rounded-3xl shadow-xl">
-      <h3 className="text-xl font-semibold text-white mb-6 text-center">Share Your Experience</h3>
+      <h3 className="text-xl font-semibold text-white mb-6 text-center">
+        Share Your Experience
+      </h3>
 
       {/* Stars */}
       <div className="flex justify-center mb-6">
@@ -115,10 +123,11 @@ const ShortifyLanding = () => {
             onMouseEnter={() => setHovered(star)}
             onMouseLeave={() => setHovered(0)}
             onClick={() => setRating(star)}
-            className={`w-10 h-10 cursor-pointer transition-all duration-200 mx-1 ${(hovered || rating) >= star
+            className={`w-10 h-10 cursor-pointer transition-all duration-200 mx-1 ${
+              (hovered || rating) >= star
                 ? "text-yellow-400 fill-current scale-110"
                 : "text-gray-500 hover:text-gray-400"
-              }`}
+            }`}
           />
         ))}
       </div>
@@ -210,7 +219,6 @@ const ShortifyLanding = () => {
   ];
 
   return (
-
     <div className="min-h-screen bg-gradient-to-br from-black to-gray-900 text-white overflow-hidden relative">
       {/* Ultra-Premium Animated Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
@@ -244,9 +252,9 @@ const ShortifyLanding = () => {
           {/* Main headline */}
           <h1 className="text-7xl md:text-9xl font-black mb-8 tracking-tight">
             <span className="bg-gradient-to-r from-white via-green-200 to-green-300 bg-clip-text text-transparent">
-              Short
+              Clari
               <span className="bg-gradient-to-r from-green-300 to-green-380 bg-clip-text text-transparent">
-                ify
+                AI
               </span>
             </span>
           </h1>
@@ -258,20 +266,18 @@ const ShortifyLanding = () => {
             </p>
 
             <p className="text-lg text-gray-400 font-light leading-relaxed mb-6">
-              AI-powered summarization for YouTube videos, PDFs, web content,
-              and more.
-              <br />
-              Engineered for speed, clarity, and the future of AI productivity.
+              From YouTube Shorts and video summaries to PDF insights, resume
+              analysis, and research help — everything AI-powered, all in one
+              place. Built for creators, learners, and professionals — designed
+              for clarity, speed, and next-gen productivity.
             </p>
 
             <p className="text-2xl md:text-3xl font-light leading-relaxed">
               <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent font-semibold">
-                actionable intelligence
+                Simplify, Summarize, Succeed
               </span>
             </p>
-            <HelloBot>
-
-            </HelloBot>
+            <HelloBot></HelloBot>
           </div>
 
           {/* CTA Buttons */}
@@ -391,10 +397,11 @@ const ShortifyLanding = () => {
                   onMouseEnter={() => setHovered(star)}
                   onMouseLeave={() => setHovered(0)}
                   onClick={() => setRating(star)}
-                  className={`w-8 h-8 cursor-pointer transition-colors ${(hovered || rating) >= star
+                  className={`w-8 h-8 cursor-pointer transition-colors ${
+                    (hovered || rating) >= star
                       ? "text-yellow-400 fill-current"
                       : "text-gray-500"
-                    }`}
+                  }`}
                 />
               ))}
             </div>
@@ -480,21 +487,26 @@ const ShortifyLanding = () => {
             {/* Brand Name */}
             <div className="text-center md:text-left">
               <h1 className="text-3xl font-extrabold text-white-900">
-                Short<span className="text-green-500">ify</span>
+                Clari<span className="text-green-500">AI</span>
               </h1>
               <p className="mt-2 text-white-600 text-md h-6">
                 <Typewriter
                   words={[
-                    "Your all-in-one AI-powered platform for shorts generation and video summarization.",
-                    "Generate YouTube Shorts using AI in seconds.",
-                    "Summarize videos and PDFs instantly with AI.",
+                    "Your all-in-one AI-powered platform for video, document, and productivity tools.",
+                    "Generate viral YouTube Shorts in seconds with AI.",
+                    "Summarize YouTube videos into bite-sized insights instantly.",
+                    "Get instant PDF and article summaries with a single click.",
+                    "Analyze resumes and generate tailored cover letters effortlessly.",
+                    "Boost your productivity with AI-powered assignment and research tools.",
+                    "Transform data into insights with our smart Data Analyzer.",
+                    "Optimize your professional presence with the LinkedIn Helper.",
                   ]}
                   loop={0}
                   cursor
                   cursorStyle="_"
-                  typeSpeed={40}
-                  deleteSpeed={30}
-                  delaySpeed={2000}
+                  typeSpeed={50}
+                  deleteSpeed={40}
+                  delaySpeed={1000}
                 />
               </p>
             </div>

@@ -10,7 +10,7 @@ const Footer = () => {
           {/* Brand Name */}
           <div className="text-center md:text-left">
             <h1 className="text-3xl font-extrabold text-gray-900">
-              Short<span className="text-green-500">ify</span>
+              Clari<span className="text-green-500">AI</span>
             </h1>
             <p className="mt-2 text-gray-600 text-md h-6">
               <Typewriter
