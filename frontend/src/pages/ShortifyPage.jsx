@@ -8,6 +8,7 @@ import {
   FileText,
   Zap,
   User,
+  Users,
   BarChart3,
   Menu,
   X,
@@ -24,10 +25,13 @@ import {
   FileImage,
   Lightbulb,
   Play,
+  Award,
+  MessageSquare,
   Upload,
   Palette,
   Paintbrush,
-  Eye,Coffee,
+  Eye,
+  Coffee,
   Cpu,
   Brain,
   Rocket,
@@ -48,6 +52,7 @@ import {
 import AuthModalSystem from "../components/AuthModalSystem";
 import logo from "../assets/logo.png";
 import { useNavigate } from "react-router-dom";
+import { Linkedin } from "lucide-react";
 
 export default function ShortifyPage() {
   const [activeTab, setActiveTab] = useState("home");
@@ -147,6 +152,8 @@ export default function ShortifyPage() {
         return "Research Assistant";
       case "autoeda":
         return "Dataset Analyzer";
+      case "LinkedIn":
+        return "LinkedIn Optimizer";
       default:
         return "Shortify";
     }
@@ -222,6 +229,13 @@ export default function ShortifyPage() {
       label: "Dataset Analyzer",
       gradient: "from-blue-500 via-cyan-600 to-purple-600",
       glow: "shadow-violet-500/25",
+    },
+    {
+      id: "LinkedIn",
+      icon: Linkedin,
+      label: "Linkedin Optimizer",
+      gradient: "from-violet-500 via-cyan-500 to-blue-500",
+      glow: "shadow-purple-500/25",
     },
   ];
 
@@ -326,6 +340,17 @@ export default function ShortifyPage() {
       animation: "pulse",
       bgPattern: "grid",
     },
+    {
+      title: "LinkedIn Optimizer",
+      icon: Linkedin,
+      desc: "AI-powered profile optimization that enhances your LinkedIn presence with keyword analysis, content suggestions, and engagement strategies to maximize professional visibility.",
+      gradient: "from-blue-600 via-indigo-600 to-purple-700",
+      link: "/features/linkwiseAI",
+      label: "Optimize",
+      badge: "NEW",
+      animation: "bounce",
+      bgPattern: "dots",
+    },
   ];
 
   const stats = [
@@ -362,7 +387,6 @@ export default function ShortifyPage() {
       bgColor: "bg-purple-500/10",
     },
   ];
-  
 
   return (
     <div className="flex h-screen bg-gray-950 text-white overflow-hidden relative">
@@ -1637,6 +1661,215 @@ export default function ShortifyPage() {
                     <Zap className="w-6 h-6" />
                   </button>
                 </a>
+              </div>
+            </div>
+          )}
+
+          {/* LinkwiseAI Info Section */}
+          {activeTab === "LinkedIn" && (
+            <div className="max-w-4xl mx-auto space-y-8">
+              <div className="text-center mb-12">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/20 border border-cyan-500/30 mb-6">
+                  <Users className="w-5 h-5 text-cyan-400" />
+                  <span className="text-cyan-400 font-medium">
+                    PROFESSIONAL LINKEDIN OPTIMIZATION
+                  </span>
+                </div>
+                <h2 className="text-4xl font-bold bg-gradient-to-r from-cyan-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent mb-4">
+                  AI-Powered LinkedIn Enhancement
+                </h2>
+                <p className="text-xl text-gray-400 leading-relaxed">
+                  Transform your LinkedIn presence with advanced AI that
+                  analyzes, optimizes, and generates compelling professional
+                  content tailored to your career goals.
+                </p>
+              </div>
+
+              <div className="bg-gradient-to-br from-cyan-500/10 to-indigo-500/10 border border-cyan-500/20 rounded-3xl p-8 mb-8">
+                <div className="grid md:grid-cols-3 gap-6 text-center">
+                  <div>
+                    <div className="text-3xl font-bold text-cyan-400 mb-2">
+                      100+
+                    </div>
+                    <div className="text-gray-400">Profile Score Points</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-indigo-400 mb-2">
+                      95%
+                    </div>
+                    <div className="text-gray-400">Content Quality Boost</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-purple-400 mb-2">
+                      10x
+                    </div>
+                    <div className="text-gray-400">Faster Content Creation</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6 mb-8">
+                <div className="bg-gradient-to-br from-cyan-500/5 to-indigo-500/5 border border-cyan-500/10 rounded-2xl p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Target className="w-6 h-6 text-cyan-400" />
+                    <h3 className="text-xl font-semibold text-gray-200">
+                      Profile Analysis
+                    </h3>
+                  </div>
+                  <p className="text-gray-400 mb-4">
+                    Comprehensive AI-driven analysis of your LinkedIn profile
+                    with detailed scoring, strengths identification, and
+                    actionable improvement suggestions.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="px-3 py-1 bg-cyan-500/20 text-cyan-300 rounded-full text-sm">
+                      Profile Scoring
+                    </span>
+                    <span className="px-3 py-1 bg-indigo-500/20 text-indigo-300 rounded-full text-sm">
+                      Strengths Analysis
+                    </span>
+                    <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">
+                      Optimization Tips
+                    </span>
+                  </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-indigo-500/5 to-purple-500/5 border border-indigo-500/10 rounded-2xl p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Sparkles className="w-6 h-6 text-indigo-400" />
+                    <h3 className="text-xl font-semibold text-gray-200">
+                      Content Generation
+                    </h3>
+                  </div>
+                  <p className="text-gray-400 mb-4">
+                    AI creates personalized headlines, about sections, and
+                    engaging posts tailored to your skills, role, and career
+                    aspirations.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="px-3 py-1 bg-indigo-500/20 text-indigo-300 rounded-full text-sm">
+                      Headlines
+                    </span>
+                    <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">
+                      About Sections
+                    </span>
+                    <span className="px-3 py-1 bg-cyan-500/20 text-cyan-300 rounded-full text-sm">
+                      Engaging Posts
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-r from-cyan-500/10 via-indigo-500/10 to-purple-500/10 border border-cyan-500/20 rounded-2xl p-6 mb-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <Brain className="w-6 h-6 text-indigo-400" />
+                  <h3 className="text-xl font-semibold text-gray-200">
+                    Smart Features & Capabilities
+                  </h3>
+                </div>
+                <div className="grid md:grid-cols-2 gap-4 text-gray-400">
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-cyan-400 rounded-full mt-2 flex-shrink-0"></div>
+                    <span>
+                      Automated profile URL analysis and data extraction
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-indigo-400 rounded-full mt-2 flex-shrink-0"></div>
+                    <span>
+                      Multi-tone content generation (Professional, Friendly,
+                      Technical)
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-purple-400 rounded-full mt-2 flex-shrink-0"></div>
+                    <span>Career goal-aligned content optimization</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-cyan-400 rounded-full mt-2 flex-shrink-0"></div>
+                    <span>One-click copy and download functionality</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-indigo-400 rounded-full mt-2 flex-shrink-0"></div>
+                    <span>
+                      Comprehensive weakness identification and solutions
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-purple-400 rounded-full mt-2 flex-shrink-0"></div>
+                    <span>Industry best practices integration</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6 mb-8">
+                <div className="bg-gradient-to-br from-emerald-500/5 to-teal-500/5 border border-emerald-500/10 rounded-2xl p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Award className="w-6 h-6 text-emerald-400" />
+                    <h3 className="text-xl font-semibold text-gray-200">
+                      Profile Scoring System
+                    </h3>
+                  </div>
+                  <p className="text-gray-400 mb-4">
+                    Get a comprehensive 0-100 score with color-coded feedback:
+                    Excellent (80+), Good (60-79), or Needs Improvement
+                    (&lt;60).
+                  </p>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                      <span className="text-gray-400">
+                        80-100: Excellent Profile
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                      <span className="text-gray-400">60-79: Good Profile</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                      <span className="text-gray-400">
+                        &lt;60: Needs Improvement
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-rose-500/5 to-pink-500/5 border border-rose-500/10 rounded-2xl p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <MessageSquare className="w-6 h-6 text-rose-400" />
+                    <h3 className="text-xl font-semibold text-gray-200">
+                      Content Personalization
+                    </h3>
+                  </div>
+                  <p className="text-gray-400 mb-4">
+                    Every piece of content is uniquely crafted based on your
+                    specific skills, experience, and career objectives for
+                    maximum impact.
+                  </p>
+                  <div className="space-y-2 text-sm text-gray-400">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-rose-400" />
+                      <span>Skills-based customization</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-rose-400" />
+                      <span>Role-specific optimization</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-rose-400" />
+                      <span>Goal-aligned messaging</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="text-center">
+                <button className="bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-500 hover:from-cyan-600 hover:via-indigo-600 hover:to-purple-600 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-cyan-500/25 flex items-center gap-3 mx-auto group">
+                  <Users className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                  Optimize Your LinkedIn Now
+                  <Sparkles className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                </button>
               </div>
             </div>
           )}
