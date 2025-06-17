@@ -1,3 +1,4 @@
+from datetime import timedelta
 import os
 import pathlib
 from typing import Optional, Dict, Any
@@ -112,8 +113,10 @@ settings = Settings()
 client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
 CELERY_BEAT_SCHEDULE = {
-        "reset-video-counts-daily": {
-            "task": "app.tasks.reset_video_limits.reset_video_limits",
-            "schedule": crontab(hour=0, minute=0),  # every midnight
-        },
-    }
+    "reset-video-limits-every-24h": {
+        "task": "app.tasks.reset_limits.reset_video_limits",  # full dotted task path
+        "schedule": timedelta(hours=1),
+        #"schedule": timedelta(seconds=30),
+        "options": {"queue": "shorts"},
+    },
+}
