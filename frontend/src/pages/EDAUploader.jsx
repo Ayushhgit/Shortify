@@ -91,6 +91,9 @@ const EDAUploader = () => {
       }
       const response = await fetch('http://localhost:8000/eda/analyze', {
         method: 'POST',
+        headers: {
+          "Authorization": `Bearer ${idToken}`,
+        },
         body: formData,
       });
 

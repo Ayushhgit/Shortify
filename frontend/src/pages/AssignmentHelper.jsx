@@ -39,10 +39,10 @@ const AssignmentHelper = () => {
     const [editedAnswer, setEditedAnswer] = useState("");
     const [allRenderedImages, setAllRenderedImages] = useState([]);
     const displayToast = (message, type = "success") => {
-    setToastMessage(message);
-    setToastType(type);
-    setShowToast(true);
-  };
+        setToastMessage(message);
+        setToastType(type);
+        setShowToast(true);
+    };
 
 
     const navigate = useNavigate();
@@ -208,6 +208,9 @@ const AssignmentHelper = () => {
 
                 response = await fetch('http://localhost:8000/ai/upload-and-solve', {
                     method: 'POST',
+                    headers: {
+                        "Authorization": `Bearer ${idToken}`,
+                    },
                     body: formData
                 });
 

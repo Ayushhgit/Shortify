@@ -75,8 +75,7 @@ export default function YouTubeSummarizer() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // Include ID token if backend expects it (optional):
-          // 'Authorization': `Bearer ${idToken}`,
+          "Authorization": `Bearer ${idToken}`,
         },
         body: JSON.stringify({
           url: youtubeUrl,
@@ -86,7 +85,15 @@ export default function YouTubeSummarizer() {
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ detail: "Unknown error" }));
         console.error("Server error:", errorData);
-        displayToast(`Error: ${errorData.detail || response.status}`, "error");
+
+        // Handle different error types
+        if (response.status === 400) {
+          displayToast(`Invalid request: ${errorData.detail}`, "error");
+        } else if (response.status === 500) {
+          displayToast("Server error occurred. Please try again later.", "error");
+        } else {
+          displayToast(`Error: ${errorData.detail || response.status}`, "error");
+        }
         return;
       }
 

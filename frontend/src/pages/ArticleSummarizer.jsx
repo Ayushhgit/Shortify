@@ -243,6 +243,7 @@ export default function ArticleSummarizer() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${idToken}`,
           },
           body: JSON.stringify({
             url: articleUrl,

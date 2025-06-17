@@ -192,7 +192,8 @@ const LinkwiseAI = () => {
             const response = await fetch(`${API_BASE}${endpoint}`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    "Authorization": `Bearer ${idToken}`,
                 },
                 body: JSON.stringify(data)
             });
