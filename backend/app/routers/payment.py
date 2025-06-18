@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from typing import Optional
 from app.core.database import get_db
 from app.auth.dependencies import get_current_user
+from app.core.rate_limiting import SUBSCRIPTION_LIMITS, FeatureType
 from app.services.payment_service import PaymentService
 from app.models.user import User
 import logging
@@ -210,3 +211,28 @@ async def test_subscription_status(
                 "subscription_start": None
             }
         }
+    
+@router.get("/feature-limits")
+async def get_user_feature_limits(
+    current_user: User = Depends(get_current_user),  # This is a User object, not dict
+    db: Session = Depends(get_db)
+):
+    user = db.query(User).filter(User.firebase_uid == current_user.firebase_uid).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    subscription = (user.subscription_type or "free").lower()
+    limits = SUBSCRIPTION_LIMITS.get(subscription, SUBSCRIPTION_LIMITS["free"])
+    
+    result = {}
+    for feature_type in FeatureType:
+        current_count = getattr(user, f"{feature_type.value}_count", 0) or 0
+        limit = limits.get(feature_type, 0)
+        
+        result[feature_type.value] = {
+            'current_count': current_count,
+            'limit': limit,
+            'remaining': max(0, limit - current_count)
+        }
+    
+    return result

@@ -52,6 +52,8 @@ export default function EnhancedProfile() {
   const [subscriptionEnd, setSubscriptionEnd] = useState(null);
   const [videoGenerationCount, setVideoGenerationCount] = useState(0);
   const [paymentId, setPaymentId] = useState(null);
+  const [featureLimits, setFeatureLimits] = useState({});
+  const [limitsLoading, setLimitsLoading] = useState(false);
 
   const auth = getAuth();
   const navigate = useNavigate();
@@ -77,6 +79,7 @@ export default function EnhancedProfile() {
 
         // Fetch comprehensive user data from backend API
         await fetchUserData(currentUser);
+        await fetchFeatureLimits(currentUser);
 
         setLoading(false);
       } catch (err) {
@@ -128,6 +131,30 @@ export default function EnhancedProfile() {
     } catch (apiError) {
       console.error("Error fetching comprehensive user data:", apiError);
       setError("Some profile data could not be loaded");
+    }
+  };
+
+  const fetchFeatureLimits = async (currentUser) => {
+    try {
+      setLimitsLoading(true);
+      const token = await currentUser.getIdToken();
+      const response = await fetch("http://localhost:8000/payment/feature-limits", {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const limitsData = await response.json();
+        setFeatureLimits(limitsData);
+      } else {
+        console.error("Failed to fetch feature limits");
+      }
+    } catch (err) {
+      console.error("Error fetching feature limits:", err);
+    } finally {
+      setLimitsLoading(false);
     }
   };
 
@@ -380,7 +407,7 @@ export default function EnhancedProfile() {
   const sidebarItems = [
     { id: "profile", label: "Profile", icon: User, description: "Personal Info", path: "/profile" },
     { id: "settings", label: "Settings", icon: Settings, description: "Preferences", path: "/settings" },
-    { id: "security", label: "Security", icon: Lock, description: "Privacy & Safety", path: "/security" },
+    { id: "limits", label: "Daily Limits", icon: Activity, description: "Usage Stats", path: null },
     { id: "billing", label: "Billing", icon: CreditCard, description: "Payments", path: "/pricing" },
   ];
 
@@ -450,35 +477,89 @@ export default function EnhancedProfile() {
             <div className="space-y-3">
               {sidebarItems.map((item) => {
                 const Icon = item.icon;
-                const isActive = item.id === "profile";
+                const isActive = activeTab === item.id;
+
+                // Handle Profile tab specially to use local state instead of routing
+                if (item.id === "profile") {
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => setActiveTab(item.id)}
+                      className={`block w-full group relative overflow-hidden rounded-2xl p-4 transition-all duration-300 ${activeTab === item.id
+                          ? "bg-gradient-to-r from-cyan-500/20 to-blue-500/20 shadow-2xl shadow-cyan-500/10"
+                          : "bg-slate-800/50 hover:bg-slate-800 border border-slate-700 hover:border-slate-600 hover:shadow-lg"
+                        }`}
+                    >
+                      <div className="flex items-center gap-4 relative z-10">
+                        <div
+                          className={`p-3 rounded-xl transition-all duration-300 ${activeTab === item.id ? "bg-white/20 shadow-lg" : "bg-slate-700 group-hover:bg-slate-600"
+                            }`}
+                        >
+                          <Icon size={20} className={activeTab === item.id ? "text-white" : "text-slate-300"} />
+                        </div>
+                        <div className="text-left">
+                          <div className={`font-semibold ${activeTab === item.id ? "text-white" : "text-slate-300"}`}>
+                            {item.label}
+                          </div>
+                          <div className="text-xs text-slate-400">{item.description}</div>
+                        </div>
+                      </div>
+                      {activeTab === item.id && (
+                        <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-30" />
+                      )}
+                    </button>
+                  );
+                }
+
+                // Handle items with no path (like Daily Limits)
+                if (!item.path) {
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => setActiveTab(item.id)}
+                      className={`block w-full group relative overflow-hidden rounded-2xl p-4 transition-all duration-300 ${activeTab === item.id
+                          ? "bg-gradient-to-r from-cyan-500/20 to-blue-500/20 shadow-2xl shadow-cyan-500/10"
+                          : "bg-slate-800/50 hover:bg-slate-800 border border-slate-700 hover:border-slate-600 hover:shadow-lg"
+                        }`}
+                    >
+                      <div className="flex items-center gap-4 relative z-10">
+                        <div
+                          className={`p-3 rounded-xl transition-all duration-300 ${activeTab === item.id ? "bg-white/20 shadow-lg" : "bg-slate-700 group-hover:bg-slate-600"
+                            }`}
+                        >
+                          <Icon size={20} className={activeTab === item.id ? "text-white" : "text-slate-300"} />
+                        </div>
+                        <div className="text-left">
+                          <div className={`font-semibold ${activeTab === item.id ? "text-white" : "text-slate-300"}`}>
+                            {item.label}
+                          </div>
+                          <div className="text-xs text-slate-400">{item.description}</div>
+                        </div>
+                      </div>
+                      {activeTab === item.id && (
+                        <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-30" />
+                      )}
+                    </button>
+                  );
+                }
+
+                // Regular Link items (Settings, Billing)
                 return (
                   <Link
                     key={item.id}
                     to={item.path}
-                    className={`block w-full group relative overflow-hidden rounded-2xl p-4 transition-all duration-300 ${activeTab === item.id
-                      ? "bg-gradient-to-r from-cyan-500/20 to-blue-500/20 shadow-2xl shadow-cyan-500/10"
-                      : "bg-slate-800/50 hover:bg-slate-800 border border-slate-700 hover:border-slate-600 hover:shadow-lg"
-                      }`}
+                    className="block w-full group relative overflow-hidden rounded-2xl p-4 transition-all duration-300 bg-slate-800/50 hover:bg-slate-800 border border-slate-700 hover:border-slate-600 hover:shadow-lg"
                   >
                     <div className="flex items-center gap-4 relative z-10">
-                      <div
-                        className={`p-3 rounded-xl transition-all duration-300 ${activeTab === item.id ? "bg-white/20 shadow-lg" : "bg-slate-700 group-hover:bg-slate-600"
-                          }`}
-                      >
-                        <Icon size={20} className={activeTab === item.id ? "text-white" : "text-slate-300"} />
+                      <div className="p-3 rounded-xl transition-all duration-300 bg-slate-700 group-hover:bg-slate-600">
+                        <Icon size={20} className="text-slate-300" />
                       </div>
                       <div className="text-left">
-                        <div className={`font-semibold ${activeTab === item.id ? "text-white" : "text-slate-300"}`}>
-                          {item.label}
-                        </div>
+                        <div className="font-semibold text-slate-300">{item.label}</div>
                         <div className="text-xs text-slate-400">{item.description}</div>
                       </div>
                     </div>
-                    {activeTab === item.id && (
-                      <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-30" />
-                    )}
                   </Link>
-
                 );
               })}
             </div>
@@ -514,7 +595,7 @@ export default function EnhancedProfile() {
         <div className="h-24 flex-shrink-0 flex items-center justify-between px-8 bg-gray-950/95 backdrop-blur-xl border-b border-gray-900/70">
           <div className="flex items-center gap-6">
             <h1 className="text-3xl font-bold bg-gradient-to-r from-white via-cyan-200 to-blue-300 bg-clip-text text-transparent">
-              Profile Settings
+              {activeTab === "limits" ? "Daily Limits" : "Profile Settings"}
             </h1>
             <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-emerald-500/20 border border-emerald-500/30 shadow-lg">
               <div className="w-3 h-3 bg-emerald-400 rounded-full animate-pulse shadow-lg shadow-emerald-400/50" />
@@ -586,123 +667,196 @@ export default function EnhancedProfile() {
               </div>
             </div>
 
-            {/* Main Content Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Conditional Content Based on Active Tab */}
+            {activeTab === "profile" && (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Profile Form */}
+                <div className="lg:col-span-2 bg-slate-800/50 backdrop-blur-xl border border-slate-700 rounded-3xl p-8 shadow-2xl">
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-2xl font-bold text-white">Personal Information</h3>
+                    <Brain className="w-6 h-6 text-cyan-400" />
+                  </div>
 
-              {/* Profile Form */}
-              <div className="lg:col-span-2 bg-slate-800/50 backdrop-blur-xl border border-slate-700 rounded-3xl p-8 shadow-2xl">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-2xl font-bold text-white">Personal Information</h3>
-                  <Brain className="w-6 h-6 text-cyan-400" />
-                </div>
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label htmlFor="name" className="block text-sm font-medium text-slate-300 mb-2">
+                          Full Name
+                        </label>
+                        <input
+                          id="name"
+                          type="text"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          disabled={!editing}
+                          className="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300 disabled:opacity-50"
+                        />
+                      </div>
 
-                <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-slate-300 mb-2">
-                        Full Name
-                      </label>
-                      <input
-                        id="name"
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        disabled={!editing}
-                        className="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300 disabled:opacity-50"
-                      />
+                      <div>
+                        <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
+                          Email Address
+                        </label>
+                        <input
+                          id="email"
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          disabled={!editing}
+                          className="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300 disabled:opacity-50"
+                        />
+                      </div>
                     </div>
 
-                    <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
-                        Email Address
-                      </label>
-                      <input
-                        id="email"
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        disabled={!editing}
-                        className="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300 disabled:opacity-50"
-                      />
+                    {editing && (
+                      <div className="flex gap-3 pt-4">
+                        <button
+                          onClick={handleUpdateProfile}
+                          disabled={updating}
+                          className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition-all duration-300 shadow-lg hover:shadow-cyan-500/25 disabled:opacity-50"
+                        >
+                          {updating ? (
+                            <>
+                              <Loader size={16} className="animate-spin" />
+                              Saving...
+                            </>
+                          ) : (
+                            <>
+                              <Save size={16} />
+                              Save Changes
+                            </>
+                          )}
+                        </button>
+                        <button
+                          onClick={() => setEditing(false)}
+                          className="bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition-all duration-300"
+                        >
+                          <X size={16} />
+                          Cancel
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Subscription and Payment Info */}
+                <div className="space-y-6">
+                  {/* Subscription Card */}
+                  <div className="bg-slate-800/50 backdrop-blur-xl border border-slate-700 rounded-3xl p-6 shadow-2xl">
+                    <h4 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                      <Crown className="h-5 w-5 text-cyan-400" />
+                      Subscription
+                    </h4>
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <span className="text-slate-400">Plan</span>
+                        <span className="text-white font-semibold capitalize">{subscriptionType}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-slate-400">Videos Generated</span>
+                        <span className="text-cyan-400 font-bold">{videoGenerationCount}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-slate-400">Expires</span>
+                        <span className="text-white font-medium">{formatDate(subscriptionEnd)}</span>
+                      </div>
                     </div>
                   </div>
 
-                  {editing && (
-                    <div className="flex gap-3 pt-4">
+                  {/* Payment Info Card */}
+                  <div className="bg-slate-800/50 backdrop-blur-xl border border-slate-700 rounded-3xl p-6 shadow-2xl">
+                    <h4 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                      <CreditCard className="h-5 w-5 text-cyan-400" />
+                      Payment Info
+                    </h4>
+                    <div className="space-y-4">
+                      <div className="p-3 bg-slate-700/50 rounded-xl">
+                        <p className="text-sm text-slate-400 mb-1">Payment ID</p>
+                        <p className="text-white font-mono text-xs break-all">
+                          {paymentId || "No payment ID available"}
+                        </p>
+                      </div>
                       <button
-                        onClick={handleUpdateProfile}
-                        disabled={updating}
-                        className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition-all duration-300 shadow-lg hover:shadow-cyan-500/25 disabled:opacity-50"
+                        onClick={() => navigate("/pricing")}
+                        className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-3 rounded-xl transition-all duration-300 shadow-lg hover:shadow-purple-500/25"
                       >
-                        {updating ? (
-                          <>
-                            <Loader size={16} className="animate-spin" />
-                            Saving...
-                          </>
-                        ) : (
-                          <>
-                            <Save size={16} />
-                            Save Changes
-                          </>
-                        )}
+                        Manage Billing
                       </button>
-                      <button
-                        onClick={() => setEditing(false)}
-                        className="bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition-all duration-300"
-                      >
-                        <X size={16} />
-                        Cancel
-                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Daily Limits Tab */}
+            {activeTab === "limits" && (
+              <div className="max-w-4xl mx-auto">
+                <div className="bg-slate-800/50 backdrop-blur-xl border border-slate-700 rounded-3xl p-8 shadow-2xl">
+                  <div className="flex items-center justify-between mb-8">
+                    <div>
+                      <h3 className="text-3xl font-bold text-white mb-2">Daily Usage Limits</h3>
+                      <p className="text-slate-400">Track your daily feature usage and remaining quotas</p>
+                    </div>
+                    <Activity className="w-8 h-8 text-cyan-400" />
+                  </div>
+
+                  {limitsLoading ? (
+                    <div className="flex items-center justify-center py-16">
+                      <div className="text-center">
+                        <Loader className="h-12 w-12 text-cyan-400 animate-spin mx-auto mb-4" />
+                        <p className="text-slate-400">Loading your usage limits...</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {Object.entries(featureLimits).map(([feature, data]) => (
+                        <div key={feature} className="bg-slate-700/30 rounded-2xl p-6 border border-slate-600">
+                          <div className="flex justify-between items-start mb-4">
+                            <div>
+                              <h4 className="text-xl font-semibold text-white capitalize mb-1">
+                                {feature.replace(/_/g, ' ')}
+                              </h4>
+                              <p className="text-sm text-slate-400">
+                                {data.current_count || 0} of {data.limit} used today
+                              </p>
+                            </div>
+                            <div className={`px-3 py-1 rounded-full text-xs font-bold ${(data.remaining || 0) > 0 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                              }`}>
+                              {data.remaining || 0} left
+                            </div>
+                          </div>
+
+                          <div className="space-y-3">
+                            <div className="w-full h-3 bg-slate-600 rounded-full overflow-hidden">
+                              <div
+                                className={`h-full rounded-full transition-all duration-500 ${(data.current_count || 0) / data.limit < 0.7 ? 'bg-gradient-to-r from-green-500 to-emerald-500' :
+                                  (data.current_count || 0) / data.limit < 0.9 ? 'bg-gradient-to-r from-yellow-500 to-orange-500' :
+                                    'bg-gradient-to-r from-red-500 to-pink-500'
+                                  }`}
+                                style={{ width: `${Math.min(((data.current_count || 0) / data.limit) * 100, 100)}%` }}
+                              />
+                            </div>
+
+                            <div className="flex justify-between text-sm">
+                              <span className="text-slate-400">Usage: {Math.round(((data.current_count || 0) / data.limit) * 100)}%</span>
+                              <span className="text-slate-300 font-medium">{data.limit} daily limit</span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {!limitsLoading && Object.keys(featureLimits).length === 0 && (
+                    <div className="text-center py-16">
+                      <Activity className="w-16 h-16 text-slate-600 mx-auto mb-4" />
+                      <h4 className="text-xl font-semibold text-slate-400 mb-2">No usage data available</h4>
+                      <p className="text-slate-500">Start using features to see your daily limits here</p>
                     </div>
                   )}
                 </div>
               </div>
-
-              {/* Subscription Info */}
-              <div className="space-y-6">
-                <div className="bg-slate-800/50 backdrop-blur-xl border border-slate-700 rounded-3xl p-6 shadow-2xl">
-                  <h4 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                    <Crown className="h-5 w-5 text-cyan-400" />
-                    Subscription
-                  </h4>
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-400">Plan</span>
-                      <span className="text-white font-semibold capitalize">{subscriptionType}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-400">Videos Generated</span>
-                      <span className="text-cyan-400 font-bold">{videoGenerationCount}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-400">Expires</span>
-                      <span className="text-white font-medium">{formatDate(subscriptionEnd)}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-slate-800/50 backdrop-blur-xl border border-slate-700 rounded-3xl p-6 shadow-2xl">
-                  <h4 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                    <CreditCard className="h-5 w-5 text-cyan-400" />
-                    Payment Info
-                  </h4>
-                  <div className="space-y-4">
-                    <div className="p-3 bg-slate-700/50 rounded-xl">
-                      <p className="text-sm text-slate-400 mb-1">Payment ID</p>
-                      <p className="text-white font-mono text-xs break-all">
-                        {paymentId || "No payment ID available"}
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => navigate("/pricing")}
-                      className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-3 rounded-xl transition-all duration-300 shadow-lg hover:shadow-purple-500/25"
-                    >
-                      Manage Billing
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

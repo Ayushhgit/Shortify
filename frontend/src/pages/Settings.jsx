@@ -165,7 +165,6 @@ export default function EnhancedSettings() {
   const sidebarItems = [
     { id: "profile", label: "Profile", icon: User, description: "Personal Info", path: "/profile" },
     { id: "settings", label: "Settings", icon: Settings, description: "Preferences", path: "/settings" },
-    { id: "security", label: "Security", icon: Lock, description: "Privacy & Safety", path: "/security" },
     { id: "billing", label: "Billing", icon: CreditCard, description: "Payments", path: "/pricing" },
   ];
 
@@ -361,10 +360,6 @@ export default function EnhancedSettings() {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800/50 border border-slate-700">
-              <Activity className="w-4 h-4 text-cyan-400" />
-              <span className="text-sm text-slate-300 font-medium">Live Sync</span>
-            </div>
           </div>
         </div>
 
@@ -397,13 +392,6 @@ export default function EnhancedSettings() {
               </div>
 
               <div className="space-y-6 relative z-10">
-                <ToggleSwitch
-                  enabled={darkMode}
-                  onToggle={() => setDarkMode(!darkMode)}
-                  label="Dark Mode"
-                  description="Toggle between light and dark themes"
-                />
-
                 <ToggleSwitch
                   enabled={autoSave}
                   onToggle={() => setAutoSave(!autoSave)}
@@ -471,27 +459,6 @@ export default function EnhancedSettings() {
                 />
 
                 <ToggleSwitch
-                  enabled={appNotifications}
-                  onToggle={() => setAppNotifications(!appNotifications)}
-                  label="In-App Notifications"
-                  description="Show notifications while using the application"
-                />
-
-                <ToggleSwitch
-                  enabled={pushNotifications}
-                  onToggle={() => setPushNotifications(!pushNotifications)}
-                  label="Push Notifications"
-                  description="Receive push notifications on your device"
-                />
-
-                <ToggleSwitch
-                  enabled={soundNotifications}
-                  onToggle={() => setSoundNotifications(!soundNotifications)}
-                  label="Sound Notifications"
-                  description="Play sounds for notifications and alerts"
-                />
-
-                <ToggleSwitch
                   enabled={marketingEmails}
                   onToggle={() => setMarketingEmails(!marketingEmails)}
                   label="Marketing Emails"
@@ -513,20 +480,6 @@ export default function EnhancedSettings() {
               </div>
 
               <div className="space-y-6 relative z-10">
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Content Visibility
-                  </label>
-                  <select
-                    value={privacy}
-                    onChange={(e) => setPrivacy(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-300"
-                  >
-                    <option value="Public">Public - Anyone can see your content</option>
-                    <option value="Friends">Friends - Only connections can see your content</option>
-                    <option value="Private">Private - Only you can see your content</option>
-                  </select>
-                </div>
 
                 <ToggleSwitch
                   enabled={twoFactor}
