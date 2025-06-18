@@ -14,7 +14,14 @@ load_dotenv()
 # Import Base AFTER adding path
 try:
     from app.core.database import Base
-    # DO NOT import individual models here — Base.metadata already collects all models
+    
+    # IMPORTANT: Import ALL your models here so Alembic can see them
+    from app.models.user import User  # Replace with your actual model path
+    from app.models.review import Review  # Replace with your actual model path
+    # Import any other models you have
+    
+    print(f"Models loaded: {list(Base.metadata.tables.keys())}")
+    
 except ImportError as e:
     print(f"Import error: {e}")
     print("Make sure your app directory structure is correct")

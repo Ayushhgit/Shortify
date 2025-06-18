@@ -4,6 +4,7 @@ from app.core.database import get_db
 from app.core.security import get_current_user
 from app.services.pdf_service import PDFService
 from datetime import datetime
+from app.core.rate_limiting import pdf_summarization_rate_limit
 
 router = APIRouter(prefix="/api/pdf", tags=["PDF Processing"])
 pdf_service = PDFService()
@@ -20,21 +21,40 @@ async def upload_and_analyze_pdf(
     role: str = Form(default=None),
     current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db),
+    rate_limit_data: dict = Depends(pdf_summarization_rate_limit)
 ):
+    """PDF summarization endpoint with rate limiting"""
     try:
+        user = rate_limit_data['user']
+        rate_info = rate_limit_data['rate_limit_info']
+        
+        # Validate file
         validation = validate_pdf_file(file)
         if not validation["valid"]:
             raise HTTPException(status_code=400, detail=validation["error"])
 
+        # Process the PDF
         result = await pdf_service.analyze_document_complete(file, analysis_type, role)
 
         if not result.get("success"):
             raise HTTPException(status_code=500, detail=result.get("error", "Analysis failed"))
 
+        # Add usage info to response
+        result["usage_info"] = {
+            "remaining": rate_info['remaining'],
+            "limit": rate_info['limit'],
+            "subscription": rate_info['subscription']
+        }
+
         return result
 
+    except HTTPException:
+        raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error analyzing PDF: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to analyze PDF: {str(e)}"
+        )
 
 @router.post("/chat-simple")
 async def chat_with_document_simple(

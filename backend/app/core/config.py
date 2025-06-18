@@ -113,10 +113,9 @@ settings = Settings()
 client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
 CELERY_BEAT_SCHEDULE = {
-    "reset-video-limits-every-24h": {
-        "task": "app.tasks.reset_limits.reset_video_limits",  # full dotted task path
-        "schedule": timedelta(hours=1),
-        #"schedule": timedelta(seconds=30),
+    "reset-all-limits-daily": {
+        "task": "app.tasks.reset_limits.reset_all_limits",  # Updated task name
+        "schedule": timedelta(hours=24),  # Reset every 24 hours
         "options": {"queue": "shorts"},
     },
 }

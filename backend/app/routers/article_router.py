@@ -1,9 +1,11 @@
 from fastapi import APIRouter, HTTPException, Form, Depends
+from grpc import Status
 from app.models.schemas import ArticleRequest, ArticleResponse, ArticleChatRequest, ArticleChatResponse
 from app.services.Article_summary import process_article_async, generate_summary_with_groq, chat_with_article
 from app.core.security import get_current_user
 from datetime import datetime
 import logging
+from app.core.rate_limiting import article_summarization_rate_limit
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -12,11 +14,15 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 @router.post("/api/article/summarize", response_model=ArticleResponse)
-async def summarize_article(request: ArticleRequest):
-    """
-    Summarize an article from a given URL
-    """
+async def summarize_article(
+    request: ArticleRequest,
+    rate_limit_data: dict = Depends(article_summarization_rate_limit)
+):
+    """Summarize an article from a given URL"""
     try:
+        user = rate_limit_data['user']
+        rate_info = rate_limit_data['rate_limit_info']
+        
         logger.info(f"Processing article: {request.url}")
         
         # Extract article content
@@ -24,7 +30,7 @@ async def summarize_article(request: ArticleRequest):
         
         if len(content.strip()) < 100:
             raise HTTPException(
-                status_code=400, 
+                status_code=400,
                 detail="Article content is too short or could not be extracted properly"
             )
         
@@ -40,9 +46,15 @@ async def summarize_article(request: ArticleRequest):
         
         logger.info("Summary generated successfully")
         
+        # Create response with usage info
         return ArticleResponse(
             summary=summary,
-            articleDetails=article_details
+            articleDetails=article_details,
+            usage_info={
+                "remaining": rate_info['remaining'],
+                "limit": rate_info['limit'],
+                "subscription": rate_info['subscription']
+            }
         )
         
     except HTTPException:
@@ -50,8 +62,8 @@ async def summarize_article(request: ArticleRequest):
     except Exception as e:
         logger.error(f"Unexpected error processing {request.url}: {e}")
         raise HTTPException(
-            status_code=500,
-            detail=f"An unexpected error occurred: {str(e)}"
+            status_code=Status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to summarize article: {str(e)}"
         )
 
 @router.post("/api/article/chat-simple")

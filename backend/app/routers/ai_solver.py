@@ -20,6 +20,7 @@ import PyPDF2
 from PIL import Image
 import pytesseract
 from docx import Document
+from app.core.rate_limiting import assignment_help_rate_limit
 
 router = APIRouter(prefix="/ai", tags=["AI Solution Generation"])
 
@@ -166,9 +167,15 @@ def process_ai_response(ai_response: str) -> dict:
     }
 
 @router.post("/generate-solutions")
-async def generate_solutions(request: AssignmentRequest):
+async def generate_solutions(
+    request: AssignmentRequest,
+    rate_limit_data: dict = Depends(assignment_help_rate_limit)
+    ):
+    
     """Enhanced endpoint for text-based questions"""
     try:
+        user = rate_limit_data['user']
+        rate_info = rate_limit_data['rate_limit_info']
         logger.info(f"Received request: {request}")
         
         if not request.questions or len(request.questions) == 0:
@@ -226,7 +233,13 @@ async def generate_solutions(request: AssignmentRequest):
                     "explanation": f"Error: {str(e)}"
                 })
         
-        return {"solutions": solutions}
+        return {"solutions": solutions,
+                "usage_info": {
+                "remaining": rate_info['remaining'],
+                "limit": rate_info['limit'],
+                "subscription": rate_info['subscription']
+            }        
+        }
     
     except Exception as e:
         logger.error(f"AI generation failed: {str(e)}")
@@ -235,10 +248,14 @@ async def generate_solutions(request: AssignmentRequest):
 @router.post("/upload-and-solve")
 async def upload_and_solve(
     file: UploadFile = File(...),
-    subject: str = Form("general")
+    subject: str = Form("general"),
+    rate_limit_data: dict = Depends(assignment_help_rate_limit)
 ):
+    
     """Endpoint for file uploads"""
     try:
+        user = rate_limit_data['user']
+        rate_info = rate_limit_data['rate_limit_info']
         logger.info(f"Processing file upload: {file.filename}, content_type: {file.content_type}")
         
         # Validate file size
@@ -321,7 +338,13 @@ Extracted content:
             }
         }
         
-        return {"solutions": [solution]}
+        return {"solutions": [solution],
+                "usage_info": {
+                "remaining": rate_info['remaining'],
+                "limit": rate_info['limit'],
+                "subscription": rate_info['subscription']
+            }
+        }
         
     except HTTPException:
         raise

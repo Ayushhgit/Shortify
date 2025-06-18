@@ -122,6 +122,7 @@ class ArticleDetails(BaseModel):
 class ArticleResponse(BaseModel):
     summary: str
     articleDetails: ArticleDetails
+    usage_info: Optional[dict] = None
 
 class ArticleChatRequest(BaseModel):
     message: str
@@ -166,6 +167,7 @@ class CoverLetterResponse(BaseModel):
     success: bool
     cover_letter: Optional[str] = None
     message: Optional[str] = None
+    usage_info: Optional[dict] = None
 
 class ResumeExtractionResponse(BaseModel):
     success: bool
@@ -222,7 +224,7 @@ class ResearchResponse(BaseModel):
     summary: str = Field(..., description="Comprehensive summary of research findings")
     sources: List[str] = Field(default_factory=list, description="List of sources used")
     timestamp: Optional[datetime] = Field(default_factory=datetime.now, description="When the research was conducted")
-    
+    usage_info: Optional[dict] = None
     class Config:
         json_encoders = {
             datetime: lambda v: v.isoformat()

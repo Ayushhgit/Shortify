@@ -4,6 +4,13 @@ from urllib.parse import urlparse, parse_qs
 import faster_whisper
 import os
 import tempfile
+import time
+import logging
+from xml.etree.ElementTree import ParseError
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def extract_video_id(url: str) -> str:
     parsed_url = urlparse(url)
@@ -29,63 +36,99 @@ def get_video_details(video_url: str):
             "thumbnailUrl": info.get("thumbnail"),
         }
 
-def get_transcript(video_id):
-    try:
-        # Try to get English transcript first
-        transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
-        
-        # Try to find English transcript (manual or generated)
+def get_transcript_with_retry(video_id, max_retries=3, delay=2):
+    """
+    Get transcript with retry logic to handle XML parsing errors
+    """
+    for attempt in range(max_retries):
         try:
-            transcript = transcript_list.find_manually_created_transcript(['en']).fetch()
-        except NoTranscriptFound:
+            logger.info(f"Attempting to get transcript for {video_id}, attempt {attempt + 1}")
+            
+            # Get list of available transcripts
+            transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+            
+            # Strategy 1: Try manually created English transcript
+            try:
+                transcript = transcript_list.find_manually_created_transcript(['en']).fetch()
+                logger.info("Successfully retrieved manually created English transcript")
+                return " ".join([t['text'] for t in transcript])
+            except NoTranscriptFound:
+                logger.info("No manually created English transcript found")
+            
+            # Strategy 2: Try auto-generated English transcript
             try:
                 transcript = transcript_list.find_generated_transcript(['en']).fetch()
+                logger.info("Successfully retrieved auto-generated English transcript")
+                return " ".join([t['text'] for t in transcript])
             except NoTranscriptFound:
-                # If English not found, try fallback to any available transcript
-                fallback_languages = ['hi', 'es', 'fr', 'de']  # Add more languages as needed
-                transcript = None
-                
-                for lang in fallback_languages:
+                logger.info("No auto-generated English transcript found")
+            except ParseError as e:
+                logger.warning(f"XML Parse error on attempt {attempt + 1}: {e}")
+                if attempt < max_retries - 1:
+                    logger.info(f"Retrying in {delay} seconds...")
+                    time.sleep(delay)
+                    continue
+                else:
+                    raise e
+            
+            # Strategy 3: Try other available languages and translate
+            available_transcripts = list(transcript_list)
+            if available_transcripts:
+                for transcript_obj in available_transcripts:
                     try:
-                        transcript = transcript_list.find_manually_created_transcript([lang]).fetch()
-                        break
-                    except NoTranscriptFound:
-                        try:
-                            transcript = transcript_list.find_generated_transcript([lang]).fetch()
-                            break
-                        except NoTranscriptFound:
-                            continue
-                
-                if not transcript:
-                    # Try to get any available transcript and translate to English
-                    for transcript_obj in transcript_list:
-                        try:
-                            if transcript_obj.is_translatable:
-                                transcript = transcript_obj.translate('en').fetch()
-                                break
-                            else:
-                                transcript = transcript_obj.fetch()
-                                break
-                        except:
-                            continue
-                    
-                    if not transcript:
-                        raise NoTranscriptFound("No transcripts found in any language")
-        
-        # Combine transcript texts
-        # FetchedTranscriptSnippet objects use .text attribute, not ['text'] key
-        full_transcript = " ".join([t.text for t in transcript])
-        return full_transcript
-        
-    except (TranscriptsDisabled, NoTranscriptFound) as e:
-        # Handle no transcripts found or disabled
-        print(f"Transcript error: {e}")
+                        if transcript_obj.is_translatable:
+                            logger.info(f"Trying to translate from {transcript_obj.language_code}")
+                            transcript = transcript_obj.translate('en').fetch()
+                            logger.info("Successfully retrieved and translated transcript")
+                            return " ".join([t['text'] for t in transcript])
+                        else:
+                            # Use the original language transcript
+                            logger.info(f"Using original language transcript: {transcript_obj.language_code}")
+                            transcript = transcript_obj.fetch()
+                            return " ".join([t['text'] for t in transcript])
+                    except ParseError as e:
+                        logger.warning(f"XML Parse error for {transcript_obj.language_code}: {e}")
+                        continue
+                    except Exception as e:
+                        logger.warning(f"Error with {transcript_obj.language_code}: {e}")
+                        continue
+            
+            # If we get here, no transcript worked
+            raise NoTranscriptFound("No transcripts could be retrieved")
+            
+        except ParseError as e:
+            logger.warning(f"XML Parse error on attempt {attempt + 1}: {e}")
+            if attempt < max_retries - 1:
+                logger.info(f"Retrying in {delay} seconds...")
+                time.sleep(delay)
+                delay *= 1.5  # Exponential backoff
+            else:
+                logger.error("Max retries reached for XML parsing")
+                raise e
+        except (TranscriptsDisabled, NoTranscriptFound) as e:
+            logger.error(f"Transcript not available: {e}")
+            raise e
+        except Exception as e:
+            logger.error(f"Unexpected error on attempt {attempt + 1}: {e}")
+            if attempt < max_retries - 1:
+                time.sleep(delay)
+            else:
+                raise e
+
+def get_transcript(video_id):
+    """
+    Main transcript function with fallback strategies
+    """
+    try:
+        return get_transcript_with_retry(video_id)
+    except Exception as e:
+        logger.error(f"All transcript retrieval strategies failed: {e}")
         raise e
 
 def transcribe_audio(video_url: str) -> str:
     """Fallback transcription using Whisper when subtitles are not available"""
     try:
-        print("Attempting audio transcription with Whisper...")
+        logger.info("Attempting audio transcription with Whisper...")
         
         # Create temporary directory for audio file
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -96,6 +139,7 @@ def transcribe_audio(video_url: str) -> str:
                 'format': 'bestaudio/best',
                 'outtmpl': audio_path,
                 'quiet': True,
+                'no_warnings': True,
             }
             
             with YoutubeDL(ydl_opts) as ydl:
@@ -111,45 +155,69 @@ def transcribe_audio(video_url: str) -> str:
             if not audio_file:
                 raise Exception("Failed to download audio")
             
-            print(f"Audio downloaded: {audio_file}")
+            logger.info(f"Audio downloaded: {audio_file}")
             
             # Load Whisper model (using base model for balance of speed/accuracy)
-            model = faster_whisper.load_model("base")
+            model = faster_whisper.WhisperModel("base")
             
             # Transcribe the audio
-            result = model.transcribe(audio_file)
+            segments, info = model.transcribe(audio_file)
             
-            print("Audio transcription completed")
-            return result["text"]
+            # Extract text from segments
+            transcript_text = " ".join([segment.text for segment in segments])
+            
+            logger.info("Audio transcription completed")
+            return transcript_text
             
     except Exception as e:
-        print(f"Audio transcription failed: {e}")
+        logger.error(f"Audio transcription failed: {e}")
         raise Exception(f"Could not transcribe audio: {str(e)}")
 
 def get_transcript_and_details(video_url: str):
+    """
+    Main function to get transcript and video details with comprehensive error handling
+    """
     video_id = extract_video_id(video_url)
     if not video_id:
         raise ValueError("Invalid YouTube URL")
     
     transcript = None
+    transcript_source = None
     
-    # First try to get existing subtitles
+    # First try to get existing subtitles with retry logic
     try:
         transcript = get_transcript(video_id)
         if transcript:
-            print("Used existing subtitles")
-    except (TranscriptsDisabled, NoTranscriptFound, ValueError) as e:
-        print(f"Subtitles not available: {e}")
+            transcript_source = "subtitles"
+            logger.info("Successfully used existing subtitles")
+    except Exception as e:
+        logger.warning(f"Subtitles not available: {e}")
         
         # Fallback to audio transcription
         try:
             transcript = transcribe_audio(video_url)
-            print("Used audio transcription")
+            transcript_source = "audio_transcription"
+            logger.info("Successfully used audio transcription")
         except Exception as audio_error:
-            raise ValueError(f"Neither subtitles nor audio transcription available: {str(audio_error)}")
+            logger.error(f"Audio transcription also failed: {audio_error}")
+            raise ValueError(f"Neither subtitles nor audio transcription available. Subtitle error: {str(e)}. Audio error: {str(audio_error)}")
     
     if not transcript:
         raise ValueError("No transcript could be generated")
     
-    details = get_video_details(video_url)
+    # Get video details
+    try:
+        details = get_video_details(video_url)
+        details['transcript_source'] = transcript_source  # Add info about transcript source
+    except Exception as e:
+        logger.warning(f"Could not get video details: {e}")
+        details = {
+            "title": "Unknown",
+            "channelName": "Unknown",
+            "duration": None,
+            "publishDate": None,
+            "thumbnailUrl": None,
+            "transcript_source": transcript_source
+        }
+    
     return transcript, details

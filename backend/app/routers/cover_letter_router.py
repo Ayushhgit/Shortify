@@ -1,7 +1,10 @@
-from fastapi import APIRouter, HTTPException
+from aiohttp import request
+from fastapi import APIRouter, Depends, HTTPException
+from grpc import Status
 from app.models.schemas import CoverLetterRequest, CoverLetterResponse
 import logging
 from app.services.rcover_letter import COVER_LETTER_PROMPT, llm
+from app.core.rate_limiting import cover_letter_generation_rate_limit
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -9,9 +12,15 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 @router.post("/generate-cover-letter", response_model=CoverLetterResponse)
-async def generate_cover_letter(request: CoverLetterRequest):
+async def generate_cover_letter(
+    request: CoverLetterRequest,
+    rate_limit_data: dict = Depends(cover_letter_generation_rate_limit)
+):
     """Generate a personalized cover letter using AI"""
     try:
+        user = rate_limit_data['user']
+        rate_info = rate_limit_data['rate_limit_info']
+        
         # Logging input details
         logger.info(f"Received request - Company: {request.company}, Role: {request.role}")
         logger.info(f"Resume length: {len(request.resume) if request.resume else 0}")
@@ -25,7 +34,10 @@ async def generate_cover_letter(request: CoverLetterRequest):
             request.company and request.company.strip(),
             request.role and request.role.strip()
         ]):
-            raise HTTPException(status_code=422, detail="All fields (resume, job, company, role) are required")
+            raise HTTPException(
+                status_code=422, 
+                detail="All fields (resume, job, company, role) are required"
+            )
 
         # Prepare the prompt
         prompt = COVER_LETTER_PROMPT.format_messages(
@@ -42,17 +54,30 @@ async def generate_cover_letter(request: CoverLetterRequest):
         cover_letter = response.content.strip()
 
         if not cover_letter:
-            raise HTTPException(status_code=500, detail="Failed to generate cover letter content")
+            raise HTTPException(
+                status_code=500, 
+                detail="Failed to generate cover letter content"
+            )
 
         logger.info("Cover letter generated successfully")
+        
+        # Create response with usage info
         return CoverLetterResponse(
             success=True,
             cover_letter=cover_letter,
-            message="Cover letter generated successfully"
+            message="Cover letter generated successfully",
+            usage_info={
+                "remaining": rate_info['remaining'],
+                "limit": rate_info['limit'],
+                "subscription": rate_info['subscription']
+            }
         )
 
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"Error generating cover letter: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Internal error: {str(e)}")
+        raise HTTPException(
+            status_code=Status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to generate cover letter: {str(e)}"
+        )

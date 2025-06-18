@@ -1,6 +1,7 @@
 import random
 import time
 from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks
+from grpc import Status
 import httpx
 from pydantic import BaseModel, HttpUrl, field_validator, model_validator, validator
 from typing import Optional, List, Dict, Any
@@ -23,6 +24,7 @@ from requests_toolbelt import user_agent
 from ..core.config import settings
 from ..auth.dependencies import get_current_user
 from ..models.user import User
+from app.core.rate_limiting import linkedin_help_rate_limit
 
 router = APIRouter(prefix="/linkwise", tags=["linkwise"])
 
@@ -763,10 +765,15 @@ async def generate_headlines_bio(request: HeadlineBioRequest) -> GeneratedConten
 
 # API Endpoints
 @router.post("/analyze-profile", response_model=ProfileScore)
-async def analyze_profile(request: ProfileAnalysisRequest):
+async def analyze_profile(
+    request: ProfileAnalysisRequest,
+    rate_limit_data: dict = Depends(linkedin_help_rate_limit)
+):
     """Analyze LinkedIn profile with improved error handling"""
-    
     try:
+        user = rate_limit_data['user']
+        rate_info = rate_limit_data['rate_limit_info']
+        
         profile_data = {}
         
         # If LinkedIn URL is provided, try to scrape the profile
@@ -788,7 +795,6 @@ async def analyze_profile(request: ProfileAnalysisRequest):
                 profile_data['experience'] = request.experience
             if request.skills:
                 profile_data['skills'] = request.skills
-        
         else:
             # Use manually provided data only
             profile_data = {
@@ -800,21 +806,55 @@ async def analyze_profile(request: ProfileAnalysisRequest):
             }
         
         logger.info(f"Analyzing profile data for: {profile_data.get('name', 'Unknown')}")
-        return await analyze_profile_with_ai(profile_data)
+        result = await analyze_profile_with_ai(profile_data)
+        
+        # Add usage info to response (you'll need to modify ProfileScore model or handle this differently)
+        if hasattr(result, '__dict__'):
+            result.usage_info = {
+                "remaining": rate_info['remaining'],
+                "limit": rate_info['limit'],
+                "subscription": rate_info['subscription']
+            }
+        
+        return result
         
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"Profile analysis failed: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+        raise HTTPException(
+            status_code=Status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to analyze profile: {str(e)}"
+        )
 
 @router.post("/generate-content", response_model=GeneratedContent)
 async def generate_headlines_and_bio(
     request: HeadlineBioRequest,
-    #current_user: User = Depends(get_current_user)
+    rate_limit_data: dict = Depends(linkedin_help_rate_limit)
 ):
     """Generate LinkedIn headlines and bio sections"""
-    return await generate_headlines_bio(request)
+    try:
+        user = rate_limit_data['user']
+        rate_info = rate_limit_data['rate_limit_info']
+        
+        result = await generate_headlines_bio(request)
+        
+        # Add usage info to response (you'll need to modify GeneratedContent model or handle this differently)
+        if hasattr(result, '__dict__'):
+            result.usage_info = {
+                "remaining": rate_info['remaining'],
+                "limit": rate_info['limit'],
+                "subscription": rate_info['subscription']
+            }
+        
+        return result
+        
+    except Exception as e:
+        logger.error(f"Content generation failed: {str(e)}")
+        raise HTTPException(
+            status_code=Status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to generate content: {str(e)}"
+        )
 
 @router.get("/health")
 async def health_check():

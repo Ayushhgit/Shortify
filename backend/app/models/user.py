@@ -19,8 +19,21 @@ class User(Base):
         server_default=SubscriptionTypeEnum.free.value,
         nullable=False
     )
+    
+    # Existing video generation counter
     video_generation_count = Column(Integer, default=0)
     last_video_reset = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    
+    # New feature usage counters
+    pdf_summarization_count = Column(Integer, default=0)
+    yt_summarization_count = Column(Integer, default=0)
+    article_summarization_count = Column(Integer, default=0)
+    resume_analysis_count = Column(Integer, default=0)
+    cover_letter_generation_count = Column(Integer, default=0)
+    assignment_help_count = Column(Integer, default=0)
+    research_assistance_count = Column(Integer, default=0)
+    data_analysis_count = Column(Integer, default=0)
+    linkedin_help_count = Column(Integer, default=0)
     
     # Subscription fields
     subscription_start = Column(DateTime(timezone=True), nullable=True)

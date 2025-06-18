@@ -1,17 +1,16 @@
 from celery import Celery
-import app
 from app.core.config import CELERY_BEAT_SCHEDULE, settings
 
 celery_app = Celery(
     "shortify_worker",
     broker=settings.CELERY_BROKER_URL,
     backend=settings.CELERY_RESULT_BACKEND,
-    include=["app.tasks.shorts","app.tasks.reset_limits"]
+    include=["app.tasks.shorts", "app.tasks.reset_limits"]
 )
 
 celery_app.conf.task_routes = {
     "app.tasks.shorts.*": {"queue": "shorts"},
-    "app.tasks.reset_limits.reset_video_limits": {"queue": "shorts"},
+    "app.tasks.reset_limits.*": {"queue": "shorts"},  # Updated to handle all reset tasks
 }
 
 celery_app.conf.update(
@@ -24,5 +23,3 @@ celery_app.conf.update(
     worker_max_tasks_per_child=100,
     beat_schedule=CELERY_BEAT_SCHEDULE
 )
-
-#app.core.config = CELERY_BEAT_SCHEDULE
