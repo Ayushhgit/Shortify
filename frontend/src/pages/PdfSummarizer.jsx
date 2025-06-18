@@ -427,11 +427,11 @@ export default function PremiumPdfSummarizer() {
         <div className="flex justify-between items-center h-16 px-6">
           <div className="flex items-center">
             <div className="relative">
-              <Sparkles className="h-8 w-8 text-purple-400 mr-3" />
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-purple-400 rounded-full animate-pulse"></div>
+              <FileText className="h-8 w-8 text-teal-400 mr-3" />
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></div>
             </div>
             <span className="text-xl font-bold text-white">
-              Summ<span className="text-purple-400">AIze</span>
+              Summ<span className="text-teal-500">AIze</span>
             </span>
           </div>
           <div className="flex items-center space-x-2">
@@ -767,6 +767,14 @@ export default function PremiumPdfSummarizer() {
           )}
         </div>
       </main>
+      {/* Footer */}
+      <footer className="relative z-10 bg-white/5 backdrop-blur-sm border-t border-white/20 mt-8">
+        <div className="max-w-7xl mx-auto px-6 py-8 flex items-center justify-center">
+          <p className="text-gray-300 text-center">
+            Made with ❤️ and ☕ for everyone everywhere.
+          </p>
+        </div>
+      </footer>
       {/* Chat Component */}
       <ChatWithDocument
         documentContent={documentContent}

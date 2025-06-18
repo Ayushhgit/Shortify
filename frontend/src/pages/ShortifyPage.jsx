@@ -345,7 +345,7 @@ export default function ShortifyPage() {
       icon: Linkedin,
       desc: "AI-powered profile optimization that enhances your LinkedIn presence with keyword analysis, content suggestions, and engagement strategies to maximize professional visibility.",
       gradient: "from-blue-600 via-indigo-600 to-purple-700",
-      link: "/features/linkwiseAI",
+      link: "/features/LinkwiseAI",
       label: "Optimize",
       badge: "NEW",
       animation: "bounce",
@@ -1865,11 +1865,12 @@ export default function ShortifyPage() {
               </div>
 
               <div className="text-center">
+                <a href="/features/LinkwiseAI">
                 <button className="bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-500 hover:from-cyan-600 hover:via-indigo-600 hover:to-purple-600 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-cyan-500/25 flex items-center gap-3 mx-auto group">
                   <Users className="w-6 h-6 group-hover:scale-110 transition-transform" />
                   Optimize Your LinkedIn Now
                   <Sparkles className="w-6 h-6 group-hover:scale-110 transition-transform" />
-                </button>
+                </button> </a>
               </div>
             </div>
           )}

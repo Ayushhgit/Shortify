@@ -415,7 +415,7 @@ export default function ShortsGenerator() {
                   Powered by Advanced AI
                 </span>
               </div>
-              <h1 className="text-6xl sm:text-7xl font-bold text-white tracking-tight mb-6">
+              <h1 className="text-6xl sm:text-7xl font-bold bg-gradient-to-r from-white to-purple-400 text-transparent bg-clip-text tracking-tight mb-6">
                 Short
                 <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
                   ify

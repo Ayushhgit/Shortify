@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { ChevronDown, ChevronUp, Menu, X, Zap } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { ChevronDown, ChevronUp, Menu, X, Zap } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function Header() {
   const [openDropdown, setOpenDropdown] = useState(null); // for desktop
@@ -18,26 +18,35 @@ export default function Header() {
           items: [
             { label: "YouTube Clipper", path: "/features/shorts-generator" },
             { label: "YT-Video Summarizer", path: "/features/summarizer" },
-          ]
+          ],
         },
         {
           category: "DOCUMENT TOOLS",
           items: [
             { label: "PDF Summarizer", path: "/features/pdf-summarizer" },
-            { label: "Article Summarizer", path: "/features/ArticleSummarizer" },
+            {
+              label: "Article Summarizer",
+              path: "/features/ArticleSummarizer",
+            },
             { label: "Resume Analyzer", path: "/features/ResumeAnalyzer" },
-            { label: "Cover Letter Generator", path: "/features/coverLetterGenerator" },
-          ]
+            {
+              label: "Cover Letter Generator",
+              path: "/features/coverLetterGenerator",
+            },
+          ],
         },
         {
           category: "PRODUCTIVITY TOOLS",
           items: [
             { label: "Assignment Helper", path: "/features/AssignmentHelper" },
-            { label: "Research Assistant", path: "/features/ResearchAssistant" },
+            {
+              label: "Research Assistant",
+              path: "/features/ResearchAssistant",
+            },
             { label: "Data Analyzer", path: "/features/EDA" },
             { label: "LinkedIn Helper", path: "/features/LinkwiseAI" },
-          ]
-        }
+          ],
+        },
       ],
     },
     {
@@ -74,12 +83,12 @@ export default function Header() {
   // Lock body scroll when mobile menu is open
   useEffect(() => {
     if (mobileNavOpen) {
-      document.body.classList.add('overflow-hidden');
+      document.body.classList.add("overflow-hidden");
     } else {
-      document.body.classList.remove('overflow-hidden');
+      document.body.classList.remove("overflow-hidden");
     }
     return () => {
-      document.body.classList.remove('overflow-hidden');
+      document.body.classList.remove("overflow-hidden");
     };
   }, [mobileNavOpen]);
 
@@ -173,7 +182,9 @@ export default function Header() {
     <header className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] max-w-7xl rounded-full bg-gray-800/10 backdrop-blur-lg shadow-xl border border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-extrabold text-white-900">
-          <a href='/'>Clari<span className="text-green-400">AI</span></a>
+          <a href="/">
+            Clari<span className="text-green-400">AI</span>
+          </a>
         </h1>
 
         {/* Desktop Menu */}
@@ -207,30 +218,54 @@ export default function Header() {
           </a>
         </nav>
 
+        {/* Desktop Right Section - Coffee Icon + CTA Button */}
+        <div className="hidden md:flex items-center space-x-3">
+          <div className="h-9 w-9 p-1 rounded-full bg-white shadow-md">
+            <a
+              href="https://www.buymeacoffee.com/yourusername"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block"
+            >
+              <img
+                src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg"
+                alt="Buy me a coffee"
+                className="h-8 w-8"
+              />
+            </a>
+          </div>
+          <a href="/shortify">
+            <button className="bg-green-500 hover:bg-green-400 text-white font-semibold py-2.5 px-6 rounded-full flex items-center transition-all duration-200 shadow-md hover:shadow-lg">
+              <Zap className="mr-2 h-5 w-5" />
+              Try ClariAI Now
+            </button>
+          </a>
+        </div>
+
         {/* Mobile Menu Button */}
         <div className="md:hidden">
           <button onClick={() => setMobileNavOpen(!mobileNavOpen)}>
-            {mobileNavOpen ? <X className="h-6 w-6 text-white-800" /> : <Menu className="h-6 w-6 text-white-500"  />}
+            {mobileNavOpen ? (
+              <X className="h-6 w-6 text-white-800" />
+            ) : (
+              <Menu className="h-6 w-6 text-white-500" />
+            )}
           </button>
         </div>
-
-        {/* CTA Button */}
-        <a href="/shortify" className="hidden md:inline-block">
-          <button className="bg-green-500 hover:bg-green-400 text-white font-semibold py-2.5 px-6 rounded-full flex items-center transition-all duration-200 shadow-md hover:shadow-lg">
-            <Zap className="mr-2 h-5 w-5" />
-            Try ClariAI Now
-          </button>
-        </a>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu - Fixed oval border issue */}
       {mobileNavOpen && (
-        <div className="md:hidden mt-4 rounded-xl bg-white p-4 shadow-lg border border-gray-200 space-y-3">
+        <div className="md:hidden absolute top-full left-4 right-4 mt-2 bg-white rounded-xl p-4 shadow-lg border border-gray-200 space-y-3 z-50">
           {navItems.map((item) => (
             <div key={item.name}>
               <button
                 className="w-full text-left flex justify-between items-center font-semibold text-gray-800 py-2"
-                onClick={() => setExpandedMobileSection(expandedMobileSection === item.name ? null : item.name)}
+                onClick={() =>
+                  setExpandedMobileSection(
+                    expandedMobileSection === item.name ? null : item.name
+                  )
+                }
               >
                 {item.name}
                 {expandedMobileSection === item.name ? (
@@ -239,10 +274,14 @@ export default function Header() {
                   <ChevronDown className="w-4 h-4" />
                 )}
               </button>
-              {expandedMobileSection === item.name && renderMobileDropdown(item)}
+              {expandedMobileSection === item.name &&
+                renderMobileDropdown(item)}
             </div>
           ))}
-          <button onClick={() => handleSelect("/pricing")} className="w-full text-left text-gray-800 font-semibold py-2 hover:text-green-500">
+          <button
+            onClick={() => handleSelect("/pricing")}
+            className="w-full text-left text-gray-800 font-semibold py-2 hover:text-green-500"
+          >
             Pricing
           </button>
           <a href="/shortify">

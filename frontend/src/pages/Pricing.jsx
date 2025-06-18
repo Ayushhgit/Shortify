@@ -392,7 +392,7 @@ export default function Pricing() {
             </div>
 
             <h3 className="text-2xl font-semibold">Pro</h3>
-            <p className="text-4xl font-semibold text-white mt-4">₹499/mo</p>
+            <p className="text-4xl font-semibold text-white mt-4">₹49/mo</p>
             <p className="text-sm text-indigo-100 mb-6 mt-1">
               Great for growing teams
             </p>
@@ -416,7 +416,7 @@ export default function Pricing() {
                   ? 'bg-white hover:bg-gray-100 text-indigo-700'
                   : 'bg-white hover:bg-gray-100 text-indigo-700'
               }`}
-              onClick={() => handlePaymentClick("Pro", 499)}
+              onClick={() => handlePaymentClick("Pro", 49)}
               disabled={isCurrentPlan('pro') || processingPayment}
             >
               {isCurrentPlan('pro') ? (
@@ -451,7 +451,7 @@ export default function Pricing() {
             </div>
 
             <h3 className="text-2xl font-semibold text-gray-800">Premium</h3>
-            <p className="text-4xl font-semibold text-black mt-4">₹999/mo</p>
+            <p className="text-4xl font-semibold text-black mt-4">₹99/mo</p>
             <p className="text-sm text-gray-500 mb-6 mt-1">
               Built for power users
             </p>
@@ -473,7 +473,7 @@ export default function Pricing() {
                   ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
                   : 'border border-gray-300 bg-white text-black hover:border-black hover:shadow-md'
               }`}
-              onClick={() => handlePaymentClick("Premium", 999)}
+              onClick={() => handlePaymentClick("Premium", 99)}
               disabled={isCurrentPlan('premium') || processingPayment}
             >
               {isCurrentPlan('premium') ? (

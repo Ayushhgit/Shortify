@@ -351,11 +351,11 @@ const LinkwiseAI = () => {
                 <div className="flex justify-between items-center h-16 px-6">
                     <div className="flex items-center">
                         <div className="relative">
-                            <Users className="h-8 w-8 text-emerald-400 mr-3" />
-                            <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></div>
+                            <Users className="h-8 w-8 text-cyan-500 mr-3" />
+                            <div className="absolute -top-1 -right-1 w-3 h-3 bg-cyan-400 rounded-full animate-pulse"></div>
                         </div>
                         <span className="text-xl font-bold text-white">
-                            Link<span className="text-emerald-400">wise</span>AI
+                            Link<span className="text-cyan-500">wise</span>AI
                         </span>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -933,6 +933,14 @@ const LinkwiseAI = () => {
                     </div>
                 </div>
             </div>
+            {/* Footer */}
+      <footer className="relative z-10 bg-white/5 backdrop-blur-sm border-t border-white/20 mt-8">
+        <div className="max-w-7xl mx-auto px-6 py-8 flex items-center justify-center">
+          <p className="text-gray-300 text-center">
+            Made with ❤️ and ☕ | Powered by AI.
+          </p>
+        </div>
+      </footer>
 
             <Toast
                 show={showToast}
