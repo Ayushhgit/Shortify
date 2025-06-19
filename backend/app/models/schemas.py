@@ -277,4 +277,4 @@ class QuizResponse(BaseModel):
     generated_at: str
 
 class VideoRequest(BaseModel):
-    query: str
+    topic: str

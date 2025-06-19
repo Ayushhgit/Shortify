@@ -9,6 +9,14 @@ import {
   Zap,
   User,
   Users,
+  Subtitles,
+  Clapperboard,
+  ClipboardList,
+  KeyRound,
+  SlidersHorizontal,
+  Library,
+  Film,
+  Mic,
   BarChart3,
   Menu,
   X,
@@ -38,6 +46,7 @@ import {
   Target,
   TrendingUp,
   CheckCircle,
+  BrainCircuit,
   BookOpen,
   Clock,
   Chrome,
@@ -154,6 +163,10 @@ export default function ShortifyPage() {
         return "Dataset Analyzer";
       case "LinkedIn":
         return "LinkedIn Optimizer";
+      case "quiz":
+        return "Quiz Generator";
+      case "clip":
+        return "Clip Maker";
       default:
         return "Shortify";
     }
@@ -237,11 +250,25 @@ export default function ShortifyPage() {
       gradient: "from-violet-500 via-cyan-500 to-blue-500",
       glow: "shadow-purple-500/25",
     },
+    {
+      id: "quiz",
+      icon: BrainCircuit,
+      label: "Quiz Generator",
+      gradient: "from-pink-500 to-purple-500",
+      glow: "shadow-purple-500/25",
+    },
+    {
+      id: "clip",
+      icon: Video,
+      label: "Clip Maker",
+      gradient: "from-emerald-500 via-teal-500 to-green-500",
+      glow: "shadow-purple-500/25",
+    },
   ];
 
   const features = [
     {
-      title: "YouTube Shorts Generator",
+      title: "AI YouTube Shorts Generator",
       icon: Youtube,
       desc: "Transform long-form videos into viral shorts using advanced AI that understands engagement patterns and optimal timing.",
       gradient: "from-rose-500 via-pink-500 to-fuchsia-500",
@@ -263,7 +290,7 @@ export default function ShortifyPage() {
       bgPattern: "neural-network",
     },
     {
-      title: "Document Summarizer",
+      title: "AI Document Summarizer",
       icon: BookText,
       desc: "Revolutionary AI transforms complex documents into crystal-clear summaries with human-like comprehension and precision.",
       gradient: "from-emerald-500 via-teal-500 to-cyan-500",
@@ -274,7 +301,7 @@ export default function ShortifyPage() {
       bgPattern: "grid",
     },
     {
-      title: "Resume Analyzer",
+      title: "AI Resume Analyzer",
       icon: Eye,
       desc: "Advanced machine learning analyzes resumes and provides strategic insights to maximize your job application success rate.",
       gradient: "from-violet-500 via-purple-600 to-indigo-600",
@@ -285,7 +312,7 @@ export default function ShortifyPage() {
       bgPattern: "radar",
     },
     {
-      title: "Article Summarizer",
+      title: "AI Article Summarizer",
       icon: Chrome,
       desc: "Summarize long articles into clear, concise points using AI—perfect for quick reading, research, or content repurposing and supports multiple pages.",
       gradient: "from-pink-500 via-purple-600 to-orange-600",
@@ -297,7 +324,7 @@ export default function ShortifyPage() {
     },
 
     {
-      title: "Cover Letter Generator",
+      title: "AI Cover Letter Generator",
       icon: SquareChartGantt,
       desc: "Effortlessly generate personalized, job-specific cover letters using AI that tailors content based on your resume and the job role.",
       gradient: "from-violet-500 via-blue-600 to-indigo-600",
@@ -308,7 +335,7 @@ export default function ShortifyPage() {
       bgPattern: "radar",
     },
     {
-      title: "Assignment Helper",
+      title: "AI Assignment Helper",
       icon: Pencil,
       desc: "Convert AI-generated answers into realistic handwritten assignments with ruled paper styling – perfect for fast, smart submissions.",
       gradient: "from-yellow-500 via-orange-400 to-amber-200",
@@ -319,7 +346,7 @@ export default function ShortifyPage() {
       bgPattern: "paper",
     },
     {
-      title: "Research Assistant",
+      title: "AI Research Assistant",
       icon: Binoculars,
       desc: "AI-powered assistant that searches research papers, summarizes concepts, and answers your academic queries using real citations.",
       gradient: "from-rose-500 via-cyan-600 to-fuchsia-600",
@@ -341,7 +368,7 @@ export default function ShortifyPage() {
       bgPattern: "grid",
     },
     {
-      title: "LinkedIn Optimizer",
+      title: "AI LinkedIn Optimizer",
       icon: Linkedin,
       desc: "AI-powered profile optimization that enhances your LinkedIn presence with keyword analysis, content suggestions, and engagement strategies to maximize professional visibility.",
       gradient: "from-blue-600 via-indigo-600 to-purple-700",
@@ -350,6 +377,28 @@ export default function ShortifyPage() {
       badge: "NEW",
       animation: "bounce",
       bgPattern: "dots",
+    },
+    {
+      title: "AI Clip Generator",
+      icon: Video,
+      desc: "Transform any topic into an engaging short video, complete with an AI-generated script, natural voiceover, and synchronized captions over a ready to use minecraft gameplay stock video, ready in seconds.",
+      gradient: "from-fuchsia-600 via-purple-600 to-indigo-700",
+      link: "/tools/ai-video-generator",
+      label: "Create Video",
+      badge: "POPULAR",
+      animation: "pulse",
+      bgPattern: "grid",
+    },
+    {
+      title: "AI Quiz Generator",
+      icon: BrainCircuit,
+      desc: "Instantly create challenging and engaging quizzes on any topic. Our AI generates diverse question types, including MCQ, QnA and Numericals, complete with correct answers to streamline learning.",
+      gradient: "from-green-500 via-teal-600 to-cyan-700",
+      link: "/tools/quiz-generator",
+      label: "Generate Quiz",
+      badge: "EDUCATION",
+      animation: "none",
+      bgPattern: "plus",
     },
   ];
 
@@ -1866,14 +1915,339 @@ export default function ShortifyPage() {
 
               <div className="text-center">
                 <a href="/features/LinkwiseAI">
-                <button className="bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-500 hover:from-cyan-600 hover:via-indigo-600 hover:to-purple-600 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-cyan-500/25 flex items-center gap-3 mx-auto group">
-                  <Users className="w-6 h-6 group-hover:scale-110 transition-transform" />
-                  Optimize Your LinkedIn Now
-                  <Sparkles className="w-6 h-6 group-hover:scale-110 transition-transform" />
-                </button> </a>
+                  <button className="bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-500 hover:from-cyan-600 hover:via-indigo-600 hover:to-purple-600 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-cyan-500/25 flex items-center gap-3 mx-auto group">
+                    <Users className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                    Optimize Your LinkedIn Now
+                    <Sparkles className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                  </button>{" "}
+                </a>
               </div>
             </div>
           )}
+
+          {/*Clip section*/}
+          {activeTab === "clip" && (
+          <div className="max-w-4xl mx-auto space-y-8">
+            <div className="text-center mb-12">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600/20 border border-blue-600/30 mb-6">
+                    <Clapperboard className="w-5 h-5 text-blue-400" />
+                    <span className="text-blue-400 font-medium">
+                        INSTANT VIDEO CREATION
+                    </span>
+                </div>
+                <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-fuchsia-400 to-purple-400 bg-clip-text text-transparent mb-4">
+                    AI-Powered Clip Generator
+                </h2>
+                <p className="text-xl text-gray-400 leading-relaxed">
+                    Turn any topic into a viral-style short video with AI-generated
+                    scripts, voiceovers, background footage, and synchronized captions.
+                </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8 mb-8">
+                <div className="bg-gradient-to-br from-blue-600/10 to-fuchsia-600/10 border border-blue-600/20 rounded-3xl p-8">
+                    <h3 className="text-2xl font-bold text-blue-400 mb-4 flex items-center gap-3">
+                        <Sparkles className="w-8 h-8" />
+                        Core AI Features
+                    </h3>
+                    <ul className="space-y-4 text-gray-300">
+                        <li className="flex items-start gap-3">
+                            <CheckCircle className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
+                            <span>Engaging script generation from any topic</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                            <CheckCircle className="w-5 h-5 text-fuchsia-400 mt-0.5 flex-shrink-0" />
+                            <span>Natural-sounding text-to-speech voiceovers</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                            <CheckCircle className="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" />
+                            <span>Auto-selection of relevant background footage</span>
+                        </li>
+                         <li className="flex items-start gap-3">
+                            <CheckCircle className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
+                            <span>Frame-by-frame subtitle generation & syncing</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div className="bg-gradient-to-br from-fuchsia-600/10 to-purple-600/10 border border-fuchsia-600/20 rounded-3xl p-8">
+                    <h3 className="text-2xl font-bold text-fuchsia-400 mb-4 flex items-center gap-3">
+                        <Film className="w-8 h-8" />
+                        Output & Customization
+                    </h3>
+                    <ul className="space-y-4 text-gray-300">
+                        <li className="flex items-start gap-3">
+                            <CheckCircle className="w-5 h-5 text-fuchsia-400 mt-0.5 flex-shrink-0" />
+                            <span>Multiple voice styles and language options</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                            <CheckCircle className="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" />
+                            <span>Customizable caption styles and animations</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                            <CheckCircle className="w-5 h-5 text-fuchsia-400 mt-0.5 flex-shrink-0" />
+                            <span>Choice of aspect ratios (9:16, 1:1, 16:9)</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                            <CheckCircle className="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" />
+                            <span>High-definition 1080p MP4 video export</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            {/* Statistics Section */}
+            <div className="bg-gradient-to-br from-blue-600/10 to-fuchsia-600/10 border border-blue-600/20 rounded-3xl p-8 mb-8">
+                <div className="grid md:grid-cols-4 gap-6 text-center">
+                    <div>
+                        <div className="text-3xl font-bold text-blue-400 mb-2">
+                            &lt;60s
+                        </div>
+                        <div className="text-gray-400">Render Time</div>
+                    </div>
+                    <div>
+                        <div className="text-3xl font-bold text-fuchsia-400 mb-2">
+                            3+
+                        </div>
+                        <div className="text-gray-400">AI Models Used</div>
+                    </div>
+                    <div>
+                        <div className="text-3xl font-bold text-purple-400 mb-2">
+                            10k+
+                        </div>
+                        <div className="text-gray-400">Stock Videos</div>
+                    </div>
+                    <div>
+                        <div className="text-3xl font-bold text-blue-400 mb-2">
+                            1080p
+                        </div>
+                        <div className="text-gray-400">HD Quality</div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Video Generation Process */}
+            <div className="bg-gradient-to-br from-fuchsia-600/10 to-purple-600/10 border border-fuchsia-600/20 rounded-3xl p-8 mb-8">
+                <h3 className="text-2xl font-bold text-fuchsia-400 mb-6 flex items-center gap-3">
+                    <Cpu className="w-8 h-8" />
+                    Our Video Generation Process
+                </h3>
+                <div className="grid md:grid-cols-4 gap-6">
+                    {[
+                        { step: "01", title: "Topic to Script", desc: "AI writes an engaging script based on your input topic", color: "blue" },
+                        { step: "02", title: "Text to Voice", desc: "A natural voiceover is generated from the AI script", color: "fuchsia" },
+                        { step: "03", title: "Video Assembly", desc: "Footage, audio & captions are synced and compiled", color: "purple" },
+                        { step: "04", title: "Final Render", desc: "Your final video is rendered in HD and ready for download", color: "blue" },
+                    ].map((item) => (
+                        <div key={item.step} className="text-center">
+                            <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-${item.color}-500 to-${item.color}-600 flex items-center justify-center text-white font-bold text-xl`}>
+                                {item.step}
+                            </div>
+                            <h4 className="text-lg font-bold text-white mb-2">{item.title}</h4>
+                            <p className="text-gray-400 text-sm">{item.desc}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Features Grid */}
+            <div className="grid md:grid-cols-3 gap-6 mb-8">
+                <div className="bg-gradient-to-br from-blue-600/10 to-fuchsia-600/10 border border-blue-600/20 rounded-2xl p-6 text-center">
+                    <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-blue-500 to-fuchsia-500 flex items-center justify-center">
+                        <Library className="w-6 h-6 text-white" />
+                    </div>
+                    <h4 className="text-lg font-bold text-blue-400 mb-2">Stock Footage</h4>
+                    <p className="text-gray-400 text-sm">Access to a vast library of high-quality background videos for any topic.</p>
+                </div>
+                <div className="bg-gradient-to-br from-fuchsia-600/10 to-purple-600/10 border border-fuchsia-600/20 rounded-2xl p-6 text-center">
+                    <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-fuchsia-500 to-purple-500 flex items-center justify-center">
+                        <Subtitles className="w-6 h-6 text-white" />
+                    </div>
+                    <h4 className="text-lg font-bold text-fuchsia-400 mb-2">Burnt-in Captions</h4>
+                    <p className="text-gray-400 text-sm">Automatically generated and animated captions are embedded into your video.</p>
+                </div>
+                <div className="bg-gradient-to-br from-purple-600/10 to-blue-600/10 border border-purple-600/20 rounded-2xl p-6 text-center">
+                    <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center">
+                        <Download className="w-6 h-6 text-white" />
+                    </div>
+                    <h4 className="text-lg font-bold text-purple-400 mb-2">One-Click Export</h4>
+                    <p className="text-gray-400 text-sm">Download your finished video as a high-quality MP4 file, ready to be shared.</p>
+                </div>
+            </div>
+
+            <div className="text-center">
+                <a href="/features/ClipGenerator">
+                    <button className="bg-gradient-to-r from-blue-500 via-fuchsia-500 to-purple-500 hover:from-blue-600 hover:via-fuchsia-600 hover:to-purple-600 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-fuchsia-500/25 flex items-center gap-3 mx-auto group">
+                        <Video className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                        Start Creating Clips
+                        <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                    </button>
+                </a>
+            </div>
+        </div>
+        )}
+
+        {/*Quiz Generator*/}
+        {activeTab === "quiz" && (
+        <div className="max-w-4xl mx-auto space-y-8">
+            <div className="text-center mb-12">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-600/20 border border-green-600/30 mb-6">
+                    <BrainCircuit className="w-5 h-5 text-green-400" />
+                    <span className="text-green-400 font-medium">
+                        AUTOMATED ASSESSMENT
+                    </span>
+                </div>
+                <h2 className="text-4xl font-bold bg-gradient-to-r from-green-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent mb-4">
+                    AI-Powered Quiz Generator
+                </h2>
+                <p className="text-xl text-gray-400 leading-relaxed">
+                    Effortlessly create engaging and challenging quizzes on any subject
+                    with diverse question types and automatic answer key generation.
+                </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8 mb-8">
+                <div className="bg-gradient-to-br from-green-600/10 to-teal-600/10 border border-green-600/20 rounded-3xl p-8">
+                    <h3 className="text-2xl font-bold text-green-400 mb-4 flex items-center gap-3">
+                        <Lightbulb className="w-8 h-8" />
+                        Input Flexibility
+                    </h3>
+                    <ul className="space-y-4 text-gray-300">
+                        <li className="flex items-start gap-3">
+                            <CheckCircle className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
+                            <span>Generate from any topic or subject name</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                            <CheckCircle className="w-5 h-5 text-teal-400 mt-0.5 flex-shrink-0" />
+                            <span>Paste in your own text, articles, or notes</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                            <CheckCircle className="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" />
+                            <span>Upload documents (PDF, DOCX) for analysis</span>
+                        </li>
+                         <li className="flex items-start gap-3">
+                            <CheckCircle className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
+                            <span>Specify number of questions and difficulty level</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div className="bg-gradient-to-br from-teal-600/10 to-cyan-600/10 border border-teal-600/20 rounded-3xl p-8">
+                    <h3 className="text-2xl font-bold text-teal-400 mb-4 flex items-center gap-3">
+                        <ClipboardList className="w-8 h-8" />
+                        Quiz & Question Features
+                    </h3>
+                    <ul className="space-y-4 text-gray-300">
+                        <li className="flex items-start gap-3">
+                            <CheckCircle className="w-5 h-5 text-teal-400 mt-0.5 flex-shrink-0" />
+                            <span>Multiple Choice & True/False questions</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                            <CheckCircle className="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" />
+                            <span>Fill-in-the-blank and short answer generation</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                            <CheckCircle className="w-5 h-5 text-teal-400 mt-0.5 flex-shrink-0" />
+                            <span>Automatic generation of plausible distractors</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                            <CheckCircle className="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" />
+                            <span>Instant answer key creation for easy grading</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            {/* Statistics Section */}
+            <div className="bg-gradient-to-br from-green-600/10 to-teal-600/10 border border-green-600/20 rounded-3xl p-8 mb-8">
+                <div className="grid md:grid-cols-4 gap-6 text-center">
+                    <div>
+                        <div className="text-3xl font-bold text-green-400 mb-2">
+                            Instant
+                        </div>
+                        <div className="text-gray-400">Quiz Creation</div>
+                    </div>
+                    <div>
+                        <div className="text-3xl font-bold text-teal-400 mb-2">
+                            5+
+                        </div>
+                        <div className="text-gray-400">Question Types</div>
+                    </div>
+                    <div>
+                        <div className="text-3xl font-bold text-cyan-400 mb-2">
+                            99%
+                        </div>
+                        <div className="text-gray-400">Factual Accuracy</div>
+                    </div>
+                    <div>
+                        <div className="text-3xl font-bold text-green-400 mb-2">
+                            PDF
+                        </div>
+                        <div className="text-gray-400"> & DOCX Export</div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Quiz Generation Process */}
+            <div className="bg-gradient-to-br from-teal-600/10 to-cyan-600/10 border border-teal-600/20 rounded-3xl p-8 mb-8">
+                <h3 className="text-2xl font-bold text-teal-400 mb-6 flex items-center gap-3">
+                    <Cpu className="w-8 h-8" />
+                    Our Quiz Generation Process
+                </h3>
+                <div className="grid md:grid-cols-4 gap-6">
+                    {[
+                        { step: "01", title: "Provide Content", desc: "Input a topic, paste text, or upload a document for analysis", color: "green" },
+                        { step: "02", title: "AI Comprehension", desc: "The AI reads and understands the key concepts in your material", color: "teal" },
+                        { step: "03", title: "Question Crafting", desc: "Relevant questions are generated in various formats with answers", color: "cyan" },
+                        { step: "04", title: "Review & Export", desc: "Edit your quiz and download it in your desired file format", color: "green" },
+                    ].map((item) => (
+                        <div key={item.step} className="text-center">
+                            <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-${item.color}-500 to-${item.color}-600 flex items-center justify-center text-white font-bold text-xl`}>
+                                {item.step}
+                            </div>
+                            <h4 className="text-lg font-bold text-white mb-2">{item.title}</h4>
+                            <p className="text-gray-400 text-sm">{item.desc}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Features Grid */}
+            <div className="grid md:grid-cols-3 gap-6 mb-8">
+                <div className="bg-gradient-to-br from-green-600/10 to-teal-600/10 border border-green-600/20 rounded-2xl p-6 text-center">
+                    <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-green-500 to-teal-500 flex items-center justify-center">
+                        <FileText className="w-6 h-6 text-white" />
+                    </div>
+                    <h4 className="text-lg font-bold text-green-400 mb-2">Multiple Formats</h4>
+                    <p className="text-gray-400 text-sm">Export your quizzes and answer keys as printable PDF or editable DOCX files.</p>
+                </div>
+                <div className="bg-gradient-to-br from-teal-600/10 to-cyan-600/10 border border-teal-600/20 rounded-2xl p-6 text-center">
+                    <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 flex items-center justify-center">
+                        <SlidersHorizontal className="w-6 h-6 text-white" />
+                    </div>
+                    <h4 className="text-lg font-bold text-teal-400 mb-2">Adjustable Difficulty</h4>
+                    <p className="text-gray-400 text-sm">Fine-tune the complexity of your quizzes to suit any audience, from beginners to experts.</p>
+                </div>
+                <div className="bg-gradient-to-br from-cyan-600/10 to-green-600/10 border border-cyan-600/20 rounded-2xl p-6 text-center">
+                    <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 flex items-center justify-center">
+                        <KeyRound className="w-6 h-6 text-white" />
+                    </div>
+                    <h4 className="text-lg font-bold text-cyan-400 mb-2">Answer Key Included</h4>
+                    <p className="text-gray-400 text-sm">Every quiz comes with a corresponding answer key for quick and easy grading.</p>
+                </div>
+            </div>
+
+            <div className="text-center">
+                <a href="/features/QuizGenerator">
+                    <button className="bg-gradient-to-r from-green-500 via-teal-500 to-cyan-500 hover:from-green-600 hover:via-teal-600 hover:to-cyan-600 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-teal-500/25 flex items-center gap-3 mx-auto group">
+                        <BrainCircuit className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                        Start Building Quizzes
+                        <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                    </button>
+                </a>
+            </div>
+        </div> )}
+
 
           {/* Footer */}
           <div className="h-16 flex items-center justify-center border-t border-gray-900 bg-gray-950/90 backdrop-blur-xl mt-16">

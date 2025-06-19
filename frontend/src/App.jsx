@@ -23,6 +23,7 @@ import ResearchAssistantChat from "./pages/ResearchAssistant";
 import LinkwiseAI from "./pages/LinkwiseAI";
 import EDAUploader from "./pages/EDAUploader";
 import QuizGenerator from "./pages/QuizGenerator";
+import ClipGenerator from "./pages/ClipGenerator";
 
 
 const LayoutWrapper = ({ children }) => {
@@ -43,6 +44,7 @@ const LayoutWrapper = ({ children }) => {
     "/features/AssignmentHelper",
     "/features/ResearchAssistant",
     "/features/LinkwiseAI",
+    "/features/Clip-generator",
     "/features/quiz-generator" ,
     "/",
     
@@ -82,6 +84,7 @@ function App() {
           <Route path="/features/AssignmentHelper" element={<AssignmentHelper />}/>
           <Route path="/features/ResearchAssistant"  element={<ResearchAssistantChat />}/>
           <Route path="/features/quiz-generator"  element={<QuizGenerator />}/>
+          <Route path="/features/Clip-generator"  element={<ClipGenerator />}/>
           <Route path="/features/LinkwiseAI"  element={<LinkwiseAI />}/>
           <Route path="/features/EDA"  element={<EDAUploader />}/>
           <Route path="/profile" element={<Profile />} />

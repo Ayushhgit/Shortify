@@ -18,6 +18,7 @@ export default function Header() {
           items: [
             { label: "YouTube Clipper", path: "/features/shorts-generator" },
             { label: "YT-Video Summarizer", path: "/features/summarizer" },
+            { label: "MineCraft Clip Maker", path: "/features/Clip-generator" },
           ],
         },
         {
