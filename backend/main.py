@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from app.core.database import Base, engine
 from pathlib import Path
+import os
 import logging
 from app.models import user 
 from app.routers import payment
@@ -25,7 +26,7 @@ from app.routers import handwriting
 from app.routers import research_router
 from app.routers import linkwise_router
 from app.routers import eda_router
-from app.routers import quiz_router
+from app.routers import quiz_router , stock_clip_router
 
 
 logging.basicConfig(
@@ -46,6 +47,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+ASSETS_DIR = os.path.join(os.path.dirname(__file__), "assets")
+OUTPUT_DIR = os.path.join(ASSETS_DIR, "output")
+TEMP_DIR = os.path.join(ASSETS_DIR, "temp")
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+os.makedirs(TEMP_DIR, exist_ok=True)
 
 Path("uploads").mkdir(exist_ok=True)
 Path("outputs").mkdir(exist_ok=True)
@@ -76,6 +83,7 @@ app.include_router(research_router.router, prefix="/api")
 app.include_router(linkwise_router.router)
 app.include_router(eda_router.router)
 app.include_router(quiz_router.router)
+app.include_router(stock_clip_router.router)
 
 @app.get("/", tags=["status"])
 async def root():

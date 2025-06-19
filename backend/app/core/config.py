@@ -20,6 +20,9 @@ class Settings(BaseSettings):
     UPLOAD_DIR: pathlib.Path = pathlib.Path("uploads").resolve()
     ORIGINALS_DIR: pathlib.Path = UPLOAD_DIR / "originals"
     CLIPS_DIR: pathlib.Path = UPLOAD_DIR / "clips"
+    ASSETS_DIR: pathlib.Path = pathlib.Path("Assets").resolve()
+    OUTPUT_DIR: pathlib.Path = ASSETS_DIR / "output"
+    TEMP_DIR: pathlib.Path = ASSETS_DIR / "temp"
 
     # S3 (optional)
     S3_ENDPOINT: Optional[str] = None

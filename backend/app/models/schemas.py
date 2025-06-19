@@ -275,3 +275,6 @@ class QuizResponse(BaseModel):
     difficulty: str
     total_questions: int
     generated_at: str
+
+class VideoRequest(BaseModel):
+    topic: str
