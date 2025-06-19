@@ -206,7 +206,7 @@ Evaluate it and return a pure JSON like:
 Analyze this document and return a pure JSON like:
 {{
   "document_type": "report/manual/article/presentation/etc",
-  "summary": "Brief summary of the document content and main purpose",
+  "summary": "Give the in detail Summary of everything you found in the document in atleast 100 words",
   "key_points": ["main point 1", "main point 2", "main point 3"],
   "topics": ["topic1", "topic2", "topic3"],
   "complexity": "Basic/Intermediate/Advanced",

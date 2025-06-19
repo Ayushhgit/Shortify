@@ -253,9 +253,9 @@ const ShortifyLanding = () => {
           {/* Main headline */}
           <h1 className="text-7xl md:text-9xl font-black mb-8 tracking-tight">
             <span className="bg-gradient-to-r from-white via-green-200 to-green-300 bg-clip-text text-transparent">
-              Clari
+              Crux
               <span className="bg-gradient-to-r from-green-300 to-green-380 bg-clip-text text-transparent">
-                AI
+                LM
               </span>
             </span>
           </h1>
@@ -275,7 +275,7 @@ const ShortifyLanding = () => {
 
             <p className="text-2xl md:text-3xl font-light leading-relaxed">
               <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent font-semibold">
-                Simplify, Summarize, Succeed
+                Simplify, Summarize, Succeed 
               </span>
             </p>
             <HelloBot></HelloBot>

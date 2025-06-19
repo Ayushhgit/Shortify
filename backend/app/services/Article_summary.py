@@ -91,7 +91,7 @@ def extract_article_content(url: str) -> tuple[str, ArticleDetails]:
     Extract article content using newspaper3k with fallback to BeautifulSoup
     """
     try:
-        # Method 1: newspaper3k (usually more reliable)
+        # Method 1: newspaper3k
         article = Article(url)
         article.download()
         article.parse()

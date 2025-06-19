@@ -39,11 +39,9 @@ export default function Header() {
           category: "PRODUCTIVITY TOOLS",
           items: [
             { label: "Assignment Helper", path: "/features/AssignmentHelper" },
-            {
-              label: "Research Assistant",
-              path: "/features/ResearchAssistant",
-            },
+            { label: "Research Assistant", path: "/features/ResearchAssistant"},
             { label: "Data Analyzer", path: "/features/EDA" },
+            { label: "Quiz Generator", path: "/features/quiz-generator" },
             { label: "LinkedIn Helper", path: "/features/LinkwiseAI" },
           ],
         },

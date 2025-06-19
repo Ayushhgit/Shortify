@@ -239,3 +239,39 @@ class HealthResponse(BaseModel):
     status: str = Field(..., description="Service status")
     service: str = Field(..., description="Service name")
     timestamp: datetime = Field(default_factory=datetime.now, description="Health check timestamp")
+
+class DifficultyLevel(str, Enum):
+    easy = "easy"
+    medium = "medium"
+    hard = "hard"
+
+class QuestionType(str, Enum):
+    mcq = "mcq"
+    qna = "qna"
+    numerical = "numerical"
+
+class QuizRequest(BaseModel):
+    num_questions: int = Field(ge=1, le=50, description="Number of questions to generate")
+    difficulty: DifficultyLevel = Field(description="Difficulty level of questions")
+    topic: str = Field(min_length=1, max_length=500, description="Topic or context for the questions")
+    question_types: List[QuestionType] = Field(min_items=1, description="Types of questions to generate")
+    
+    @field_validator('topic')
+    def validate_topic(cls, v):
+        if not v.strip():
+            raise ValueError('Topic cannot be empty')
+        return v.strip()
+
+class Question(BaseModel):
+    type: str
+    question: str
+    options: Optional[List[str]] = None
+    answer: str
+    explanation: Optional[str] = None
+
+class QuizResponse(BaseModel):
+    questions: List[Question]
+    topic: str
+    difficulty: str
+    total_questions: int
+    generated_at: str
