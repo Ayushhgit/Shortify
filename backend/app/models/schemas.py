@@ -275,3 +275,4 @@ class QuizResponse(BaseModel):
     difficulty: str
     total_questions: int
     generated_at: str
+    usage_info: Optional[dict] = None

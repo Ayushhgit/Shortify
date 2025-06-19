@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, Brain, FileText, Calculator, CheckCircle, AlertCircle, Loader2, Home, User, Settings, Sparkles, Database } from 'lucide-react';
+import { useNavigate } from "react-router-dom";
+import Toast from "../components/Toast";
+import { getToken } from '../firebase';
 
 const QuizGenerator = () => {
   const [formData, setFormData] = useState({
@@ -12,14 +15,30 @@ const QuizGenerator = () => {
       numerical: false
     }
   });
-  
+
   const [quiz, setQuiz] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [step, setStep] = useState(1);
   const [animateResult, setAnimateResult] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState("success");
+
+  const navigate = useNavigate();
+  const displayToast = (message, type = "success") => {
+    setToastMessage(message);
+    setToastType(type);
+    setShowToast(true);
+  };
 
   const generateQuiz = async () => {
+    const idToken = await getToken();
+    if (!idToken) {
+      console.error("User not authenticated");
+      displayToast("Authentication failed. Please try logging in again.", "error");
+      return;
+    }
     if (!formData.topic.trim()) {
       setError('Please enter a topic');
       return;
@@ -43,6 +62,7 @@ const QuizGenerator = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`,
         },
         body: JSON.stringify({
           num_questions: formData.numQuestions,
@@ -58,7 +78,7 @@ const QuizGenerator = () => {
       }
 
       const data = await response.json();
-      
+
       // Validate response structure
       if (!data || !data.questions || !Array.isArray(data.questions)) {
         throw new Error('Invalid response format from server');
@@ -67,10 +87,10 @@ const QuizGenerator = () => {
       setQuiz(data);
       setStep(3);
       setAnimateResult(true);
-      
+
     } catch (err) {
       let errorMessage = 'Error generating quiz. Please try again.';
-      
+
       // Handle different types of errors
       if (err.name === 'TypeError' && err.message.includes('fetch')) {
         errorMessage = 'Unable to connect to the server. Please check if the API is running.';
@@ -79,17 +99,13 @@ const QuizGenerator = () => {
       } else if (err.message) {
         errorMessage = err.message;
       }
-      
+
       setError(errorMessage);
       console.error('Error generating quiz:', err);
       setStep(1);
     } finally {
       setLoading(false);
     }
-  };
-
-  const navigate = (href) => {
-    console.log(`Navigate to: ${href}`);
   };
 
   const handleInputChange = (e) => {
@@ -135,18 +151,18 @@ const QuizGenerator = () => {
             </div>
             <div>
               <span className="text-sm font-medium text-gray-300 uppercase tracking-wide block">
-                {question.type === 'mcq' ? 'Multiple Choice' : 
-                 question.type === 'qna' ? 'Q&A' : 'Numerical'}
+                {question.type === 'mcq' ? 'Multiple Choice' :
+                  question.type === 'qna' ? 'Q&A' : 'Numerical'}
               </span>
               <span className="text-xs text-gray-400">Question {index + 1}</span>
             </div>
           </div>
         </div>
-        
+
         <h3 className="text-xl font-semibold text-white mb-6 leading-relaxed">
           {question.question}
         </h3>
-        
+
         {question.type === 'mcq' && question.options && (
           <div className="space-y-3 mb-6">
             {question.options.map((option, idx) => (
@@ -159,7 +175,7 @@ const QuizGenerator = () => {
             ))}
           </div>
         )}
-        
+
         <div className="bg-emerald-500/20 border border-emerald-400/30 rounded-2xl p-6">
           <div className="flex items-center space-x-3 mb-3">
             <div className="p-2 bg-emerald-500/20 rounded-lg">
@@ -185,8 +201,8 @@ const QuizGenerator = () => {
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -inset-10 opacity-30">
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
-          <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-emerald-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse" style={{animationDelay: '2s'}}></div>
-          <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-orange-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse" style={{animationDelay: '4s'}}></div>
+          <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-emerald-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse" style={{ animationDelay: '2s' }}></div>
+          <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-orange-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse" style={{ animationDelay: '4s' }}></div>
         </div>
       </div>
 
@@ -204,7 +220,7 @@ const QuizGenerator = () => {
           </div>
           <div className="flex items-center space-x-2">
             {[
-              { icon: Home, href: "/home" },
+              { icon: Home, href: "/shortify" },
               { icon: User, href: "/profile" },
               { icon: Settings, href: "/settings" },
             ].map((item, index) => (
@@ -249,7 +265,7 @@ const QuizGenerator = () => {
                   </div>
                   Quiz Configuration
                 </h2>
-                
+
                 <div className="grid md:grid-cols-2 gap-8">
                   <div>
                     <label className="block text-lg font-semibold text-gray-300 mb-4">
@@ -311,12 +327,11 @@ const QuizGenerator = () => {
                     Question Types
                   </label>
                   <div className="grid md:grid-cols-3 gap-6">
-                    <div 
-                      className={`p-6 border-2 rounded-2xl transition-all duration-300 cursor-pointer transform hover:scale-105 ${
-                        formData.questionTypes.mcq 
-                          ? 'border-emerald-400/50 bg-emerald-500/20' 
-                          : 'border-white/20 bg-white/10 hover:border-emerald-400/30'
-                      }`}
+                    <div
+                      className={`p-6 border-2 rounded-2xl transition-all duration-300 cursor-pointer transform hover:scale-105 ${formData.questionTypes.mcq
+                        ? 'border-emerald-400/50 bg-emerald-500/20'
+                        : 'border-white/20 bg-white/10 hover:border-emerald-400/30'
+                        }`}
                       onClick={() => handleCheckboxChange('mcq')}
                     >
                       <div className="flex items-center space-x-4">
@@ -334,12 +349,11 @@ const QuizGenerator = () => {
                       </div>
                     </div>
 
-                    <div 
-                      className={`p-6 border-2 rounded-2xl transition-all duration-300 cursor-pointer transform hover:scale-105 ${
-                        formData.questionTypes.qna 
-                          ? 'border-orange-400/50 bg-orange-500/20' 
-                          : 'border-white/20 bg-white/10 hover:border-orange-400/30'
-                      }`}
+                    <div
+                      className={`p-6 border-2 rounded-2xl transition-all duration-300 cursor-pointer transform hover:scale-105 ${formData.questionTypes.qna
+                        ? 'border-orange-400/50 bg-orange-500/20'
+                        : 'border-white/20 bg-white/10 hover:border-orange-400/30'
+                        }`}
                       onClick={() => handleCheckboxChange('qna')}
                     >
                       <div className="flex items-center space-x-4">
@@ -357,12 +371,11 @@ const QuizGenerator = () => {
                       </div>
                     </div>
 
-                    <div 
-                      className={`p-6 border-2 rounded-2xl transition-all duration-300 cursor-pointer transform hover:scale-105 ${
-                        formData.questionTypes.numerical 
-                          ? 'border-rose-400/50 bg-rose-500/20' 
-                          : 'border-white/20 bg-white/10 hover:border-rose-400/30'
-                      }`}
+                    <div
+                      className={`p-6 border-2 rounded-2xl transition-all duration-300 cursor-pointer transform hover:scale-105 ${formData.questionTypes.numerical
+                        ? 'border-rose-400/50 bg-rose-500/20'
+                        : 'border-white/20 bg-white/10 hover:border-rose-400/30'
+                        }`}
                       onClick={() => handleCheckboxChange('numerical')}
                     >
                       <div className="flex items-center space-x-4">
@@ -432,22 +445,21 @@ const QuizGenerator = () => {
                     ].map((text, index) => (
                       <div key={index} className="flex items-center space-x-3">
                         <div
-                          className={`w-4 h-4 rounded-full transition-all duration-500 ${
-                            index < 2
-                              ? "bg-indigo-400"
-                              : index === 2
-                                ? "bg-indigo-400 animate-pulse"
-                                : "bg-gray-600"
-                          }`}
+                          className={`w-4 h-4 rounded-full transition-all duration-500 ${index < 2
+                            ? "bg-indigo-400"
+                            : index === 2
+                              ? "bg-indigo-400 animate-pulse"
+                              : "bg-gray-600"
+                            }`}
                         ></div>
                         <span className="text-gray-300">{text}</span>
                       </div>
                     ))}
                   </div>
-                  
+
                   {/* Progress Bar */}
                   <div className="mt-6 w-full bg-gray-700 rounded-full h-2">
-                    <div className="bg-gradient-to-r from-indigo-500 to-emerald-500 h-2 rounded-full transition-all duration-1000 animate-pulse" style={{width: '60%'}}></div>
+                    <div className="bg-gradient-to-r from-indigo-500 to-emerald-500 h-2 rounded-full transition-all duration-1000 animate-pulse" style={{ width: '60%' }}></div>
                   </div>
                 </div>
               </div>
@@ -456,11 +468,10 @@ const QuizGenerator = () => {
 
           {step === 3 && quiz && (
             <div
-              className={`space-y-8 transition-all duration-1000 ${
-                animateResult
-                  ? "opacity-100 transform translate-y-0"
-                  : "opacity-0 transform translate-y-10"
-              }`}
+              className={`space-y-8 transition-all duration-1000 ${animateResult
+                ? "opacity-100 transform translate-y-0"
+                : "opacity-0 transform translate-y-10"
+                }`}
             >
               <div className="text-center space-y-6">
                 <h2 className="text-4xl font-bold text-white">
@@ -471,7 +482,7 @@ const QuizGenerator = () => {
                   {quiz.questions?.length || 0} questions • {formData.difficulty} difficulty
                 </div>
               </div>
-              
+
               <div className="space-y-8">
                 {quiz.questions?.map((question, index) => (
                   <QuestionCard key={index} question={question} index={index} />
@@ -508,6 +519,13 @@ const QuizGenerator = () => {
           </p>
         </div>
       </footer>
+      {/* Toast */}
+      <Toast
+        show={showToast}
+        message={toastMessage}
+        type={toastType}
+        onClose={() => setShowToast(false)}
+      />
     </div>
   );
 };

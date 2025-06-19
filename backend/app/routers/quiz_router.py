@@ -1,9 +1,10 @@
-from fastapi import APIRouter, HTTPException
-from app.models.schemas import QuizResponse, QuizRequest,QuestionType, DifficultyLevel
+from fastapi import APIRouter, Depends, HTTPException
+from app.models.schemas import QuizResponse, QuizRequest,QuestionType, DifficultyLevel, TaskStatusResponse
 from dotenv import load_dotenv
 import logging
 from app.services.quiz_service import GroqAPIClient, QuizGenerator
 import os
+from app.core.rate_limiting import quiz_generation_rate_limit
 
 # Load environment variables
 load_dotenv()
@@ -37,9 +38,15 @@ async def health_check():
     }
 
 @router.post("/generate-quiz", response_model=QuizResponse)
-async def generate_quiz(request: QuizRequest):
+async def generate_quiz(
+    request: QuizRequest,
+    rate_limit_data: dict = Depends(quiz_generation_rate_limit)
+    ):
     """Generate a quiz based on the provided parameters"""
     try:
+        user = rate_limit_data['user']
+        rate_info = rate_limit_data['rate_limit_info']
+
         logger.info(f"Generating quiz: {request.num_questions} questions about '{request.topic}' at {request.difficulty} level")
         quiz = await quiz_generator.generate_quiz(request)
         logger.info(f"Successfully generated {quiz.total_questions} questions")
