@@ -11,7 +11,7 @@ const QuizGenerator = () => {
     topic: '',
     questionTypes: {
       mcq: true,
-      qna: true,
+      qna: false,
       numerical: false
     }
   });
@@ -49,7 +49,7 @@ const QuizGenerator = () => {
       .map(([type, _]) => type);
 
     if (selectedTypes.length === 0) {
-      setError('Please select at least one question type');
+      setError('Please select a question type');
       return;
     }
 
@@ -117,8 +117,9 @@ const QuizGenerator = () => {
     setFormData(prev => ({
       ...prev,
       questionTypes: {
-        ...prev.questionTypes,
-        [type]: !prev.questionTypes[type]
+        mcq: type === 'mcq',
+        qna: type === 'qna',
+        numerical: type === 'numerical'
       }
     }));
   };
@@ -276,13 +277,17 @@ const QuizGenerator = () => {
                         name="numQuestions"
                         value={formData.numQuestions}
                         onChange={handleInputChange}
+                        style={{
+                          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                          color: 'white'
+                        }}
                         className="w-full px-6 py-4 bg-white/10 border border-white/20 rounded-2xl text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 appearance-none backdrop-blur-sm text-lg hover:bg-white/15 transition-all duration-200"
                       >
-                        <option value={1}>1 Question</option>
-                        <option value={2}>2 Questions</option>
-                        <option value={3}>3 Questions</option>
-                        <option value={4}>4 Questions</option>
-                        <option value={5}>5 Questions</option>
+                        <option value={1} style={{ backgroundColor: '#1e293b', color: 'white' }}>1 Question</option>
+                        <option value={2} style={{ backgroundColor: '#1e293b', color: 'white' }}>2 Questions</option>
+                        <option value={3} style={{ backgroundColor: '#1e293b', color: 'white' }}>3 Questions</option>
+                        <option value={4} style={{ backgroundColor: '#1e293b', color: 'white' }}>4 Questions</option>
+                        <option value={5} style={{ backgroundColor: '#1e293b', color: 'white' }}>5 Questions</option>
                       </select>
                       <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 w-6 h-6 text-gray-400 pointer-events-none" />
                     </div>
@@ -297,11 +302,15 @@ const QuizGenerator = () => {
                         name="difficulty"
                         value={formData.difficulty}
                         onChange={handleInputChange}
+                        style={{
+                          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                          color: 'white'
+                        }}
                         className="w-full px-6 py-4 bg-white/10 border border-white/20 rounded-2xl text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 appearance-none backdrop-blur-sm text-lg hover:bg-white/15 transition-all duration-200"
                       >
-                        <option value="easy">Easy</option>
-                        <option value="medium">Medium</option>
-                        <option value="hard">Hard</option>
+                        <option value="easy" style={{ backgroundColor: '#1e293b', color: 'white' }}>Easy</option>
+                        <option value="medium" style={{ backgroundColor: '#1e293b', color: 'white' }}>Medium</option>
+                        <option value="hard" style={{ backgroundColor: '#1e293b', color: 'white' }}>Hard</option>
                       </select>
                       <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 w-6 h-6 text-gray-400 pointer-events-none" />
                     </div>
@@ -329,7 +338,7 @@ const QuizGenerator = () => {
                   <div className="grid md:grid-cols-3 gap-6">
                     <div
                       className={`p-6 border-2 rounded-2xl transition-all duration-300 cursor-pointer transform hover:scale-105 ${formData.questionTypes.mcq
-                        ? 'border-emerald-400/50 bg-emerald-500/20'
+                        ? 'border-emerald-400/70 bg-emerald-500/30'
                         : 'border-white/20 bg-white/10 hover:border-emerald-400/30'
                         }`}
                       onClick={() => handleCheckboxChange('mcq')}
@@ -351,7 +360,7 @@ const QuizGenerator = () => {
 
                     <div
                       className={`p-6 border-2 rounded-2xl transition-all duration-300 cursor-pointer transform hover:scale-105 ${formData.questionTypes.qna
-                        ? 'border-orange-400/50 bg-orange-500/20'
+                        ? 'border-orange-400/70 bg-orange-500/30'
                         : 'border-white/20 bg-white/10 hover:border-orange-400/30'
                         }`}
                       onClick={() => handleCheckboxChange('qna')}
@@ -373,7 +382,7 @@ const QuizGenerator = () => {
 
                     <div
                       className={`p-6 border-2 rounded-2xl transition-all duration-300 cursor-pointer transform hover:scale-105 ${formData.questionTypes.numerical
-                        ? 'border-rose-400/50 bg-rose-500/20'
+                        ? 'border-rose-400/70 bg-rose-500/30'
                         : 'border-white/20 bg-white/10 hover:border-rose-400/30'
                         }`}
                       onClick={() => handleCheckboxChange('numerical')}

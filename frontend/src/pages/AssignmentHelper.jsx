@@ -233,12 +233,16 @@ const AssignmentHelper = () => {
 
             // Transform the data to match your expected result format
             const transformedResult = {
-                question: solution.question || "Question processed",
-                answer: solution.answer || "Answer generated",
-                confidence: solution.confidence || 95,
-                steps: solution.steps || (solution.answer ? solution.answer.split('\n').filter(line => line.trim()) : []),
-                keyPoints: solution.key_points || ["AI-generated solution", "Step-by-step explanation", "Comprehensive answer"],
-                explanation: solution.explanation || solution.answer || "Detailed explanation provided"
+                question: solution.question || inputMethod.id === 'text' ? textInput : `Content from ${uploadedFile?.name || 'captured image'}`,
+                answer: solution.answer || "No response generated",
+                confidence: solution.confidence || 85,
+                steps: solution.steps?.length > 0 ? solution.steps :
+                    solution.answer ? solution.answer.split('\n').filter(line => line.trim().length > 20).slice(0, 5).map((line, i) => `${i + 1}. ${line.trim()}`) :
+                        ["Processing completed", "Response generated"],
+                keyPoints: solution.key_points?.length > 0 ? solution.key_points :
+                    extractKeyPoints(solution.answer || solution.explanation || ""),
+                explanation: solution.explanation || solution.answer || "Detailed solution provided above",
+                metadata: solution.metadata || {}
             };
 
             setAiResponseText(transformedResult.answer || transformedResult.explanation || "No response text available");
@@ -823,14 +827,20 @@ const AssignmentHelper = () => {
                                     <h3 className="text-2xl font-bold text-white">Step-by-Step Solution</h3>
                                 </div>
                                 <div className="space-y-4">
-                                    {result.steps.map((step, index) => (
-                                        <div key={index} className="flex items-start space-x-4">
-                                            <div className="flex-shrink-0 w-8 h-8 bg-purple-500/20 rounded-full flex items-center justify-center">
-                                                <span className="text-purple-300 font-semibold">{index + 1}</span>
+                                    {result.steps && result.steps.length > 0 ? (
+                                        result.steps.map((step, index) => (
+                                            <div key={index} className="flex items-start space-x-4">
+                                                <div className="flex-shrink-0 w-8 h-8 bg-purple-500/20 rounded-full flex items-center justify-center">
+                                                    <span className="text-purple-300 font-semibold">{index + 1}</span>
+                                                </div>
+                                                <p className="text-gray-300 flex-1">{step}</p>
                                             </div>
-                                            <p className="text-gray-300 flex-1">{step}</p>
+                                        ))
+                                    ) : (
+                                        <div className="text-center py-8">
+                                            <p className="text-gray-400">Step-by-step breakdown is included in the answer above.</p>
                                         </div>
-                                    ))}
+                                    )}
                                 </div>
                             </div>
 

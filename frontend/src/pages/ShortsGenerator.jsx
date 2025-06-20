@@ -3,9 +3,9 @@ import {
   Home,
   Settings,
   User,
-  Video,ArrowRight, Clock,AlertCircle,
+  Video, ArrowRight, Clock, AlertCircle,
   Check,
-  Sparkles,RotateCcw,Shield,
+  Sparkles, RotateCcw, Shield,
   Download,
   Share,
   Link as LinkIcon,
@@ -401,9 +401,8 @@ export default function ShortsGenerator() {
 
       {/* Main Content */}
       <main
-        className={`flex-1 flex ${
-          submitted ? "flex-col pt-24" : "items-center justify-center"
-        } px-4 sm:px-6 lg:px-8`}
+        className={`flex-1 flex ${submitted ? "flex-col pt-24" : "items-center justify-center"
+          } px-4 sm:px-6 lg:px-8`}
       >
         <div className={`max-w-7xl mx-auto w-full ${submitted ? "" : "py-30"}`}>
           <div className="w-full">
@@ -422,7 +421,7 @@ export default function ShortsGenerator() {
                 </span>
               </h1>
               <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
-                Experience the future of content with smart clip detection, 
+                Experience the future of content with smart clip detection,
                 instant highlights, and engagement-boosting edits.
               </p>
             </div>
@@ -430,14 +429,12 @@ export default function ShortsGenerator() {
             {/* Step Indicator */}
             <div className="flex justify-center items-center mb-10">
               <div
-                className={`flex items-center ${
-                  url ? "text-indigo-500" : "text-gray-500"
-                }`}
+                className={`flex items-center ${url ? "text-indigo-500" : "text-gray-500"
+                  }`}
               >
                 <div
-                  className={`rounded-full h-8 w-8 flex items-center justify-center border-2 ${
-                    url ? "border-indigo-500 bg-indigo-100" : "border-gray-300"
-                  }`}
+                  className={`rounded-full h-8 w-8 flex items-center justify-center border-2 ${url ? "border-indigo-500 bg-indigo-100" : "border-gray-300"
+                    }`}
                 >
                   {url ? <Check className="h-5 w-5" /> : "1"}
                 </div>
@@ -445,16 +442,14 @@ export default function ShortsGenerator() {
               </div>
               <div className="h-1 w-12 mx-4 bg-gray-200"></div>
               <div
-                className={`flex items-center ${
-                  submitted ? "text-indigo-500" : "text-gray-500"
-                }`}
+                className={`flex items-center ${submitted ? "text-indigo-500" : "text-gray-500"
+                  }`}
               >
                 <div
-                  className={`rounded-full h-8 w-8 flex items-center justify-center border-2 ${
-                    submitted
-                      ? "border-indigo-500 bg-indigo-100"
-                      : "border-gray-300"
-                  }`}
+                  className={`rounded-full h-8 w-8 flex items-center justify-center border-2 ${submitted
+                    ? "border-indigo-500 bg-indigo-100"
+                    : "border-gray-300"
+                    }`}
                 >
                   {submitted ? <Check className="h-5 w-5" /> : "2"}
                 </div>
@@ -471,189 +466,183 @@ export default function ShortsGenerator() {
 
             {/* Input Section */}
             <div className="max-w-2xl mx-auto mb-16">
-  <form onSubmit={handleSubmit} className="space-y-6">
-    {/* Input Container */}
-    <div className="relative group">
-      {/* Animated background glow */}
-      <div className="absolute -inset-1 bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-cyan-500/20 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-      
-      <div className="relative bg-white/95 backdrop-blur-sm border border-white/20 rounded-2xl shadow-2xl overflow-hidden">
-        {/* Input field */}
-        <div className="relative">
-          <div className="absolute inset-y-0 left-0 flex items-center pl-6 pointer-events-none">
-            <div className="p-2 bg-gradient-to-br from-purple-100 to-blue-100 rounded-lg">
-              <LinkIcon className="h-5 w-5 text-purple-600" />
-            </div>
-          </div>
-          
-          <input
-            type="text"
-            value={url}
-            onChange={handleUrlChange}
-            onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-            placeholder="Paste your YouTube URL here..."
-            className={`block w-full pl-20 pr-16 py-5 text-lg bg-transparent border-0 focus:ring-0 focus:outline-none placeholder-gray-500 text-gray-900 ${
-              inputError ? "text-red-600" : ""
-            }`}
-          />
-          
-          {/* Clear button */}
-          {url && (
-            <button
-              type="button"
-              onClick={() => setUrl("")}
-              className="absolute inset-y-0 right-0 flex items-center pr-6 group/clear"
-            >
-              <div className="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200">
-                <X className="h-5 w-5 text-gray-400 group-hover/clear:text-gray-600" />
-              </div>
-            </button>
-          )}
-        </div>
-        
-        {/* Animated border bottom */}
-        <div className={`h-1 bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 transform origin-left transition-transform duration-300 ${
-          url ? "scale-x-100" : "scale-x-0"
-        }`}></div>
-      </div>
-    </div>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Input Container */}
+                <div className="relative group">
+                  {/* Animated background glow */}
+                  <div className="absolute -inset-1 bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-cyan-500/20 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-    {/* Error message */}
-    {inputError && (
-      <div className="flex items-center gap-2 text-red-500 bg-red-50 px-4 py-3 rounded-xl border border-red-200">
-        <AlertCircle className="h-4 w-4 flex-shrink-0" />
-        <p className="text-sm font-medium">{inputError}</p>
-      </div>
-    )}
+                  <div className="relative bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl shadow-2xl overflow-hidden">
+                    {/* Input field */}
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-6 pointer-events-none">
+                        <div className="p-2 bg-purple-500/20 rounded-lg">
+                          <LinkIcon className="h-5 w-5 text-indigo-500" />
+                        </div>
+                      </div>
 
-    {/* Action buttons */}
-    <div className="flex justify-center gap-4">
-      <button
-        type="submit"
-        disabled={isProcessing}
-        className={`group relative overflow-hidden px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 ${
-          isProcessing
-            ? "bg-gray-300 cursor-not-allowed text-gray-500"
-            : "bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-600 hover:from-purple-700 hover:via-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105"
-        }`}
-      >
-        {/* Button background animation */}
-        {!isProcessing && (
-          <div className="absolute inset-0 bg-gradient-to-r from-purple-400 via-blue-400 to-cyan-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-        )}
-        
-        <div className="relative flex items-center justify-center gap-3">
-          {isProcessing ? (
-            <>
-              <div className="relative">
-                <Loader2 className="h-5 w-5 animate-spin" />
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-blue-400 rounded-full animate-pulse opacity-50"></div>
-              </div>
-              <span>Processing Magic...</span>
-            </>
-          ) : (
-            <>
-              <Zap className="h-5 w-5 group-hover:animate-pulse" />
-              <span>Generate Shorts</span>
-              <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />
-            </>
-          )}
-        </div>
-      </button>
+                      <input
+                        type="text"
+                        value={url}
+                        onChange={handleUrlChange}
+                        onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+                        placeholder="Paste your YouTube URL here..."
+                        className={`block w-full pl-20 pr-16 py-5 text-lg bg-transparent border-0 focus:ring-0 focus:outline-none placeholder-gray-300 text-white ${inputError ? "text-red-400" : ""
+                          }`}
+                      />
 
-      {/* Reset button */}
-      {submitted && !isProcessing && (
-        <button
-          type="button"
-          onClick={handleReset}
-          className="group px-6 py-4 border-2 border-red-300 text-red-600 rounded-2xl hover:bg-red-50 hover:border-red-400 transition-all duration-300 font-semibold flex items-center gap-2"
-        >
-          <RotateCcw className="h-4 w-4 group-hover:rotate-180 transition-transform duration-500" />
-          Reset
-        </button>
-      )}
-    </div>
+                      {/* Clear button */}
+                      {url && (
+                        <button
+                          type="button"
+                          onClick={() => setUrl("")}
+                          className="absolute inset-y-0 right-0 flex items-center pr-6 group/clear"
+                        >
+                          <div className="p-2 rounded-lg hover:bg-white/20 transition-colors duration-200">
+                            <X className="h-5 w-5 text-gray-400 group-hover/clear:text-white" />
+                          </div>
+                        </button>
+                      )}
+                    </div>
 
-    {/* Enhanced Progress Bar */}
-    {isProcessing && (
-      <div className="mt-8 space-y-4">
-        {/* Progress container */}
-        <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg">
-          {/* Progress header */}
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <div className="w-3 h-3 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full animate-pulse"></div>
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full animate-ping opacity-50"></div>
+                    {/* Animated border bottom */}
+                    <div className={`h-1 bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 transform origin-left transition-transform duration-300 ${url ? "scale-x-100" : "scale-x-0"
+                      }`}></div>
+                  </div>
+                </div>
+
+                {/* Error message */}
+                {inputError && (
+                  <div className="flex items-center gap-2 text-red-500 bg-red-50 px-4 py-3 rounded-xl border border-red-200">
+                    <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                    <p className="text-sm font-medium">{inputError}</p>
+                  </div>
+                )}
+
+                {/* Action buttons */}
+                <div className="flex justify-center gap-4">
+                  <button
+                    type="submit"
+                    disabled={isProcessing}
+                    className={`group relative overflow-hidden px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 ${isProcessing
+                      ? "bg-gray-300 cursor-not-allowed text-gray-500"
+                      : "bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-600 hover:from-purple-700 hover:via-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105"
+                      }`}
+                  >
+                    {/* Button background animation */}
+                    {!isProcessing && (
+                      <div className="absolute inset-0 bg-gradient-to-r from-purple-400 via-blue-400 to-cyan-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                    )}
+
+                    <div className="relative flex items-center justify-center gap-3">
+                      {isProcessing ? (
+                        <>
+                          <div className="relative">
+                            <Loader2 className="h-5 w-5 animate-spin" />
+                            <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-blue-400 rounded-full animate-pulse opacity-50"></div>
+                          </div>
+                          <span>Processing Magic...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Zap className="h-5 w-5 group-hover:animate-pulse" />
+                          <span>Generate Shorts</span>
+                          <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />
+                        </>
+                      )}
+                    </div>
+                  </button>
+
+                  {/* Reset button */}
+                  {submitted && !isProcessing && (
+                    <button
+                      type="button"
+                      onClick={handleReset}
+                      className="group px-6 py-4 border-2 border-red-300 text-red-600 rounded-2xl hover:bg-red-50 hover:border-red-400 transition-all duration-300 font-semibold flex items-center gap-2"
+                    >
+                      <RotateCcw className="h-4 w-4 group-hover:rotate-180 transition-transform duration-500" />
+                      Reset
+                    </button>
+                  )}
+                </div>
+
+                {/* Enhanced Progress Bar */}
+                {isProcessing && (
+                  <div className="mt-8 space-y-4">
+                    {/* Progress container */}
+                    <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg">
+                      {/* Progress header */}
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <div className="relative">
+                            <div className="w-3 h-3 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full animate-pulse"></div>
+                            <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full animate-ping opacity-50"></div>
+                          </div>
+                          <span className="text-sm font-medium text-gray-700">
+                            {processingMessage}
+                          </span>
+                        </div>
+                        <span className="text-sm font-bold text-gray-600">
+                          {processingProgress}%
+                        </span>
+                      </div>
+
+                      {/* Progress bar */}
+                      <div className="relative h-3 bg-gray-200 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 rounded-full transition-all duration-500 ease-out relative"
+                          style={{ width: `${processingProgress}%` }}
+                        >
+                          {/* Moving shine effect */}
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse"></div>
+                        </div>
+                      </div>
+
+                      {/* Processing steps */}
+                      <div className="mt-4 grid grid-cols-3 gap-2 text-xs">
+                        <div className={`text-center p-2 rounded-lg transition-colors duration-300 ${processingProgress >= 33 ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"
+                          }`}>
+                          <div className="flex items-center justify-center gap-1">
+                            {processingProgress >= 33 ? <Check className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
+                            <span>Analyzing</span>
+                          </div>
+                        </div>
+                        <div className={`text-center p-2 rounded-lg transition-colors duration-300 ${processingProgress >= 66 ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"
+                          }`}>
+                          <div className="flex items-center justify-center gap-1">
+                            {processingProgress >= 66 ? <Check className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
+                            <span>Creating</span>
+                          </div>
+                        </div>
+                        <div className={`text-center p-2 rounded-lg transition-colors duration-300 ${processingProgress >= 100 ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"
+                          }`}>
+                          <div className="flex items-center justify-center gap-1">
+                            {processingProgress >= 100 ? <Check className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
+                            <span>Finalizing</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </form>
+
+              {/* Trust indicators */}
+              <div className="mt-12 flex justify-center items-center gap-8 text-sm text-gray-500">
+                <div className="flex items-center gap-2">
+                  <Shield className="h-4 w-4 text-green-500" />
+                  <span>Secure Processing</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Zap className="h-4 w-4 text-yellow-500" />
+                  <span>Lightning Fast</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="h-4 w-4 text-blue-500" />
+                  <span>HD Quality</span>
+                </div>
               </div>
-              <span className="text-sm font-medium text-gray-700">
-                {processingMessage}
-              </span>
             </div>
-            <span className="text-sm font-bold text-gray-600">
-              {processingProgress}%
-            </span>
-          </div>
-          
-          {/* Progress bar */}
-          <div className="relative h-3 bg-gray-200 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 rounded-full transition-all duration-500 ease-out relative"
-              style={{ width: `${processingProgress}%` }}
-            >
-              {/* Moving shine effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse"></div>
-            </div>
-          </div>
-          
-          {/* Processing steps */}
-          <div className="mt-4 grid grid-cols-3 gap-2 text-xs">
-            <div className={`text-center p-2 rounded-lg transition-colors duration-300 ${
-              processingProgress >= 33 ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"
-            }`}>
-              <div className="flex items-center justify-center gap-1">
-                {processingProgress >= 33 ? <Check className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
-                <span>Analyzing</span>
-              </div>
-            </div>
-            <div className={`text-center p-2 rounded-lg transition-colors duration-300 ${
-              processingProgress >= 66 ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"
-            }`}>
-              <div className="flex items-center justify-center gap-1">
-                {processingProgress >= 66 ? <Check className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
-                <span>Creating</span>
-              </div>
-            </div>
-            <div className={`text-center p-2 rounded-lg transition-colors duration-300 ${
-              processingProgress >= 100 ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"
-            }`}>
-              <div className="flex items-center justify-center gap-1">
-                {processingProgress >= 100 ? <Check className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
-                <span>Finalizing</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    )}
-  </form>
-  
-  {/* Trust indicators */}
-  <div className="mt-12 flex justify-center items-center gap-8 text-sm text-gray-500">
-    <div className="flex items-center gap-2">
-      <Shield className="h-4 w-4 text-green-500" />
-      <span>Secure Processing</span>
-    </div>
-    <div className="flex items-center gap-2">
-      <Zap className="h-4 w-4 text-yellow-500" />
-      <span>Lightning Fast</span>
-    </div>
-    <div className="flex items-center gap-2">
-      <Check className="h-4 w-4 text-blue-500" />
-      <span>HD Quality</span>
-    </div>
-  </div>
-</div>
 
             {/* Video Details Section (appears after processing) */}
             {videoDetails && submitted && (

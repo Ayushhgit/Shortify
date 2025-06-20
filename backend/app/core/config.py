@@ -119,7 +119,7 @@ client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_S
 CELERY_BEAT_SCHEDULE = {
     "reset-all-limits-daily": {
         "task": "app.tasks.reset_limits.reset_all_limits",  # Updated task name
-        "schedule": timedelta(hours=24),  # Reset every 24 hours
+        "schedule": timedelta(minutes=25),  # Reset every 24 hours
         "options": {"queue": "shorts"},
     },
 }

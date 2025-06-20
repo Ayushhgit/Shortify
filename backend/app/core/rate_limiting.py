@@ -44,10 +44,10 @@ SUBSCRIPTION_LIMITS: Dict[str, Dict[FeatureType, int]] = {
         FeatureType.RESUME_ANALYSIS: 8,
         FeatureType.COVER_LETTER_GENERATION: 8,
         FeatureType.ASSIGNMENT_HELP: 5,
-        FeatureType.RESEARCH_ASSISTANCE: 5,
+        FeatureType.RESEARCH_ASSISTANCE: 35,
         FeatureType.DATA_ANALYSIS: 5,
         FeatureType.LINKEDIN_HELP: 10,
-        FeatureType.QUIZ_GENERATION: 10,
+        FeatureType.QUIZ_GENERATION: 16,
         FeatureType.CLIP_GENERATION: 10,
 
     },

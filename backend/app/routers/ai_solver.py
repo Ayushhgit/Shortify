@@ -77,13 +77,14 @@ AI_SOLVER_PROMPT = ChatPromptTemplate.from_messages([
     6. Encourage learning and understanding rather than just giving answers
     7. Be encouraging and supportive in your tone
     8. Structure your response with clear sections and bullet points where appropriate
+     Do not use asterisks, bold text, or any markdown formatting
     9. If solving math problems, show each step clearly"""),
     
     ("human", """{subject_prompt}
 
 Question: {question}
 
-Please provide a detailed and helpful answer that will help the student understand the concept and solution.""")
+Please provide a detailed and helpful answer that will help the student understand the concept and solution without any special formatting.""")
 ])
 
 # File processing functions
@@ -138,32 +139,64 @@ def extract_text_from_image(file_content: bytes) -> str:
         logger.error(f"Error extracting text from image: {str(e)}")
         return f"Error processing image file: {str(e)}"
 
-def process_ai_response(ai_response: str) -> dict:
-    """Process AI response and extract structured information"""
-    lines = [line.strip() for line in ai_response.split('\n') if line.strip()]
+def clean_markdown_formatting(text: str) -> str:
+    if not text:
+        return text
     
-    # Extract steps (lines that start with numbers or bullet points)
+    # Remove code blocks first (```code```)
+    text = re.sub(r'```[\s\S]*?```', '', text)
+    
+    # Remove inline code (`code`)
+    text = re.sub(r'`([^`]+)`', r'\1', text)
+    
+    # Remove headers (# ## ###)
+    text = re.sub(r'^#{1,6}\s+', '', text, flags=re.MULTILINE)
+    
+    # Remove bold (**text** or __text__)
+    text = re.sub(r'\*\*(.*?)\*\*|__(.*?)__', r'\1\2', text)
+    
+    # Remove italic (*text* or _text*)
+    text = re.sub(r'(?<!\w)\*([^\*\n]+?)\*(?!\w)|(?<!\w)_([^_\n]+?)_(?!\w)', r'\1\2', text)
+    
+    # Remove any remaining emphasis markers
+    text = re.sub(r'[_\*]+', '', text)
+    
+    # Remove bullet points and numbered lists
+    text = re.sub(r'^\s*[-\*\+•]\s+', '', text, flags=re.MULTILINE)
+    text = re.sub(r'^\s*\d+\.\s+', '', text, flags=re.MULTILINE)
+    
+    # Clean up multiple spaces and newlines
+    text = re.sub(r'\s+', ' ', text)
+    text = re.sub(r'\n\s*\n+', '\n\n', text)
+    
+    return text.strip()
+
+def process_ai_response(ai_response: str) -> dict:
+    cleaned_response = clean_markdown_formatting(ai_response)
+    lines = [line.strip() for line in cleaned_response.split('\n') if line.strip()]
+    
+    # Better step extraction
     steps = []
     key_points = []
     
-    for line in lines:
-        if re.match(r'^\d+\.', line) or line.startswith('•') or line.startswith('-'):
-            steps.append(line)
-        elif len(line) > 20 and not line.endswith(':'):  # Likely a key point
-            key_points.append(line)
+    # Look for natural breakpoints in the text
+    paragraphs = cleaned_response.split('\n\n')
     
-    # If no structured steps found, create them from paragraphs
-    if not steps and len(lines) > 1:
-        steps = lines[:5]  # First 5 lines as steps
+    # Extract meaningful steps from paragraphs
+    for i, paragraph in enumerate(paragraphs[:6]):  # Limit to 6 steps
+        if len(paragraph.strip()) > 20:  # Meaningful content
+            step_text = paragraph.strip()[:200]  # Limit length
+            if step_text:
+                steps.append(f"Step {i+1}: {step_text}")
     
-    # Generate key points if none found
-    if not key_points:
-        key_points = ["AI-generated comprehensive solution", "Step-by-step explanation provided", "Detailed analysis included"]
+    # Generate key points from important sentences
+    sentences = [s.strip() for s in cleaned_response.split('.') if len(s.strip()) > 30]
+    key_points = sentences[:5] if sentences else ["Complete solution provided", "Detailed explanation included"]
     
     return {
-        "steps": steps[:10],  # Limit to 10 steps
-        "key_points": key_points[:5],  # Limit to 5 key points
-        "full_response": ai_response
+        "steps": steps if steps else ["Solution process completed", "Answer provided above"],
+        "key_points": key_points,
+        "full_response": cleaned_response
     }
 
 @router.post("/generate-solutions")
@@ -203,6 +236,9 @@ async def generate_solutions(
                 # Get response from Groq LLM
                 response = llm.invoke(formatted_prompt)
                 ai_answer = response.content
+
+                if not ai_answer or len(ai_answer.strip()) < 10:
+                    ai_answer = "I apologize, but I couldn't generate a proper response. Please try rephrasing your question."
                 
                 # Process the response
                 processed_response = process_ai_response(ai_answer)
@@ -211,10 +247,14 @@ async def generate_solutions(
                     "question": question,
                     "answer": ai_answer,
                     "subject": request.subject,
-                    "steps": processed_response["steps"],
-                    "key_points": processed_response["key_points"],
+                    "steps": processed_response["steps"] or ["Solution provided in answer section"],
+                    "key_points": processed_response["key_points"] or ["AI-generated response", "Comprehensive answer"],
                     "confidence": 95,
-                    "explanation": ai_answer
+                    "explanation": ai_answer,
+                    "metadata": {
+                        "response_length": len(ai_answer),
+                        "processing_time": "< 1 second"
+                    }
                 }
                 
                 solutions.append(solution)

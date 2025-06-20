@@ -163,6 +163,53 @@ const ResearchAssistantChat = () => {
     URL.revokeObjectURL(url);
   };
 
+  const formatMessageContent = (content) => {
+    return content.split('\n').map((line, i) => {
+      // Headers
+      if (line.startsWith('### ')) {
+        return <h3 key={i} className="text-lg font-semibold mb-2 mt-4 text-white">{line.slice(4)}</h3>;
+      }
+      if (line.startsWith('## ')) {
+        return <h2 key={i} className="text-xl font-bold mb-3 mt-4 text-white">{line.slice(3)}</h2>;
+      }
+      if (line.startsWith('# ')) {
+        return <h1 key={i} className="text-2xl font-bold mb-4 mt-4 text-white">{line.slice(2)}</h1>;
+      }
+
+      // Bold text **text**
+      if (line.match(/\*\*(.*?)\*\*/)) {
+        const parts = line.split(/(\*\*.*?\*\*)/);
+        return (
+          <p key={i} className="mb-2 text-gray-200 leading-relaxed">
+            {parts.map((part, j) =>
+              part.startsWith('**') && part.endsWith('**') ?
+                <strong key={j} className="font-bold text-white">{part.slice(2, -2)}</strong> :
+                part
+            )}
+          </p>
+        );
+      }
+
+      // Numbered lists
+      if (line.match(/^\d+\.\s/)) {
+        return <li key={i} className="ml-6 mb-1 text-gray-200 list-decimal">{line.replace(/^\d+\.\s/, '')}</li>;
+      }
+
+      // Bullet points
+      if (line.startsWith('- ')) {
+        return <li key={i} className="ml-4 mb-1 text-gray-200 list-disc">{line.slice(2)}</li>;
+      }
+
+      // Regular paragraphs
+      if (line.trim()) {
+        return <p key={i} className="mb-2 text-gray-200 leading-relaxed">{line}</p>;
+      }
+
+      // Empty lines
+      return <br key={i} />;
+    });
+  };
+
   const renderMessage = (message, index) => {
     const isUser = message.role === "user";
 
@@ -195,55 +242,12 @@ const ResearchAssistantChat = () => {
               }`}
           >
             <div className="prose prose-sm max-w-none">
-              {message.content.split("\n").map((line, i) => {
-                if (line.startsWith("# ")) {
-                  return (
-                    <h1 key={i} className="text-xl font-bold mb-3 text-white">
-                      {line.slice(2)}
-                    </h1>
-                  );
-                } else if (line.startsWith("## ")) {
-                  return (
-                    <h2
-                      key={i}
-                      className="text-lg font-semibold mb-2 mt-4 text-gray-100"
-                    >
-                      {line.slice(3)}
-                    </h2>
-                  );
-                } else if (line.startsWith("### ")) {
-                  return (
-                    <h3
-                      key={i}
-                      className="text-md font-semibold mb-1 mt-3 text-gray-200"
-                    >
-                      {line.slice(4)}
-                    </h3>
-                  );
-                } else if (line.startsWith("**") && line.endsWith("**")) {
-                  return (
-                    <p key={i} className="font-semibold mb-1 text-white">
-                      {line.slice(2, -2)}
-                    </p>
-                  );
-                } else if (line.startsWith("- ")) {
-                  return (
-                    <li key={i} className="ml-4 mb-1 text-gray-200">
-                      {line.slice(2)}
-                    </li>
-                  );
-                } else if (line.trim()) {
-                  return (
-                    <p key={i} className="mb-2 text-gray-200 leading-relaxed">
-                      {line}
-                    </p>
-                  );
-                }
-                return <br key={i} />;
-              })}
+              <div className="prose prose-sm max-w-none text-gray-200">
+                {formatMessageContent(message.content)}
+              </div>
             </div>
 
-            {!isUser && message.sources && message.sources.length > 0 && (
+            {/*{!isUser && message.sources && message.sources.length > 0 && (
               <div className="mt-4 pt-4 border-t border-white/20">
                 <h4 className="text-sm font-semibold text-cyan-300 mb-3 flex items-center">
                   <ExternalLink size={14} className="mr-2" />
@@ -270,7 +274,7 @@ const ResearchAssistantChat = () => {
                   ))}
                 </div>
               </div>
-            )}
+            )}*/}
 
             {!isUser && message.papers && message.papers.length > 0 && (
               <div className="mt-4 pt-4 border-t border-white/20">
@@ -317,7 +321,11 @@ const ResearchAssistantChat = () => {
             )}
 
             <div className="text-xs text-gray-400 mt-3">
-              {message.timestamp.toLocaleTimeString()}
+              {new Date(message.timestamp).toLocaleString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+              })}
             </div>
           </div>
         </div>
@@ -371,8 +379,8 @@ const ResearchAssistantChat = () => {
             <div className="flex items-center gap-2">
               {[
                 { icon: Home, label: "Home", href: "/shortify" },
-                { icon: User, label: "Profile", href: "/Profile" },
-                { icon: Settings, label: "Settings", href: "/Settings" },
+                { icon: User, label: "Profile", href: "/profile" },
+                { icon: Settings, label: "Settings", href: "/settings" },
               ].map(({ icon: Icon, label, href }) => (
                 <button
                   key={label}
@@ -485,7 +493,7 @@ const ResearchAssistantChat = () => {
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     placeholder="Ask about any research topic... e.g., 'LSTM RNNs', 'quantum computing', 'climate change'"
-                    className="block w-full pl-12 pr-4 py-4 border-2 border-white/30 rounded-2xl shadow-xl focus:ring-2 focus:ring-purple-400 focus:border-transparent bg-white/10 backdrop-blur-sm text-white placeholder-gray-300 text-lg font-medium hover:bg-white/20 transition-all duration-300"
+                    className="block w-full pl-12 pr-4 py-4 border-2 border-white/30 rounded-2xl shadow-xl focus:ring-2 focus:ring-purple-400 focus:border-transparent bg-white/10 backdrop-blur-sm placeholder-gray-400 text-white text-lg font-medium hover:bg-white/20 transition-all duration-300"
                     disabled={isLoading}
                     onKeyPress={(e) => {
                       if (e.key === "Enter") {
