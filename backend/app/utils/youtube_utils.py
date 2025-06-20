@@ -7,6 +7,64 @@ import tempfile
 import time
 import logging
 from xml.etree.ElementTree import ParseError
+import google.generativeai as genai
+import tempfile
+from app.core.config import settings
+
+def transcribe_with_gemini(video_url: str) -> str:
+    """Primary transcription using Google Gemini API"""
+    try:
+        logger.info("Attempting transcription with Google Gemini...")
+        
+        # Configure Gemini API
+        genai.configure(api_key=settings.GOOGLE_AI_API_KEY)  # Add this to your .env file
+        
+        # Create temporary directory for audio file
+        with tempfile.TemporaryDirectory() as temp_dir:
+            audio_path = os.path.join(temp_dir, "audio.%(ext)s")
+            
+            # Download audio only
+            ydl_opts = {
+                'format': 'bestaudio/best',
+                'outtmpl': audio_path,
+                'quiet': True,
+                'no_warnings': True,
+            }
+            
+            with YoutubeDL(ydl_opts) as ydl:
+                ydl.download([video_url])
+            
+            # Find the downloaded audio file
+            audio_file = None
+            for file in os.listdir(temp_dir):
+                if file.startswith("audio"):
+                    audio_file = os.path.join(temp_dir, file)
+                    break
+            
+            if not audio_file:
+                raise Exception("Failed to download audio")
+            
+            logger.info(f"Audio downloaded: {audio_file}")
+            
+            # Upload file to Gemini
+            uploaded_file = genai.upload_file(path=audio_file)
+            logger.info(f"File uploaded to Gemini: {uploaded_file.uri}")
+            
+            # Create model and generate transcript
+            model = genai.GenerativeModel(model_name="gemini-2.5-flash")
+            prompt_parts = ["Transcribe this audio file accurately. Provide only the transcription text without any additional commentary.", uploaded_file]
+            
+            response = model.generate_content(prompt_parts)
+            
+            if response.text:
+                logger.info("Gemini transcription completed")
+                return response.text.strip()
+            else:
+                raise Exception("Gemini returned no transcription text")
+            
+    except Exception as e:
+        logger.error(f"Gemini transcription failed: {e}")
+        raise Exception(f"Could not transcribe with Gemini: {str(e)}")
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -175,7 +233,7 @@ def transcribe_audio(video_url: str) -> str:
 
 def get_transcript_and_details(video_url: str):
     """
-    Main function to get transcript and video details with comprehensive error handling
+    Main function to get transcript and video details with Gemini as primary, fallbacks as secondary
     """
     video_id = extract_video_id(video_url)
     if not video_id:
@@ -184,31 +242,40 @@ def get_transcript_and_details(video_url: str):
     transcript = None
     transcript_source = None
     
-    # First try to get existing subtitles with retry logic
+    # Strategy 1: Try Gemini API transcription first
     try:
-        transcript = get_transcript(video_id)
+        transcript = transcribe_with_gemini(video_url)
         if transcript:
-            transcript_source = "subtitles"
-            logger.info("Successfully used existing subtitles")
+            transcript_source = "gemini_transcription"
+            logger.info("Successfully used Gemini transcription")
     except Exception as e:
-        logger.warning(f"Subtitles not available: {e}")
+        logger.warning(f"Gemini transcription failed: {e}")
         
-        # Fallback to audio transcription
+        # Strategy 2: Fallback to existing subtitles with retry logic
         try:
-            transcript = transcribe_audio(video_url)
-            transcript_source = "audio_transcription"
-            logger.info("Successfully used audio transcription")
-        except Exception as audio_error:
-            logger.error(f"Audio transcription also failed: {audio_error}")
-            raise ValueError(f"Neither subtitles nor audio transcription available. Subtitle error: {str(e)}. Audio error: {str(audio_error)}")
+            transcript = get_transcript(video_id)
+            if transcript:
+                transcript_source = "subtitles"
+                logger.info("Successfully used existing subtitles as fallback")
+        except Exception as subtitle_error:
+            logger.warning(f"Subtitles not available: {subtitle_error}")
+            
+            # Strategy 3: Final fallback to Whisper audio transcription
+            try:
+                transcript = transcribe_audio(video_url)
+                transcript_source = "whisper_transcription"
+                logger.info("Successfully used Whisper transcription as final fallback")
+            except Exception as whisper_error:
+                logger.error(f"All transcription methods failed. Gemini: {str(e)}, Subtitles: {str(subtitle_error)}, Whisper: {str(whisper_error)}")
+                raise ValueError(f"No transcription method available. Gemini: {str(e)}, Subtitles: {str(subtitle_error)}, Whisper: {str(whisper_error)}")
     
     if not transcript:
         raise ValueError("No transcript could be generated")
     
-    # Get video details
+    # Get video details (keep existing logic)
     try:
         details = get_video_details(video_url)
-        details['transcript_source'] = transcript_source  # Add info about transcript source
+        details['transcript_source'] = transcript_source
     except Exception as e:
         logger.warning(f"Could not get video details: {e}")
         details = {

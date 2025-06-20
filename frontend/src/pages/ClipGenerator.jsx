@@ -1,5 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { ChevronDown, Video, Download, Play, AlertCircle, Loader2, Home, User, Settings, Sparkles, FileVideo } from 'lucide-react';
+import { useNavigate } from "react-router-dom";
+import Toast from "../components/Toast";
+import { getToken } from "../firebase";
 
 const API_BASE_URL = "http://localhost:8000";
 
@@ -31,9 +34,25 @@ export default function ClipGenerator() {
     const [step, setStep] = useState(1);
     const [animateResult, setAnimateResult] = useState(false);
     const videoRef = useRef(null);
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState("");
+    const [toastType, setToastType] = useState("success");
+    const navigate = useNavigate();
+
+    const displayToast = (message, type = "success") => {
+        setToastMessage(message);
+        setToastType(type);
+        setShowToast(true);
+    };
 
     const handleSubmit = async (event) => {
-        event.preventDefault(); 
+        const idToken = await getToken();
+        if (!idToken) {
+            console.error("User not authenticated");
+            displayToast("Authentication failed. Please try logging in again.", "error");
+            return;
+        }
+        event.preventDefault();
 
         if (!topic.trim()) {
             setError("Please enter a topic to generate a video.");
@@ -49,7 +68,10 @@ export default function ClipGenerator() {
         try {
             const response = await fetch(`${API_BASE_URL}/clip/generate-video`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${idToken}`,
+                },
                 body: JSON.stringify({ topic }),
             });
 
@@ -81,7 +103,7 @@ export default function ClipGenerator() {
         link.setAttribute('download', `video_${safeTopic}.mp4`);
         document.body.appendChild(link);
         link.click();
-        document.body.removeChild(link); 
+        document.body.removeChild(link);
     };
 
     return (
@@ -109,13 +131,14 @@ export default function ClipGenerator() {
                     </div>
                     <div className="flex items-center space-x-2">
                         {[
-                            { icon: Home },
-                            { icon: User },
-                            { icon: Settings },
+                            { icon: Home, href: "/shortify" },
+                            { icon: User, href: "/profile" },
+                            { icon: Settings, href: "/settings" },
                         ].map((item, index) => (
                             <button
                                 key={index}
                                 className="p-3 rounded-xl hover:bg-white/20 transition-all duration-300 hover:scale-110 backdrop-blur-sm border border-white/10"
+                                onClick={() => navigate(item.href)}
                             >
                                 <item.icon className="h-5 w-5 text-white/80 hover:text-white" />
                             </button>
@@ -270,13 +293,12 @@ export default function ClipGenerator() {
                                         ].map((text, index) => (
                                             <div key={index} className="flex items-center space-x-3">
                                                 <div
-                                                    className={`w-4 h-4 rounded-full transition-all duration-500 ${
-                                                        index < 3 
-                                                            ? "bg-blue-400" 
-                                                            : index === 3 
-                                                                ? "bg-blue-400 animate-pulse" 
-                                                                : "bg-gray-600"
-                                                    }`}
+                                                    className={`w-4 h-4 rounded-full transition-all duration-500 ${index < 3
+                                                        ? "bg-blue-400"
+                                                        : index === 3
+                                                            ? "bg-blue-400 animate-pulse"
+                                                            : "bg-gray-600"
+                                                        }`}
                                                 ></div>
                                                 <span className="text-gray-300">{text}</span>
                                             </div>
@@ -295,11 +317,10 @@ export default function ClipGenerator() {
                     {/* Video Result */}
                     {step === 3 && videoUrl && !isLoading && (
                         <div
-                            className={`space-y-8 transition-all duration-1000 ${
-                                animateResult
-                                    ? "opacity-100 transform translate-y-0"
-                                    : "opacity-0 transform translate-y-10"
-                            }`}
+                            className={`space-y-8 transition-all duration-1000 ${animateResult
+                                ? "opacity-100 transform translate-y-0"
+                                : "opacity-0 transform translate-y-10"
+                                }`}
                         >
                             <div className="text-center space-y-6">
                                 <h2 className="text-4xl font-bold text-white">
@@ -314,11 +335,11 @@ export default function ClipGenerator() {
                             <div className="max-w-4xl mx-auto">
                                 <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20 hover:bg-white/15 transition-all duration-300">
                                     <div className="aspect-video bg-black/50 rounded-2xl overflow-hidden border-2 border-white/20 mb-6">
-                                        <video 
-                                            ref={videoRef} 
-                                            src={videoUrl} 
-                                            controls 
-                                            autoPlay 
+                                        <video
+                                            ref={videoRef}
+                                            src={videoUrl}
+                                            controls
+                                            autoPlay
                                             className="w-full h-full"
                                         >
                                             Your browser does not support the video tag.
@@ -366,6 +387,13 @@ export default function ClipGenerator() {
                     </p>
                 </div>
             </footer>
+            {/* Toast */}
+            <Toast
+                show={showToast}
+                message={toastMessage}
+                type={toastType}
+                onClose={() => setShowToast(false)}
+            />
         </div>
     );
 }

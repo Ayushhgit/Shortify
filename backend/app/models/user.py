@@ -35,6 +35,7 @@ class User(Base):
     data_analysis_count = Column(Integer, default=0)
     linkedin_help_count = Column(Integer, default=0)
     quiz_generation_count = Column(Integer, default=0)
+    clip_generation_count = Column(Integer, default=0)
     
     # Subscription fields
     subscription_start = Column(DateTime(timezone=True), nullable=True)

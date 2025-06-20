@@ -56,6 +56,7 @@ class Settings(BaseSettings):
     USE_WHISPER: bool = str_to_bool(os.getenv("USE_WHISPER"))
     ANTHROPIC_API_KEY:str = os.getenv("ANTHROPIC_API_KEY")
     PROXYCURL_API_KEY: str = os.getenv("PROXYCURL_API_KEY")
+    GOOGLE_AI_API_KEY: str = os.getenv("GOOGLE_AI_API_KEY")
 
     # Video Clip Settings
     MIN_CLIP_DURATION: int = 5  # in seconds

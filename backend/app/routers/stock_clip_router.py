@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import FileResponse
 from app.models.schemas import VideoRequest
 from app.services.stockClip_generate import generate_script, generate_tts, generate_captions_from_script, combine_video_audio_captions
@@ -6,6 +6,7 @@ import os
 import uuid
 import logging
 from ..core.config import Settings
+from app.core.rate_limiting import clip_generation_rate_limit
 
 setting = Settings()
 logger = logging.getLogger(__name__)
@@ -14,11 +15,17 @@ router = APIRouter(prefix="/clip", tags={"Clip Generator"})
 
 
 @router.post("/generate-video", status_code=200)
-async def generate_video_endpoint(request: VideoRequest):
+async def generate_video_endpoint(
+    request: VideoRequest,
+    rate_limit_data: dict = Depends(clip_generation_rate_limit)
+    ):
     """
     Accepts a topic, generates a video synchronously, and returns the URL to the final video.
     """
     try:
+        user = rate_limit_data['user']
+        rate_info = rate_limit_data['rate_limit_info']
+
         if not request.topic or not request.topic.strip():
             raise HTTPException(status_code=400, detail="Topic cannot be empty.")
 
