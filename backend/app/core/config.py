@@ -59,7 +59,7 @@ class Settings(BaseSettings):
     GOOGLE_AI_API_KEY: str = os.getenv("GOOGLE_AI_API_KEY")
 
     # Video Clip Settings
-    MIN_CLIP_DURATION: int = 5  # in seconds
+    MIN_CLIP_DURATION: int = 60  # in seconds
     MAX_CLIP_DURATION: int = 60  # in seconds
     MAX_CLIPS: int = 4
 
