@@ -34,6 +34,10 @@ export default function Header() {
               label: "Cover Letter Generator",
               path: "/features/coverLetterGenerator",
             },
+            {
+              label: "InterviewPrep Assitant",
+              path: "/features/InterviewPrepAssistant",
+            },
           ],
         },
         {

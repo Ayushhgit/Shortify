@@ -24,7 +24,7 @@ import LinkwiseAI from "./pages/LinkwiseAI";
 import EDAUploader from "./pages/EDAUploader";
 import QuizGenerator from "./pages/QuizGenerator";
 import ClipGenerator from "./pages/ClipGenerator";
-
+import InterviewPrepAssistant from "./pages/InterviewPrepAssistant";
 
 const LayoutWrapper = ({ children }) => {
   const location = useLocation();
@@ -46,6 +46,7 @@ const LayoutWrapper = ({ children }) => {
     "/features/LinkwiseAI",
     "/features/Clip-generator",
     "/features/quiz-generator" ,
+    "/features/InterviewPrepAssistant" ,
     "/",
     
   ];
@@ -87,6 +88,7 @@ function App() {
           <Route path="/features/Clip-generator"  element={<ClipGenerator />}/>
           <Route path="/features/LinkwiseAI"  element={<LinkwiseAI />}/>
           <Route path="/features/EDA"  element={<EDAUploader />}/>
+          <Route path="/features/InterviewPrepAssistant"  element={<InterviewPrepAssistant />}/>
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>
