@@ -11,24 +11,29 @@ import google.generativeai as genai
 import tempfile
 from app.core.config import settings
 
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 def transcribe_with_gemini(video_url: str) -> str:
-    """Primary transcription using Google Gemini API"""
+    """Primary transcription using Google Gemini API with file state checking"""
     try:
         logger.info("Attempting transcription with Google Gemini...")
         
         # Configure Gemini API
-        genai.configure(api_key=settings.GOOGLE_AI_API_KEY)  # Add this to your .env file
+        genai.configure(api_key=settings.GOOGLE_AI_API_KEY)
         
         # Create temporary directory for audio file
         with tempfile.TemporaryDirectory() as temp_dir:
             audio_path = os.path.join(temp_dir, "audio.%(ext)s")
             
-            # Download audio only
+            # Download audio only with better format selection
             ydl_opts = {
-                'format': 'bestaudio/best',
+                'format': 'bestaudio[ext=m4a]/bestaudio[ext=mp3]/bestaudio/best',
                 'outtmpl': audio_path,
                 'quiet': True,
                 'no_warnings': True,
+                'extract_flat': False,
             }
             
             with YoutubeDL(ydl_opts) as ydl:
@@ -50,14 +55,40 @@ def transcribe_with_gemini(video_url: str) -> str:
             uploaded_file = genai.upload_file(path=audio_file)
             logger.info(f"File uploaded to Gemini: {uploaded_file.uri}")
             
+            # Wait for file to become ACTIVE
+            max_wait_time = 60  # seconds
+            wait_interval = 2   # seconds
+            waited_time = 0
+            
+            while uploaded_file.state.name != "ACTIVE" and waited_time < max_wait_time:
+                logger.info(f"File state: {uploaded_file.state.name}, waiting...")
+                time.sleep(wait_interval)
+                waited_time += wait_interval
+                uploaded_file = genai.get_file(uploaded_file.name)
+            
+            if uploaded_file.state.name != "ACTIVE":
+                raise Exception(f"File failed to become ACTIVE after {max_wait_time} seconds. State: {uploaded_file.state.name}")
+            
+            logger.info("File is now ACTIVE, proceeding with transcription")
+            
             # Create model and generate transcript
             model = genai.GenerativeModel(model_name="gemini-2.5-flash")
-            prompt_parts = ["Transcribe this audio file accurately. Provide only the transcription text without any additional commentary.", uploaded_file]
+            prompt_parts = [
+                "Transcribe this audio file accurately. Provide only the transcription text without any additional commentary or formatting. Focus on accuracy and completeness.",
+                uploaded_file
+            ]
             
             response = model.generate_content(prompt_parts)
             
+            # Clean up the uploaded file
+            try:
+                genai.delete_file(uploaded_file.name)
+                logger.info("Uploaded file cleaned up")
+            except Exception as cleanup_error:
+                logger.warning(f"Failed to cleanup uploaded file: {cleanup_error}")
+            
             if response.text:
-                logger.info("Gemini transcription completed")
+                logger.info("Gemini transcription completed successfully")
                 return response.text.strip()
             else:
                 raise Exception("Gemini returned no transcription text")
@@ -66,11 +97,8 @@ def transcribe_with_gemini(video_url: str) -> str:
         logger.error(f"Gemini transcription failed: {e}")
         raise Exception(f"Could not transcribe with Gemini: {str(e)}")
 
-# Set up logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
 def extract_video_id(url: str) -> str:
+    """Extract video ID from YouTube URL"""
     parsed_url = urlparse(url)
     if parsed_url.hostname == "youtu.be":
         return parsed_url.path[1:]
@@ -79,10 +107,11 @@ def extract_video_id(url: str) -> str:
     return None
 
 def get_video_details(video_url: str):
+    """Get video metadata"""
     ydl_opts = {
         'quiet': True,
         'skip_download': True,
-        'extract_flat': True,
+        'extract_flat': False,
     }
     with YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(video_url, download=False)
@@ -95,15 +124,21 @@ def get_video_details(video_url: str):
         }
 
 def get_transcript_with_retry(video_id, max_retries=3, delay=2):
-    """
-    Get transcript with retry logic to handle XML parsing errors
-    """
+    """Get transcript with retry logic and robust error handling"""
     for attempt in range(max_retries):
         try:
             logger.info(f"Attempting to get transcript for {video_id}, attempt {attempt + 1}")
             
             # Get list of available transcripts
-            transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+            try:
+                transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+            except Exception as e:
+                logger.warning(f"Could not list transcripts: {e}")
+                raise NoTranscriptFound(
+                    video_id=video_id,
+                    requested_language_codes=['en'],
+                    transcript_data={}
+                )
             
             # Strategy 1: Try manually created English transcript
             try:
@@ -112,6 +147,8 @@ def get_transcript_with_retry(video_id, max_retries=3, delay=2):
                 return " ".join([t['text'] for t in transcript])
             except NoTranscriptFound:
                 logger.info("No manually created English transcript found")
+            except Exception as e:
+                logger.warning(f"Error getting manual English transcript: {e}")
             
             # Strategy 2: Try auto-generated English transcript
             try:
@@ -121,38 +158,56 @@ def get_transcript_with_retry(video_id, max_retries=3, delay=2):
             except NoTranscriptFound:
                 logger.info("No auto-generated English transcript found")
             except ParseError as e:
-                logger.warning(f"XML Parse error on attempt {attempt + 1}: {e}")
+                logger.warning(f"XML Parse error for auto-generated transcript: {e}")
                 if attempt < max_retries - 1:
                     logger.info(f"Retrying in {delay} seconds...")
                     time.sleep(delay)
                     continue
                 else:
                     raise e
+            except Exception as e:
+                logger.warning(f"Error getting auto-generated English transcript: {e}")
             
             # Strategy 3: Try other available languages and translate
-            available_transcripts = list(transcript_list)
-            if available_transcripts:
-                for transcript_obj in available_transcripts:
-                    try:
-                        if transcript_obj.is_translatable:
-                            logger.info(f"Trying to translate from {transcript_obj.language_code}")
-                            transcript = transcript_obj.translate('en').fetch()
-                            logger.info("Successfully retrieved and translated transcript")
-                            return " ".join([t['text'] for t in transcript])
-                        else:
-                            # Use the original language transcript
-                            logger.info(f"Using original language transcript: {transcript_obj.language_code}")
-                            transcript = transcript_obj.fetch()
-                            return " ".join([t['text'] for t in transcript])
-                    except ParseError as e:
-                        logger.warning(f"XML Parse error for {transcript_obj.language_code}: {e}")
-                        continue
-                    except Exception as e:
-                        logger.warning(f"Error with {transcript_obj.language_code}: {e}")
-                        continue
+            try:
+                available_transcripts = list(transcript_list)
+                if available_transcripts:
+                    for transcript_obj in available_transcripts:
+                        try:
+                            logger.info(f"Trying transcript in {transcript_obj.language_code}")
+                            
+                            # Try to fetch the transcript
+                            transcript_data = transcript_obj.fetch()
+                            
+                            # If we can translate it, do so
+                            if transcript_obj.is_translatable and transcript_obj.language_code != 'en':
+                                logger.info(f"Translating from {transcript_obj.language_code} to English")
+                                transcript_data = transcript_obj.translate('en').fetch()
+                            
+                            # Extract text
+                            transcript_text = " ".join([t['text'] for t in transcript_data])
+                            if transcript_text.strip():
+                                logger.info(f"Successfully retrieved transcript in {transcript_obj.language_code}")
+                                return transcript_text
+                            
+                        except ParseError as e:
+                            logger.warning(f"XML Parse error for {transcript_obj.language_code}: {e}")
+                            continue
+                        except Exception as e:
+                            logger.warning(f"Error with {transcript_obj.language_code}: {e}")
+                            continue
+                else:
+                    logger.info("No transcripts available for this video")
+            except Exception as e:
+                logger.warning(f"Error processing available transcripts: {e}")
             
             # If we get here, no transcript worked
-            raise NoTranscriptFound("No transcripts could be retrieved")
+            logger.info("No usable transcripts found")
+            raise NoTranscriptFound(
+                video_id=video_id,
+                requested_language_codes=['en'],
+                transcript_data={}
+            )
             
         except ParseError as e:
             logger.warning(f"XML Parse error on attempt {attempt + 1}: {e}")
@@ -162,21 +217,28 @@ def get_transcript_with_retry(video_id, max_retries=3, delay=2):
                 delay *= 1.5  # Exponential backoff
             else:
                 logger.error("Max retries reached for XML parsing")
-                raise e
+                raise NoTranscriptFound(
+                    video_id=video_id,
+                    requested_language_codes=['en'],
+                    transcript_data={}
+                )
         except (TranscriptsDisabled, NoTranscriptFound) as e:
-            logger.error(f"Transcript not available: {e}")
+            logger.info(f"Transcripts not available for video {video_id}: {e}")
             raise e
         except Exception as e:
-            logger.error(f"Unexpected error on attempt {attempt + 1}: {e}")
+            logger.warning(f"Unexpected error on attempt {attempt + 1}: {e}")
             if attempt < max_retries - 1:
                 time.sleep(delay)
             else:
-                raise e
+                logger.error(f"Max retries reached for unexpected error: {e}")
+                raise NoTranscriptFound(
+                    video_id=video_id,
+                    requested_language_codes=['en'],
+                    transcript_data={}
+                )
 
 def get_transcript(video_id):
-    """
-    Main transcript function with fallback strategies
-    """
+    """Main transcript function with fallback strategies"""
     try:
         return get_transcript_with_retry(video_id)
     except Exception as e:
@@ -192,12 +254,13 @@ def transcribe_audio(video_url: str) -> str:
         with tempfile.TemporaryDirectory() as temp_dir:
             audio_path = os.path.join(temp_dir, "audio.%(ext)s")
             
-            # Download audio only
+            # Download audio only with better format selection
             ydl_opts = {
-                'format': 'bestaudio/best',
+                'format': 'bestaudio[ext=m4a]/bestaudio[ext=mp3]/bestaudio/best',
                 'outtmpl': audio_path,
                 'quiet': True,
                 'no_warnings': True,
+                'extract_flat': False,
             }
             
             with YoutubeDL(ydl_opts) as ydl:
@@ -216,15 +279,16 @@ def transcribe_audio(video_url: str) -> str:
             logger.info(f"Audio downloaded: {audio_file}")
             
             # Load Whisper model (using base model for balance of speed/accuracy)
-            model = faster_whisper.WhisperModel("base")
+            # Use CPU if GPU causes issues
+            model = faster_whisper.WhisperModel("base", device="cpu", compute_type="int8")
             
             # Transcribe the audio
-            segments, info = model.transcribe(audio_file)
+            segments, info = model.transcribe(audio_file, language="auto")
             
             # Extract text from segments
             transcript_text = " ".join([segment.text for segment in segments])
             
-            logger.info("Audio transcription completed")
+            logger.info(f"Audio transcription completed. Detected language: {info.language}")
             return transcript_text
             
     except Exception as e:
@@ -233,7 +297,7 @@ def transcribe_audio(video_url: str) -> str:
 
 def get_transcript_and_details(video_url: str):
     """
-    Main function to get transcript and video details with Gemini as primary, fallbacks as secondary
+    Main function to get transcript and video details with multiple fallback strategies
     """
     video_id = extract_video_id(video_url)
     if not video_id:
@@ -242,23 +306,23 @@ def get_transcript_and_details(video_url: str):
     transcript = None
     transcript_source = None
     
-    # Strategy 1: Try Gemini API transcription first
+    # Strategy 1: Try existing subtitles first (faster)
     try:
-        transcript = transcribe_with_gemini(video_url)
+        transcript = get_transcript(video_id)
         if transcript:
-            transcript_source = "gemini_transcription"
-            logger.info("Successfully used Gemini transcription")
-    except Exception as e:
-        logger.warning(f"Gemini transcription failed: {e}")
+            transcript_source = "subtitles"
+            logger.info("Successfully used existing subtitles")
+    except Exception as subtitle_error:
+        logger.warning(f"Subtitles not available: {subtitle_error}")
         
-        # Strategy 2: Fallback to existing subtitles with retry logic
+        # Strategy 2: Try Gemini API transcription
         try:
-            transcript = get_transcript(video_id)
+            transcript = transcribe_with_gemini(video_url)
             if transcript:
-                transcript_source = "subtitles"
-                logger.info("Successfully used existing subtitles as fallback")
-        except Exception as subtitle_error:
-            logger.warning(f"Subtitles not available: {subtitle_error}")
+                transcript_source = "gemini_transcription"
+                logger.info("Successfully used Gemini transcription")
+        except Exception as gemini_error:
+            logger.warning(f"Gemini transcription failed: {gemini_error}")
             
             # Strategy 3: Final fallback to Whisper audio transcription
             try:
@@ -266,13 +330,13 @@ def get_transcript_and_details(video_url: str):
                 transcript_source = "whisper_transcription"
                 logger.info("Successfully used Whisper transcription as final fallback")
             except Exception as whisper_error:
-                logger.error(f"All transcription methods failed. Gemini: {str(e)}, Subtitles: {str(subtitle_error)}, Whisper: {str(whisper_error)}")
-                raise ValueError(f"No transcription method available. Gemini: {str(e)}, Subtitles: {str(subtitle_error)}, Whisper: {str(whisper_error)}")
+                logger.error(f"All transcription methods failed. Subtitles: {str(subtitle_error)}, Gemini: {str(gemini_error)}, Whisper: {str(whisper_error)}")
+                raise ValueError(f"No transcription method available. Subtitles: {str(subtitle_error)}, Gemini: {str(gemini_error)}, Whisper: {str(whisper_error)}")
     
     if not transcript:
         raise ValueError("No transcript could be generated")
     
-    # Get video details (keep existing logic)
+    # Get video details
     try:
         details = get_video_details(video_url)
         details['transcript_source'] = transcript_source
