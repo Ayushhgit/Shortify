@@ -465,7 +465,7 @@ export default function EnhancedProfile() {
               </div> </a>
               <div>
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-                  Shortify
+                  KwixLab
                 </h1>
                 <p className="text-xs text-slate-400 font-medium">AI-Powered Intelligence</p>
               </div>

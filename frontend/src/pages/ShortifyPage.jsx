@@ -479,7 +479,7 @@ export default function ShortifyPage() {
               </a>
               <div>
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-                  Shortify
+                  KwixLab
                 </h1>
                 <p className="text-xs text-slate-400 font-medium">
                   AI-Powered Intelligence
@@ -501,19 +501,17 @@ export default function ShortifyPage() {
                       setActiveTab(item.id);
                       setSidebarOpen(false);
                     }}
-                    className={`w-full group relative overflow-hidden rounded-2xl p-4 transition-all duration-300 ${
-                      isActive
-                        ? `bg-gradient-to-r ${item.gradient} shadow-2xl ${item.glow}`
-                        : "bg-slate-800/50 hover:bg-slate-800 border border-slate-700 hover:border-slate-600 hover:shadow-lg"
-                    }`}
+                    className={`w-full group relative overflow-hidden rounded-2xl p-4 transition-all duration-300 ${isActive
+                      ? `bg-gradient-to-r ${item.gradient} shadow-2xl ${item.glow}`
+                      : "bg-slate-800/50 hover:bg-slate-800 border border-slate-700 hover:border-slate-600 hover:shadow-lg"
+                      }`}
                   >
                     <div className="flex items-center gap-4 relative z-10">
                       <div
-                        className={`p-3 rounded-xl transition-all duration-300 ${
-                          isActive
-                            ? "bg-white/20 shadow-lg"
-                            : "bg-slate-700 group-hover:bg-slate-600"
-                        }`}
+                        className={`p-3 rounded-xl transition-all duration-300 ${isActive
+                          ? "bg-white/20 shadow-lg"
+                          : "bg-slate-700 group-hover:bg-slate-600"
+                          }`}
                       >
                         <Icon
                           size={20}
@@ -522,9 +520,8 @@ export default function ShortifyPage() {
                       </div>
                       <div className="text-left">
                         <div
-                          className={`font-semibold ${
-                            isActive ? "text-white" : "text-slate-300"
-                          }`}
+                          className={`font-semibold ${isActive ? "text-white" : "text-slate-300"
+                            }`}
                         >
                           {item.label}
                         </div>
@@ -666,6 +663,7 @@ export default function ShortifyPage() {
                     return (
                       <div
                         key={idx}
+                        onClick={() => navigate(feature.link)}
                         className="group relative overflow-hidden bg-gray-900/40 backdrop-blur-sm border border-gray-800 rounded-3xl p-8 hover:border-gray-700 transition-all duration-500 hover:transform hover:scale-[1.02] hover:shadow-2xl"
                       >
                         {/* Animated Background Pattern */}
@@ -697,16 +695,18 @@ export default function ShortifyPage() {
                         </p>
 
                         {/* Action Button */}
-                        <button
+                        <div
+                        
                           onClick={() => navigate(feature.link)}
-                          className={`w-full bg-gradient-to-r ${feature.gradient} hover:shadow-2xl text-white py-4 px-6 rounded-2xl font-semibold transition-all duration-300 flex items-center justify-center gap-3 group-hover:gap-4 text-lg shadow-lg`}
+                          className={`w-full bg-gradient-to-r ${feature.gradient} hover:shadow-2xl text-white py-4 px-6 rounded-2xl font-semibold transition-all duration-300 flex items-center justify-center gap-3 group-hover:gap-4 text-lg shadow-lg cursor-pointer`}
                         >
+                          
                           <span>{feature.label}</span>
                           <ArrowRight
                             size={20}
                             className="group-hover:translate-x-1 transition-transform duration-300"
                           />
-                        </button>
+                        </div>
                       </div>
                     );
                   })}
@@ -1927,326 +1927,326 @@ export default function ShortifyPage() {
 
           {/*Clip section*/}
           {activeTab === "clip" && (
-          <div className="max-w-4xl mx-auto space-y-8">
-            <div className="text-center mb-12">
+            <div className="max-w-4xl mx-auto space-y-8">
+              <div className="text-center mb-12">
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600/20 border border-blue-600/30 mb-6">
-                    <Clapperboard className="w-5 h-5 text-blue-400" />
-                    <span className="text-blue-400 font-medium">
-                        INSTANT VIDEO CREATION
-                    </span>
+                  <Clapperboard className="w-5 h-5 text-blue-400" />
+                  <span className="text-blue-400 font-medium">
+                    INSTANT VIDEO CREATION
+                  </span>
                 </div>
                 <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-fuchsia-400 to-purple-400 bg-clip-text text-transparent mb-4">
-                    AI-Powered Clip Generator
+                  AI-Powered Clip Generator
                 </h2>
                 <p className="text-xl text-gray-400 leading-relaxed">
-                    Turn any topic into a viral-style short video with AI-generated
-                    scripts, voiceovers, background footage, and synchronized captions.
+                  Turn any topic into a viral-style short video with AI-generated
+                  scripts, voiceovers, background footage, and synchronized captions.
                 </p>
-            </div>
+              </div>
 
-            <div className="grid md:grid-cols-2 gap-8 mb-8">
+              <div className="grid md:grid-cols-2 gap-8 mb-8">
                 <div className="bg-gradient-to-br from-blue-600/10 to-fuchsia-600/10 border border-blue-600/20 rounded-3xl p-8">
-                    <h3 className="text-2xl font-bold text-blue-400 mb-4 flex items-center gap-3">
-                        <Sparkles className="w-8 h-8" />
-                        Core AI Features
-                    </h3>
-                    <ul className="space-y-4 text-gray-300">
-                        <li className="flex items-start gap-3">
-                            <CheckCircle className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
-                            <span>Engaging script generation from any topic</span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                            <CheckCircle className="w-5 h-5 text-fuchsia-400 mt-0.5 flex-shrink-0" />
-                            <span>Natural-sounding text-to-speech voiceovers</span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                            <CheckCircle className="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" />
-                            <span>Auto-selection of relevant background footage</span>
-                        </li>
-                         <li className="flex items-start gap-3">
-                            <CheckCircle className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
-                            <span>Frame-by-frame subtitle generation & syncing</span>
-                        </li>
-                    </ul>
+                  <h3 className="text-2xl font-bold text-blue-400 mb-4 flex items-center gap-3">
+                    <Sparkles className="w-8 h-8" />
+                    Core AI Features
+                  </h3>
+                  <ul className="space-y-4 text-gray-300">
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
+                      <span>Engaging script generation from any topic</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-fuchsia-400 mt-0.5 flex-shrink-0" />
+                      <span>Natural-sounding text-to-speech voiceovers</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" />
+                      <span>Auto-selection of relevant background footage</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
+                      <span>Frame-by-frame subtitle generation & syncing</span>
+                    </li>
+                  </ul>
                 </div>
 
                 <div className="bg-gradient-to-br from-fuchsia-600/10 to-purple-600/10 border border-fuchsia-600/20 rounded-3xl p-8">
-                    <h3 className="text-2xl font-bold text-fuchsia-400 mb-4 flex items-center gap-3">
-                        <Film className="w-8 h-8" />
-                        Output & Customization
-                    </h3>
-                    <ul className="space-y-4 text-gray-300">
-                        <li className="flex items-start gap-3">
-                            <CheckCircle className="w-5 h-5 text-fuchsia-400 mt-0.5 flex-shrink-0" />
-                            <span>Multiple voice styles and language options</span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                            <CheckCircle className="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" />
-                            <span>Customizable caption styles and animations</span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                            <CheckCircle className="w-5 h-5 text-fuchsia-400 mt-0.5 flex-shrink-0" />
-                            <span>Choice of aspect ratios (9:16, 1:1, 16:9)</span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                            <CheckCircle className="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" />
-                            <span>High-definition 1080p MP4 video export</span>
-                        </li>
-                    </ul>
+                  <h3 className="text-2xl font-bold text-fuchsia-400 mb-4 flex items-center gap-3">
+                    <Film className="w-8 h-8" />
+                    Output & Customization
+                  </h3>
+                  <ul className="space-y-4 text-gray-300">
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-fuchsia-400 mt-0.5 flex-shrink-0" />
+                      <span>Multiple voice styles and language options</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" />
+                      <span>Customizable caption styles and animations</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-fuchsia-400 mt-0.5 flex-shrink-0" />
+                      <span>Choice of aspect ratios (9:16, 1:1, 16:9)</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" />
+                      <span>High-definition 1080p MP4 video export</span>
+                    </li>
+                  </ul>
                 </div>
-            </div>
+              </div>
 
-            {/* Statistics Section */}
-            <div className="bg-gradient-to-br from-blue-600/10 to-fuchsia-600/10 border border-blue-600/20 rounded-3xl p-8 mb-8">
+              {/* Statistics Section */}
+              <div className="bg-gradient-to-br from-blue-600/10 to-fuchsia-600/10 border border-blue-600/20 rounded-3xl p-8 mb-8">
                 <div className="grid md:grid-cols-4 gap-6 text-center">
-                    <div>
-                        <div className="text-3xl font-bold text-blue-400 mb-2">
-                            &lt;60s
-                        </div>
-                        <div className="text-gray-400">Render Time</div>
+                  <div>
+                    <div className="text-3xl font-bold text-blue-400 mb-2">
+                      &lt;60s
                     </div>
-                    <div>
-                        <div className="text-3xl font-bold text-fuchsia-400 mb-2">
-                            3+
-                        </div>
-                        <div className="text-gray-400">AI Models Used</div>
+                    <div className="text-gray-400">Render Time</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-fuchsia-400 mb-2">
+                      3+
                     </div>
-                    <div>
-                        <div className="text-3xl font-bold text-purple-400 mb-2">
-                            10k+
-                        </div>
-                        <div className="text-gray-400">Stock Videos</div>
+                    <div className="text-gray-400">AI Models Used</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-purple-400 mb-2">
+                      10k+
                     </div>
-                    <div>
-                        <div className="text-3xl font-bold text-blue-400 mb-2">
-                            1080p
-                        </div>
-                        <div className="text-gray-400">HD Quality</div>
+                    <div className="text-gray-400">Stock Videos</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-blue-400 mb-2">
+                      1080p
                     </div>
+                    <div className="text-gray-400">HD Quality</div>
+                  </div>
                 </div>
-            </div>
+              </div>
 
-            {/* Video Generation Process */}
-            <div className="bg-gradient-to-br from-fuchsia-600/10 to-purple-600/10 border border-fuchsia-600/20 rounded-3xl p-8 mb-8">
+              {/* Video Generation Process */}
+              <div className="bg-gradient-to-br from-fuchsia-600/10 to-purple-600/10 border border-fuchsia-600/20 rounded-3xl p-8 mb-8">
                 <h3 className="text-2xl font-bold text-fuchsia-400 mb-6 flex items-center gap-3">
-                    <Cpu className="w-8 h-8" />
-                    Our Video Generation Process
+                  <Cpu className="w-8 h-8" />
+                  Our Video Generation Process
                 </h3>
                 <div className="grid md:grid-cols-4 gap-6">
-                    {[
-                        { step: "01", title: "Topic to Script", desc: "AI writes an engaging script based on your input topic", color: "blue" },
-                        { step: "02", title: "Text to Voice", desc: "A natural voiceover is generated from the AI script", color: "fuchsia" },
-                        { step: "03", title: "Video Assembly", desc: "Footage, audio & captions are synced and compiled", color: "purple" },
-                        { step: "04", title: "Final Render", desc: "Your final video is rendered in HD and ready for download", color: "blue" },
-                    ].map((item) => (
-                        <div key={item.step} className="text-center">
-                            <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-${item.color}-500 to-${item.color}-600 flex items-center justify-center text-white font-bold text-xl`}>
-                                {item.step}
-                            </div>
-                            <h4 className="text-lg font-bold text-white mb-2">{item.title}</h4>
-                            <p className="text-gray-400 text-sm">{item.desc}</p>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-            {/* Features Grid */}
-            <div className="grid md:grid-cols-3 gap-6 mb-8">
-                <div className="bg-gradient-to-br from-blue-600/10 to-fuchsia-600/10 border border-blue-600/20 rounded-2xl p-6 text-center">
-                    <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-blue-500 to-fuchsia-500 flex items-center justify-center">
-                        <Library className="w-6 h-6 text-white" />
+                  {[
+                    { step: "01", title: "Topic to Script", desc: "AI writes an engaging script based on your input topic", color: "blue" },
+                    { step: "02", title: "Text to Voice", desc: "A natural voiceover is generated from the AI script", color: "fuchsia" },
+                    { step: "03", title: "Video Assembly", desc: "Footage, audio & captions are synced and compiled", color: "purple" },
+                    { step: "04", title: "Final Render", desc: "Your final video is rendered in HD and ready for download", color: "blue" },
+                  ].map((item) => (
+                    <div key={item.step} className="text-center">
+                      <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-${item.color}-500 to-${item.color}-600 flex items-center justify-center text-white font-bold text-xl`}>
+                        {item.step}
+                      </div>
+                      <h4 className="text-lg font-bold text-white mb-2">{item.title}</h4>
+                      <p className="text-gray-400 text-sm">{item.desc}</p>
                     </div>
-                    <h4 className="text-lg font-bold text-blue-400 mb-2">Stock Footage</h4>
-                    <p className="text-gray-400 text-sm">Access to a vast library of high-quality background videos for any topic.</p>
+                  ))}
+                </div>
+              </div>
+
+              {/* Features Grid */}
+              <div className="grid md:grid-cols-3 gap-6 mb-8">
+                <div className="bg-gradient-to-br from-blue-600/10 to-fuchsia-600/10 border border-blue-600/20 rounded-2xl p-6 text-center">
+                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-blue-500 to-fuchsia-500 flex items-center justify-center">
+                    <Library className="w-6 h-6 text-white" />
+                  </div>
+                  <h4 className="text-lg font-bold text-blue-400 mb-2">Stock Footage</h4>
+                  <p className="text-gray-400 text-sm">Access to a vast library of high-quality background videos for any topic.</p>
                 </div>
                 <div className="bg-gradient-to-br from-fuchsia-600/10 to-purple-600/10 border border-fuchsia-600/20 rounded-2xl p-6 text-center">
-                    <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-fuchsia-500 to-purple-500 flex items-center justify-center">
-                        <Subtitles className="w-6 h-6 text-white" />
-                    </div>
-                    <h4 className="text-lg font-bold text-fuchsia-400 mb-2">Burnt-in Captions</h4>
-                    <p className="text-gray-400 text-sm">Automatically generated and animated captions are embedded into your video.</p>
+                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-fuchsia-500 to-purple-500 flex items-center justify-center">
+                    <Subtitles className="w-6 h-6 text-white" />
+                  </div>
+                  <h4 className="text-lg font-bold text-fuchsia-400 mb-2">Burnt-in Captions</h4>
+                  <p className="text-gray-400 text-sm">Automatically generated and animated captions are embedded into your video.</p>
                 </div>
                 <div className="bg-gradient-to-br from-purple-600/10 to-blue-600/10 border border-purple-600/20 rounded-2xl p-6 text-center">
-                    <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center">
-                        <Download className="w-6 h-6 text-white" />
-                    </div>
-                    <h4 className="text-lg font-bold text-purple-400 mb-2">One-Click Export</h4>
-                    <p className="text-gray-400 text-sm">Download your finished video as a high-quality MP4 file, ready to be shared.</p>
+                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center">
+                    <Download className="w-6 h-6 text-white" />
+                  </div>
+                  <h4 className="text-lg font-bold text-purple-400 mb-2">One-Click Export</h4>
+                  <p className="text-gray-400 text-sm">Download your finished video as a high-quality MP4 file, ready to be shared.</p>
                 </div>
-            </div>
+              </div>
 
-            <div className="text-center">
+              <div className="text-center">
                 <a href="/features/ClipGenerator">
-                    <button className="bg-gradient-to-r from-blue-500 via-fuchsia-500 to-purple-500 hover:from-blue-600 hover:via-fuchsia-600 hover:to-purple-600 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-fuchsia-500/25 flex items-center gap-3 mx-auto group">
-                        <Video className="w-6 h-6 group-hover:scale-110 transition-transform" />
-                        Start Creating Clips
-                        <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-                    </button>
+                  <button className="bg-gradient-to-r from-blue-500 via-fuchsia-500 to-purple-500 hover:from-blue-600 hover:via-fuchsia-600 hover:to-purple-600 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-fuchsia-500/25 flex items-center gap-3 mx-auto group">
+                    <Video className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                    Start Creating Clips
+                    <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                  </button>
                 </a>
+              </div>
             </div>
-        </div>
-        )}
+          )}
 
-        {/*Quiz Generator*/}
-        {activeTab === "quiz" && (
-        <div className="max-w-4xl mx-auto space-y-8">
-            <div className="text-center mb-12">
+          {/*Quiz Generator*/}
+          {activeTab === "quiz" && (
+            <div className="max-w-4xl mx-auto space-y-8">
+              <div className="text-center mb-12">
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-600/20 border border-green-600/30 mb-6">
-                    <BrainCircuit className="w-5 h-5 text-green-400" />
-                    <span className="text-green-400 font-medium">
-                        AUTOMATED ASSESSMENT
-                    </span>
+                  <BrainCircuit className="w-5 h-5 text-green-400" />
+                  <span className="text-green-400 font-medium">
+                    AUTOMATED ASSESSMENT
+                  </span>
                 </div>
                 <h2 className="text-4xl font-bold bg-gradient-to-r from-green-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent mb-4">
-                    AI-Powered Quiz Generator
+                  AI-Powered Quiz Generator
                 </h2>
                 <p className="text-xl text-gray-400 leading-relaxed">
-                    Effortlessly create engaging and challenging quizzes on any subject
-                    with diverse question types and automatic answer key generation.
+                  Effortlessly create engaging and challenging quizzes on any subject
+                  with diverse question types and automatic answer key generation.
                 </p>
-            </div>
+              </div>
 
-            <div className="grid md:grid-cols-2 gap-8 mb-8">
+              <div className="grid md:grid-cols-2 gap-8 mb-8">
                 <div className="bg-gradient-to-br from-green-600/10 to-teal-600/10 border border-green-600/20 rounded-3xl p-8">
-                    <h3 className="text-2xl font-bold text-green-400 mb-4 flex items-center gap-3">
-                        <Lightbulb className="w-8 h-8" />
-                        Input Flexibility
-                    </h3>
-                    <ul className="space-y-4 text-gray-300">
-                        <li className="flex items-start gap-3">
-                            <CheckCircle className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
-                            <span>Generate from any topic or subject name</span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                            <CheckCircle className="w-5 h-5 text-teal-400 mt-0.5 flex-shrink-0" />
-                            <span>Paste in your own text, articles, or notes</span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                            <CheckCircle className="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" />
-                            <span>Upload documents (PDF, DOCX) for analysis</span>
-                        </li>
-                         <li className="flex items-start gap-3">
-                            <CheckCircle className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
-                            <span>Specify number of questions and difficulty level</span>
-                        </li>
-                    </ul>
+                  <h3 className="text-2xl font-bold text-green-400 mb-4 flex items-center gap-3">
+                    <Lightbulb className="w-8 h-8" />
+                    Input Flexibility
+                  </h3>
+                  <ul className="space-y-4 text-gray-300">
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
+                      <span>Generate from any topic or subject name</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-teal-400 mt-0.5 flex-shrink-0" />
+                      <span>Paste in your own text, articles, or notes</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" />
+                      <span>Upload documents (PDF, DOCX) for analysis</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
+                      <span>Specify number of questions and difficulty level</span>
+                    </li>
+                  </ul>
                 </div>
 
                 <div className="bg-gradient-to-br from-teal-600/10 to-cyan-600/10 border border-teal-600/20 rounded-3xl p-8">
-                    <h3 className="text-2xl font-bold text-teal-400 mb-4 flex items-center gap-3">
-                        <ClipboardList className="w-8 h-8" />
-                        Quiz & Question Features
-                    </h3>
-                    <ul className="space-y-4 text-gray-300">
-                        <li className="flex items-start gap-3">
-                            <CheckCircle className="w-5 h-5 text-teal-400 mt-0.5 flex-shrink-0" />
-                            <span>Multiple Choice & True/False questions</span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                            <CheckCircle className="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" />
-                            <span>Fill-in-the-blank and short answer generation</span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                            <CheckCircle className="w-5 h-5 text-teal-400 mt-0.5 flex-shrink-0" />
-                            <span>Automatic generation of plausible distractors</span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                            <CheckCircle className="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" />
-                            <span>Instant answer key creation for easy grading</span>
-                        </li>
-                    </ul>
+                  <h3 className="text-2xl font-bold text-teal-400 mb-4 flex items-center gap-3">
+                    <ClipboardList className="w-8 h-8" />
+                    Quiz & Question Features
+                  </h3>
+                  <ul className="space-y-4 text-gray-300">
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-teal-400 mt-0.5 flex-shrink-0" />
+                      <span>Multiple Choice & True/False questions</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" />
+                      <span>Fill-in-the-blank and short answer generation</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-teal-400 mt-0.5 flex-shrink-0" />
+                      <span>Automatic generation of plausible distractors</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" />
+                      <span>Instant answer key creation for easy grading</span>
+                    </li>
+                  </ul>
                 </div>
-            </div>
+              </div>
 
-            {/* Statistics Section */}
-            <div className="bg-gradient-to-br from-green-600/10 to-teal-600/10 border border-green-600/20 rounded-3xl p-8 mb-8">
+              {/* Statistics Section */}
+              <div className="bg-gradient-to-br from-green-600/10 to-teal-600/10 border border-green-600/20 rounded-3xl p-8 mb-8">
                 <div className="grid md:grid-cols-4 gap-6 text-center">
-                    <div>
-                        <div className="text-3xl font-bold text-green-400 mb-2">
-                            Instant
-                        </div>
-                        <div className="text-gray-400">Quiz Creation</div>
+                  <div>
+                    <div className="text-3xl font-bold text-green-400 mb-2">
+                      Instant
                     </div>
-                    <div>
-                        <div className="text-3xl font-bold text-teal-400 mb-2">
-                            5+
-                        </div>
-                        <div className="text-gray-400">Question Types</div>
+                    <div className="text-gray-400">Quiz Creation</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-teal-400 mb-2">
+                      5+
                     </div>
-                    <div>
-                        <div className="text-3xl font-bold text-cyan-400 mb-2">
-                            99%
-                        </div>
-                        <div className="text-gray-400">Factual Accuracy</div>
+                    <div className="text-gray-400">Question Types</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-cyan-400 mb-2">
+                      99%
                     </div>
-                    <div>
-                        <div className="text-3xl font-bold text-green-400 mb-2">
-                            PDF
-                        </div>
-                        <div className="text-gray-400"> & DOCX Export</div>
+                    <div className="text-gray-400">Factual Accuracy</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-green-400 mb-2">
+                      PDF
                     </div>
+                    <div className="text-gray-400"> & DOCX Export</div>
+                  </div>
                 </div>
-            </div>
+              </div>
 
-            {/* Quiz Generation Process */}
-            <div className="bg-gradient-to-br from-teal-600/10 to-cyan-600/10 border border-teal-600/20 rounded-3xl p-8 mb-8">
+              {/* Quiz Generation Process */}
+              <div className="bg-gradient-to-br from-teal-600/10 to-cyan-600/10 border border-teal-600/20 rounded-3xl p-8 mb-8">
                 <h3 className="text-2xl font-bold text-teal-400 mb-6 flex items-center gap-3">
-                    <Cpu className="w-8 h-8" />
-                    Our Quiz Generation Process
+                  <Cpu className="w-8 h-8" />
+                  Our Quiz Generation Process
                 </h3>
                 <div className="grid md:grid-cols-4 gap-6">
-                    {[
-                        { step: "01", title: "Provide Content", desc: "Input a topic, paste text, or upload a document for analysis", color: "green" },
-                        { step: "02", title: "AI Comprehension", desc: "The AI reads and understands the key concepts in your material", color: "teal" },
-                        { step: "03", title: "Question Crafting", desc: "Relevant questions are generated in various formats with answers", color: "cyan" },
-                        { step: "04", title: "Review & Export", desc: "Edit your quiz and download it in your desired file format", color: "green" },
-                    ].map((item) => (
-                        <div key={item.step} className="text-center">
-                            <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-${item.color}-500 to-${item.color}-600 flex items-center justify-center text-white font-bold text-xl`}>
-                                {item.step}
-                            </div>
-                            <h4 className="text-lg font-bold text-white mb-2">{item.title}</h4>
-                            <p className="text-gray-400 text-sm">{item.desc}</p>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-            {/* Features Grid */}
-            <div className="grid md:grid-cols-3 gap-6 mb-8">
-                <div className="bg-gradient-to-br from-green-600/10 to-teal-600/10 border border-green-600/20 rounded-2xl p-6 text-center">
-                    <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-green-500 to-teal-500 flex items-center justify-center">
-                        <FileText className="w-6 h-6 text-white" />
+                  {[
+                    { step: "01", title: "Provide Content", desc: "Input a topic, paste text, or upload a document for analysis", color: "green" },
+                    { step: "02", title: "AI Comprehension", desc: "The AI reads and understands the key concepts in your material", color: "teal" },
+                    { step: "03", title: "Question Crafting", desc: "Relevant questions are generated in various formats with answers", color: "cyan" },
+                    { step: "04", title: "Review & Export", desc: "Edit your quiz and download it in your desired file format", color: "green" },
+                  ].map((item) => (
+                    <div key={item.step} className="text-center">
+                      <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-${item.color}-500 to-${item.color}-600 flex items-center justify-center text-white font-bold text-xl`}>
+                        {item.step}
+                      </div>
+                      <h4 className="text-lg font-bold text-white mb-2">{item.title}</h4>
+                      <p className="text-gray-400 text-sm">{item.desc}</p>
                     </div>
-                    <h4 className="text-lg font-bold text-green-400 mb-2">Multiple Formats</h4>
-                    <p className="text-gray-400 text-sm">Export your quizzes and answer keys as printable PDF or editable DOCX files.</p>
+                  ))}
+                </div>
+              </div>
+
+              {/* Features Grid */}
+              <div className="grid md:grid-cols-3 gap-6 mb-8">
+                <div className="bg-gradient-to-br from-green-600/10 to-teal-600/10 border border-green-600/20 rounded-2xl p-6 text-center">
+                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-green-500 to-teal-500 flex items-center justify-center">
+                    <FileText className="w-6 h-6 text-white" />
+                  </div>
+                  <h4 className="text-lg font-bold text-green-400 mb-2">Multiple Formats</h4>
+                  <p className="text-gray-400 text-sm">Export your quizzes and answer keys as printable PDF or editable DOCX files.</p>
                 </div>
                 <div className="bg-gradient-to-br from-teal-600/10 to-cyan-600/10 border border-teal-600/20 rounded-2xl p-6 text-center">
-                    <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 flex items-center justify-center">
-                        <SlidersHorizontal className="w-6 h-6 text-white" />
-                    </div>
-                    <h4 className="text-lg font-bold text-teal-400 mb-2">Adjustable Difficulty</h4>
-                    <p className="text-gray-400 text-sm">Fine-tune the complexity of your quizzes to suit any audience, from beginners to experts.</p>
+                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 flex items-center justify-center">
+                    <SlidersHorizontal className="w-6 h-6 text-white" />
+                  </div>
+                  <h4 className="text-lg font-bold text-teal-400 mb-2">Adjustable Difficulty</h4>
+                  <p className="text-gray-400 text-sm">Fine-tune the complexity of your quizzes to suit any audience, from beginners to experts.</p>
                 </div>
                 <div className="bg-gradient-to-br from-cyan-600/10 to-green-600/10 border border-cyan-600/20 rounded-2xl p-6 text-center">
-                    <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 flex items-center justify-center">
-                        <KeyRound className="w-6 h-6 text-white" />
-                    </div>
-                    <h4 className="text-lg font-bold text-cyan-400 mb-2">Answer Key Included</h4>
-                    <p className="text-gray-400 text-sm">Every quiz comes with a corresponding answer key for quick and easy grading.</p>
+                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 flex items-center justify-center">
+                    <KeyRound className="w-6 h-6 text-white" />
+                  </div>
+                  <h4 className="text-lg font-bold text-cyan-400 mb-2">Answer Key Included</h4>
+                  <p className="text-gray-400 text-sm">Every quiz comes with a corresponding answer key for quick and easy grading.</p>
                 </div>
-            </div>
+              </div>
 
-            <div className="text-center">
+              <div className="text-center">
                 <a href="/features/QuizGenerator">
-                    <button className="bg-gradient-to-r from-green-500 via-teal-500 to-cyan-500 hover:from-green-600 hover:via-teal-600 hover:to-cyan-600 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-teal-500/25 flex items-center gap-3 mx-auto group">
-                        <BrainCircuit className="w-6 h-6 group-hover:scale-110 transition-transform" />
-                        Start Building Quizzes
-                        <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-                    </button>
+                  <button className="bg-gradient-to-r from-green-500 via-teal-500 to-cyan-500 hover:from-green-600 hover:via-teal-600 hover:to-cyan-600 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-teal-500/25 flex items-center gap-3 mx-auto group">
+                    <BrainCircuit className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                    Start Building Quizzes
+                    <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                  </button>
                 </a>
-            </div>
-        </div> )}
+              </div>
+            </div>)}
 
 
           {/* Footer */}
