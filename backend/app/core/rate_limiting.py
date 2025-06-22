@@ -19,6 +19,7 @@ class FeatureType(str, Enum):
     LINKEDIN_HELP = "linkedin_help"
     QUIZ_GENERATION = "quiz_generation"
     CLIP_GENERATION = "clip_generation"
+    INTERVIEW_PREP = "interview_prep"
 
 # Define limits for each subscription type and feature
 SUBSCRIPTION_LIMITS: Dict[str, Dict[FeatureType, int]] = {
@@ -35,6 +36,7 @@ SUBSCRIPTION_LIMITS: Dict[str, Dict[FeatureType, int]] = {
         FeatureType.LINKEDIN_HELP: 2,
         FeatureType.QUIZ_GENERATION: 2,
         FeatureType.CLIP_GENERATION: 2,
+        FeatureType.INTERVIEW_PREP: 2,
     },
     "pro": {
         FeatureType.VIDEO_GENERATION: 5,
@@ -49,6 +51,7 @@ SUBSCRIPTION_LIMITS: Dict[str, Dict[FeatureType, int]] = {
         FeatureType.LINKEDIN_HELP: 10,
         FeatureType.QUIZ_GENERATION: 16,
         FeatureType.CLIP_GENERATION: 10,
+        FeatureType.INTERVIEW_PREP: 10,
 
     },
     "premium": {
@@ -64,6 +67,7 @@ SUBSCRIPTION_LIMITS: Dict[str, Dict[FeatureType, int]] = {
         FeatureType.LINKEDIN_HELP: 25,
         FeatureType.QUIZ_GENERATION: 25,
         FeatureType.CLIP_GENERATION: 25,
+        FeatureType.INTERVIEW_PREP: 25,
     }
 }
 
@@ -160,3 +164,4 @@ data_analysis_rate_limit = create_rate_limit_dependency(FeatureType.DATA_ANALYSI
 linkedin_help_rate_limit = create_rate_limit_dependency(FeatureType.LINKEDIN_HELP)
 quiz_generation_rate_limit = create_rate_limit_dependency(FeatureType.QUIZ_GENERATION)
 clip_generation_rate_limit = create_rate_limit_dependency(FeatureType.CLIP_GENERATION)
+interview_prep_rate_limit = create_rate_limit_dependency(FeatureType.INTERVIEW_PREP)

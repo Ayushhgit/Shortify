@@ -124,11 +124,10 @@ const ShortifyLanding = () => {
             onMouseEnter={() => setHovered(star)}
             onMouseLeave={() => setHovered(0)}
             onClick={() => setRating(star)}
-            className={`w-10 h-10 cursor-pointer transition-all duration-200 mx-1 ${
-              (hovered || rating) >= star
-                ? "text-yellow-400 fill-current scale-110"
-                : "text-gray-500 hover:text-gray-400"
-            }`}
+            className={`w-10 h-10 cursor-pointer transition-all duration-200 mx-1 ${(hovered || rating) >= star
+              ? "text-yellow-400 fill-current scale-110"
+              : "text-gray-500 hover:text-gray-400"
+              }`}
           />
         ))}
       </div>
@@ -245,43 +244,49 @@ const ShortifyLanding = () => {
       </div>
       <Header />
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center px-6">
-        <div className="max-w-7xl mx-auto text-center z-10">
+      <section className="relative min-h-screen flex items-center justify-center py-18 px-6">
+        <div className="max-w-7xl w-full mx-auto text-center z-10">
+
           {/* Premium badge */}
-          <div className="inline-flex items-center gap-3 px-300 py-10 rounded-full  border border-white/10 mb-12 hover:border-white/20 transition-all duration-500 group"></div>
+          <div className="inline-flex items-center gap-3 px-6 py-2 rounded-full border border-white/10 mb-12 hover:border-white/20 transition-all duration-500 group">
+            {/* optional badge content */}
+          </div>
 
           {/* Main headline */}
-          <h1 className="text-7xl md:text-9xl font-black mb-8 tracking-tight">
+          <h1 className="text-[clamp(4rem,10vw,8rem)] font-black mb-8 tracking-tight leading-tight break-words">
             <span className="bg-gradient-to-r from-white via-green-200 to-green-300 bg-clip-text text-transparent">
               Crux
-              <span className="bg-gradient-to-r from-green-300 to-green-380 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-green-300 to-green-400 bg-clip-text text-transparent">
                 LM
               </span>
             </span>
           </h1>
 
-          {/* Subheadline with premium typography */}
-          <div className="max-w-4xl mx-auto mb-16 text-center">
-            <p className="text-2xl md:text-3xl text-gray-300 font-light leading-relaxed mb-4">
+          {/* Subheadline */}
+          <div className="max-w-4xl mx-auto mb-16 text-center px-4">
+            <p className="text-xl sm:text-2xl md:text-3xl text-gray-300 font-light leading-relaxed mb-4">
               <span className="font-semibold">Your one-stop solution.</span>
             </p>
 
-            <p className="text-lg text-gray-400 font-light leading-relaxed mb-6">
-              From YouTube Shorts and video summaries to PDF insights, resume
-              analysis, and research help — everything AI-powered, all in one
-              place. Built for creators, learners, and professionals — designed
-              for clarity, speed, and next-gen productivity.
+            <p className="text-base sm:text-lg text-gray-400 font-light leading-relaxed mb-6">
+              From YouTube Shorts and video summaries to PDF insights, resume analysis,
+              and research help — everything AI-powered, all in one place. Built for
+              creators, learners, and professionals — designed for clarity, speed, and
+              next-gen productivity.
             </p>
 
-            <p className="text-2xl md:text-3xl font-light leading-relaxed">
+            <p className="text-xl sm:text-2xl md:text-3xl font-light leading-relaxed">
               <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent font-semibold">
-                Simplify, Summarize, Succeed 
+                Simplify, Summarize, Succeed
               </span>
             </p>
-            <HelloBot></HelloBot>
+
+            <div className="mt-10">
+              <HelloBot />
+            </div>
           </div>
 
-          {/* CTA Buttons */}
+          {/* CTA Button */}
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-20">
             <button
               onClick={() => navigate("/shortify")}
@@ -296,10 +301,10 @@ const ShortifyLanding = () => {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto px-4">
             {stats.map((stat, index) => (
               <div key={index} className="text-center">
-                <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-2">
+                <div className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-2">
                   {stat.value}
                 </div>
                 <div className="text-sm text-gray-400 font-light">
@@ -311,10 +316,10 @@ const ShortifyLanding = () => {
         </div>
       </section>
 
-            <div className="flex flex-col">
-             <FeaturedToolsSection />
-          </div>
-          
+      <div className="flex flex-col">
+        <FeaturedToolsSection />
+      </div>
+
       {/* Features Section */}
       <section className="relative py-32 px-6">
         <div className="max-w-7xl mx-auto">
@@ -402,11 +407,10 @@ const ShortifyLanding = () => {
                   onMouseEnter={() => setHovered(star)}
                   onMouseLeave={() => setHovered(0)}
                   onClick={() => setRating(star)}
-                  className={`w-8 h-8 cursor-pointer transition-colors ${
-                    (hovered || rating) >= star
-                      ? "text-yellow-400 fill-current"
-                      : "text-gray-500"
-                  }`}
+                  className={`w-8 h-8 cursor-pointer transition-colors ${(hovered || rating) >= star
+                    ? "text-yellow-400 fill-current"
+                    : "text-gray-500"
+                    }`}
                 />
               ))}
             </div>

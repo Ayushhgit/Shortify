@@ -209,6 +209,21 @@ class UserQuery(BaseModel):
 class AgentResponse(BaseModel):
     reply: str
 
+class ImportanceLevel(str, Enum):
+    high = "High"
+    medium = "Medium" 
+    low = "Low"
+
+class QuestionDifficulty(str, Enum):
+    low = "Low"
+    medium = "Medium"
+    high = "High"
+
+class InterviewQuestionType(str, Enum):
+    behavioral = "Behavioral"
+    technical = "Technical"
+    situational = "Situational"
+
 
 class QueryRequest(BaseModel):
     query: str = Field(..., min_length=1, max_length=1000, description="The research query")
@@ -278,3 +293,89 @@ class QuizResponse(BaseModel):
 
 class VideoRequest(BaseModel):
     topic: str
+
+class InterviewPrepRequest(BaseModel):
+    """Request model for interview preparation analysis"""
+    resume_text: Optional[str] = None
+    job_text: Optional[str] = None
+    company: str = Field(..., min_length=1, max_length=100)
+    role: str = Field(..., min_length=1, max_length=100)
+
+class SkillMatch(BaseModel):
+    """Model for skill matching analysis"""
+    skill: str
+    match: int = Field(..., ge=0, le=100)
+    description: str
+
+class SkillGap(BaseModel):
+    skill: str
+    importance: ImportanceLevel 
+    suggestion: str
+
+class InterviewFocusArea(BaseModel):
+    """Model for interview focus areas"""
+    area: str
+    why: str
+    preparation_tip: str
+
+class PotentialConcern(BaseModel):
+    """Model for potential interview concerns"""
+    concern: str
+    how_to_address: str
+
+class InterviewAnalysisResponse(BaseModel):
+    overall_match: int = Field(..., ge=0, le=100)
+    strengths: List[SkillMatch]  
+    gaps: List[SkillGap]        
+    key_words: List[str]
+    interview_focus_areas: List[InterviewFocusArea]
+    unique_selling_points: List[str]
+    potential_concerns: List[PotentialConcern]
+    session_id: Optional[str] = None
+    usage_info: Optional[Dict[str, Any]] = None
+
+class InterviewQuestion(BaseModel):
+    id: int
+    type: InterviewQuestionType  # Use enum
+    question: str
+    framework: str
+    sample_answer: str
+    difficulty: QuestionDifficulty  # Use enum
+    focus_area: str
+    preparation_tips: List[str]
+
+class InterviewQuestionsResponse(BaseModel):
+    """Response model for interview questions"""
+    questions: List[InterviewQuestion]
+    general_tips: List[str]
+    usage_info: Optional[Dict[str, Any]] = None
+
+class ChatMessage(BaseModel):
+    """Model for chat messages"""
+    message: str = Field(..., min_length=1, max_length=1000)
+    timestamp: Optional[datetime] = None
+
+class ChatResponse(BaseModel):
+    """Response model for AI chat"""
+    response: str
+    session_id: str
+    usage_info: Optional[Dict[str, Any]] = None
+
+class InterviewSession(BaseModel):
+    """Model for interview preparation session"""
+    session_id: str
+    user_id: str
+    company: str
+    role: str
+    created_at: datetime
+    resume_content: Optional[str] = None
+    job_content: Optional[str] = None
+    analysis: Optional[InterviewAnalysisResponse] = None
+    chat_history: List[Dict[str, Any]] = []
+
+class InterviewSessionSummary(BaseModel):
+    """Model for session summary in list view"""
+    session_id: str
+    company: str
+    role: str
+    created_at: str

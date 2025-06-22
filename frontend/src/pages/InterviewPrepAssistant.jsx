@@ -55,6 +55,8 @@ export default function InterviewPrepAssistant() {
     const [chatMessages, setChatMessages] = useState([]);
     const [chatInput, setChatInput] = useState("");
     const [isChatLoading, setIsChatLoading] = useState(false);
+    const [sessionId, setSessionId] = useState(null);
+    const [isGeneratingQuestions, setIsGeneratingQuestions] = useState(false);
 
     const navigate = useNavigate();
 
@@ -62,6 +64,26 @@ export default function InterviewPrepAssistant() {
         setToastMessage(message);
         setToastType(type);
         setShowToast(true);
+    };
+
+    const API_BASE_URL = 'http://localhost:8000'; // Adjust your backend URL
+
+    const apiCall = async (endpoint, formData) => {
+        const token = await getToken();
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+            body: formData
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.detail || 'API call failed');
+        }
+
+        return response.json();
     };
 
     const handleUploadMethodChange = (type, method) => {
@@ -100,6 +122,7 @@ export default function InterviewPrepAssistant() {
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             "text/plain",
         ];
+
         if (!allowedTypes.includes(file.type)) {
             displayToast("Please upload a PDF, DOC, DOCX, or TXT file", "error");
             return;
@@ -112,26 +135,11 @@ export default function InterviewPrepAssistant() {
 
         if (type === "resume") {
             setFormData((prev) => ({ ...prev, resumeFile: file }));
-            setIsExtractingResume(true);
+            displayToast("Resume uploaded successfully!");
         } else {
             setFormData((prev) => ({ ...prev, jobFile: file }));
-            setIsExtractingJob(true);
+            displayToast("Job description uploaded successfully!");
         }
-
-        // Simulate file processing
-        setTimeout(() => {
-            const extractedText = `[${file.name}] - File content extracted successfully. This is a placeholder for the actual extracted text content.`;
-
-            if (type === "resume") {
-                setFormData((prev) => ({ ...prev, resumeText: extractedText }));
-                setIsExtractingResume(false);
-                displayToast("Resume uploaded and processed successfully!");
-            } else {
-                setFormData((prev) => ({ ...prev, jobText: extractedText }));
-                setIsExtractingJob(false);
-                displayToast("Job description uploaded and processed successfully!");
-            }
-        }, 2000);
     };
 
     const removeFile = (type) => {
@@ -175,122 +183,112 @@ export default function InterviewPrepAssistant() {
         setAnalysis(null);
         setQuestions([]);
 
-        // Simulate API call
-        setTimeout(() => {
-            const mockAnalysis = {
-                overallMatch: 85,
-                strengths: [
-                    {
-                        skill: "JavaScript & React",
-                        match: 95,
-                        description: "Strong alignment with frontend requirements"
-                    },
-                    {
-                        skill: "Problem Solving",
-                        match: 90,
-                        description: "Demonstrated through project examples"
-                    },
-                    {
-                        skill: "Team Collaboration",
-                        match: 88,
-                        description: "Leadership experience matches team-focused role"
-                    }
-                ],
-                gaps: [
-                    {
-                        skill: "Python",
-                        importance: "High",
-                        suggestion: "Highlight any Python experience or willingness to learn"
-                    },
-                    {
-                        skill: "Machine Learning",
-                        importance: "Medium",
-                        suggestion: "Mention any ML coursework or personal projects"
-                    },
-                    {
-                        skill: "Cloud Platforms",
-                        importance: "Medium",
-                        suggestion: "Emphasize AWS/Azure experience if any"
-                    }
-                ],
-                keyWords: ["React", "JavaScript", "Frontend", "API", "Agile", "Git"]
-            };
+        try {
+            const formDataToSend = new FormData();
 
-            const mockQuestions = [
-                {
-                    id: 1,
-                    type: "Behavioral",
-                    question: "Tell me about a time when you had to work under pressure to meet a deadline.",
-                    framework: "Use the STAR method: Situation, Task, Action, Result",
-                    sampleAnswer: "Focus on a specific project where you managed time effectively and delivered quality results despite constraints.",
-                    difficulty: "Medium"
-                },
-                {
-                    id: 2,
-                    type: "Technical",
-                    question: "How would you optimize a React application's performance?",
-                    framework: "Discuss specific techniques and tools",
-                    sampleAnswer: "Mention React.memo, useMemo, useCallback, code splitting, and performance profiling tools.",
-                    difficulty: "High"
-                },
-                {
-                    id: 3,
-                    type: "Situational",
-                    question: "How would you handle disagreement with a team member about a technical approach?",
-                    framework: "Show collaboration and communication skills",
-                    sampleAnswer: "Emphasize listening, data-driven decision making, and finding common ground.",
-                    difficulty: "Medium"
-                },
-                {
-                    id: 4,
-                    type: "Behavioral",
-                    question: "Describe a project where you had to learn a new technology quickly.",
-                    framework: "Highlight learning agility and adaptability",
-                    sampleAnswer: "Choose an example that shows your learning process and successful implementation.",
-                    difficulty: "Low"
-                },
-                {
-                    id: 5,
-                    type: "Technical",
-                    question: "Explain the difference between REST and GraphQL APIs.",
-                    framework: "Compare and contrast with examples",
-                    sampleAnswer: "Discuss use cases, benefits, and trade-offs of each approach.",
-                    difficulty: "Medium"
-                }
-            ];
+            // Add files or text
+            if (formData.resumeFile) {
+                formDataToSend.append('resume_file', formData.resumeFile);
+            } else if (formData.resumeText) {
+                formDataToSend.append('resume_text', formData.resumeText);
+            }
 
-            setAnalysis(mockAnalysis);
-            setQuestions(mockQuestions);
+            if (formData.jobFile) {
+                formDataToSend.append('job_file', formData.jobFile);
+            } else if (formData.jobText) {
+                formDataToSend.append('job_text', formData.jobText);
+            }
+
+            formDataToSend.append('company', formData.company);
+            formDataToSend.append('role', formData.role);
+
+            const result = await apiCall('/interview-prep/analyze', formDataToSend);
+
+            setAnalysis({
+                overallMatch: result.overall_match,
+                strengths: result.strengths,
+                gaps: result.gaps,
+                keyWords: result.key_words,
+                sessionId: result.session_id
+            });
+
             setActiveTab("analysis");
-            setIsAnalyzing(false);
             displayToast("Analysis completed successfully!");
-        }, 3000);
+
+        } catch (error) {
+            displayToast(error.message || "Analysis failed", "error");
+        } finally {
+            setIsAnalyzing(false);
+        }
+    };
+
+    const handleGenerateQuestions = async () => {
+        if (!analysis?.sessionId) {
+            displayToast("Please run analysis first", "error");
+            return;
+        }
+
+        setIsGeneratingQuestions(true);
+        try {
+            const formDataToSend = new FormData();
+            formDataToSend.append('session_id', analysis.sessionId);
+            formDataToSend.append('question_count', '5');
+            formDataToSend.append('difficulty_level', 'mixed');
+            formDataToSend.append('question_types', 'behavioral');
+            formDataToSend.append('question_types', 'technical');
+            formDataToSend.append('question_types', 'situational');
+
+            const result = await apiCall('/interview-prep/questions', formDataToSend);
+
+            // Add logging to debug
+            console.log('API Response:', result);
+            console.log('Questions:', result.questions);
+            console.log('Current questions state:', questions);
+            console.log('Questions length:', questions.length);
+            console.log('Active tab:', activeTab);
+
+            // Set questions and switch to questions tab
+            setQuestions(result.questions || []);
+            setActiveTab("questions"); // Add this line to automatically switch tabs
+            displayToast("Questions generated successfully!");
+
+        } catch (error) {
+            console.error('Generate questions error:', error);
+            displayToast(error.message || "Failed to generate questions", "error");
+        }
+        finally {
+            setIsGeneratingQuestions(false);
+        }
     };
 
     const handleChatSubmit = async () => {
-        if (!chatInput.trim()) return;
+        if (!chatInput.trim() || !analysis?.sessionId) return;
 
         const userMessage = { type: "user", content: chatInput };
         setChatMessages(prev => [...prev, userMessage]);
+        const currentInput = chatInput;
         setChatInput("");
         setIsChatLoading(true);
 
-        // Simulate AI response
-        setTimeout(() => {
+        try {
+            const formDataToSend = new FormData();
+            formDataToSend.append('session_id', analysis.sessionId);
+            formDataToSend.append('message', currentInput);
+
+            const result = await apiCall('/interview-prep/chat', formDataToSend);
+
             const aiResponse = {
                 type: "ai",
-                content: `Based on your resume and the job description, here's my advice regarding "${chatInput}": 
-
-This is a great question! Given your background in React development and the job requirements, I'd recommend focusing on specific examples from your experience. 
-
-For instance, if asked about this topic, you could mention your work on [specific project] and how it demonstrates the skills they're looking for. 
-
-Would you like me to help you structure a specific answer or provide more details about any particular aspect?`
+                content: result.response
             };
 
             setChatMessages(prev => [...prev, aiResponse]);
+
+        } catch (error) {
+            displayToast(error.message || "Chat failed", "error");
+        } finally {
             setIsChatLoading(false);
-        }, 2000);
+        }
     };
 
     const handleCopy = async (text) => {
@@ -858,6 +856,18 @@ ${questions.map(q => `\n${q.type.toUpperCase()}: ${q.question}\nFramework: ${q.f
 
                                 {/* Action Buttons */}
                                 <div className="flex gap-4 mt-8">
+                                    <button
+                                        onClick={handleGenerateQuestions}
+                                        disabled={isGeneratingQuestions}
+                                        className="px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white rounded-lg transition-colors flex items-center gap-2"
+                                    >
+                                        {isGeneratingQuestions ? (
+                                            <Loader2 className="w-4 h-4 animate-spin" />
+                                        ) : (
+                                            <Brain className="w-4 h-4" />
+                                        )}
+                                        {isGeneratingQuestions ? "Generating..." : "Generate Interview Questions"}
+                                    </button>
                                     <button
                                         onClick={handleDownload}
                                         className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl text-white font-semibold hover:scale-105 transition-all duration-300 flex items-center justify-center space-x-2"

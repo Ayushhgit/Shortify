@@ -27,6 +27,7 @@ from app.routers import research_router
 from app.routers import linkwise_router
 from app.routers import eda_router
 from app.routers import quiz_router , stock_clip_router
+from app.routers import interview_prep_router
 
 
 logging.basicConfig(
@@ -84,6 +85,7 @@ app.include_router(linkwise_router.router)
 app.include_router(eda_router.router)
 app.include_router(quiz_router.router)
 app.include_router(stock_clip_router.router)
+app.include_router(interview_prep_router.router)
 
 @app.get("/", tags=["status"])
 async def root():
