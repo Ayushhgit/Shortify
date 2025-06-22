@@ -39,7 +39,7 @@ class Settings(BaseSettings):
     CELERY_RESULT_BACKEND: Optional[str] = None
 
     # DataBase
-    DATABASE_URL: str = "postgresql://postgres:hariom_715@localhost/Shortify"
+    DATABASE_URL: str = os.getenv("DATABASE_URL")
 
     # RazorPay
     RAZORPAY_KEY_ID:str = "rzp_test_quVhZvf3j1rhIY"

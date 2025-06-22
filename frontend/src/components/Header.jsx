@@ -14,7 +14,7 @@ export default function Header() {
       name: "Features",
       dropdown: [
         {
-          category: "YOUTUBE TOOLS",
+          category: "VIDEO TOOLS",
           items: [
             { label: "YouTube Clipper", path: "/features/shorts-generator" },
             { label: "YT-Video Summarizer", path: "/features/summarizer" },
@@ -43,7 +43,7 @@ export default function Header() {
         {
           category: "PRODUCTIVITY TOOLS",
           items: [
-            { label: "Assignment Helper", path: "/features/AssignmentHelper" },
+            { label: "Notes Generator", path: "/features/AssignmentHelper" },
             { label: "Research Assistant", path: "/features/ResearchAssistant"},
             { label: "Data Analyzer", path: "/features/EDA" },
             { label: "Quiz Generator", path: "/features/quiz-generator" },

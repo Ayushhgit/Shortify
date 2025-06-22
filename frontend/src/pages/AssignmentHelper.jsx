@@ -56,7 +56,7 @@ const AssignmentHelper = () => {
             name: "Type Your Question",
             icon: PenTool,
             color: "from-blue-500 to-indigo-600",
-            description: "Paste or type your assignment question directly"
+            description: "Paste or type your topic directly"
         },
         {
             id: "upload",
@@ -70,7 +70,7 @@ const AssignmentHelper = () => {
             name: "Take Photo",
             icon: Camera,
             color: "from-purple-500 to-pink-600",
-            description: "Capture assignment questions with your camera"
+            description: "upload the topic with your camera"
         }
     ];
 
@@ -424,7 +424,7 @@ const AssignmentHelper = () => {
                             <div className="absolute -top-1 -right-1 w-3 h-3 bg-purple-400 rounded-full animate-pulse"></div>
                         </div>
                         <span className="text-xl font-bold text-white">
-                            Assignment<span className="text-purple-400">AI</span>
+                            Notes<span className="text-purple-400">AI</span>
                         </span>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -449,16 +449,16 @@ const AssignmentHelper = () => {
                     <div className="text-center mb-16">
                         <div className="inline-flex items-center px-4 py-2 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-sm font-medium mb-6">
                             <Brain className="w-4 h-4 mr-2" />
-                            AI-Powered Assignment Assistant
+                            AI-Powered Notes generator
                         </div>
                         <h1 className="text-6xl font-bold text-white mb-6 leading-tight">
-                            Assignment AI
+                            Notes AI
                             <span className="block bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent">
-                                Get Instant Help
+                                Get Instant Notes
                             </span>
                         </h1>
                         <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-                            Upload documents, take photos, or type questions directly. Get comprehensive solutions with step-by-step explanations powered by advanced AI.
+                            Upload documents, take photos, or type topics directly. Get comprehensive results with step-by-step explanations powered by advanced AI.
                         </p>
                     </div>
 
