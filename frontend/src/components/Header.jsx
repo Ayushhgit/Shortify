@@ -186,7 +186,7 @@ export default function Header() {
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-extrabold text-white-900">
           <a href="/">
-            Clari<span className="text-green-400">AI</span>
+            Kwix<span className="text-green-400">Lab</span>
           </a>
         </h1>
 
@@ -240,7 +240,7 @@ export default function Header() {
           <a href="/shortify">
             <button className="bg-green-500 hover:bg-green-400 text-white font-semibold py-2.5 px-6 rounded-full flex items-center transition-all duration-200 shadow-md hover:shadow-lg">
               <Zap className="mr-2 h-5 w-5" />
-              Try ClariAI Now
+              Try KwixLab Now
             </button>
           </a>
         </div>

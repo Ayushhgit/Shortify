@@ -10,7 +10,7 @@ const Footer = () => {
           {/* Brand Name */}
           <div className="text-center md:text-left">
             <h1 className="text-3xl font-extrabold text-gray-900">
-              Clari<span className="text-green-500">AI</span>
+              Kwix<span className="text-green-500">Lab</span>
             </h1>
             <p className="mt-2 text-gray-600 text-md h-6">
               <Typewriter
@@ -35,7 +35,7 @@ const Footer = () => {
 
             <div className="flex items-center justify-center space-x-2 text-gray-800">
               <Mail className="w-5 h-5" />
-              <p className="text-sm">Shortify.rpx@gmail.com</p>
+              <p className="text-sm">info@kwixlab.com</p>
             </div>
           </div>
         </div>

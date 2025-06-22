@@ -255,9 +255,9 @@ const ShortifyLanding = () => {
           {/* Main headline */}
           <h1 className="text-[clamp(4rem,10vw,8rem)] font-black mb-8 tracking-tight leading-tight break-words">
             <span className="bg-gradient-to-r from-white via-green-200 to-green-300 bg-clip-text text-transparent">
-              Crux
+              Kwix
               <span className="bg-gradient-to-r from-green-300 to-green-400 bg-clip-text text-transparent">
-                LM
+                Lab
               </span>
             </span>
           </h1>
@@ -496,7 +496,7 @@ const ShortifyLanding = () => {
             {/* Brand Name */}
             <div className="text-center md:text-left">
               <h1 className="text-3xl font-extrabold text-white-900">
-                Clari<span className="text-green-500">AI</span>
+                Kwix<span className="text-green-500">Lab</span>
               </h1>
               <p className="mt-2 text-white-600 text-md h-6">
                 <Typewriter
@@ -526,7 +526,7 @@ const ShortifyLanding = () => {
 
               <div className="flex items-center justify-center space-x-2 text-gray-300">
                 <Mail className="w-5 h-5" />
-                <p className="text-sm">Shortify.rpx@gmail.com</p>
+                <p className="text-sm">info@kwixlab.com</p>
               </div>
             </div>
           </div>
