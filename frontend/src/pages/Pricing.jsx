@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { CheckCircle, Receipt, User, Lock, Star, Crown, Zap, Shield, X } from "lucide-react";
+import { CheckCircle, Receipt, User, Lock, Mail, Star, Crown, Zap, Shield, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import Header from "../components/Header.jsx";
+import { Typewriter } from "react-simple-typewriter";
 import { loadRazorpayScript } from "../utils/loadRazorpay";
 import { auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
@@ -9,6 +11,7 @@ import AuthModalSystem from "../components/AuthModalSystem";
 export default function Pricing() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [loading, setLoading] = useState(true);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState('login');
@@ -21,6 +24,20 @@ export default function Pricing() {
     subscription_start: null
   });
   const [processingPayment, setProcessingPayment] = useState(false);
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+    const handleScroll = () => setScrollY(window.scrollY);
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   // Monitor auth state
   useEffect(() => {
@@ -52,7 +69,7 @@ export default function Pricing() {
           "Content-Type": "application/json"
         }
       });
-      
+
       if (response.ok) {
         const status = await response.json();
         console.log("Fetched subscription status:", status); // Debug log
@@ -103,7 +120,7 @@ export default function Pricing() {
 
   async function handlePayment(planName, amount) {
     if (processingPayment) return;
-    
+
     setProcessingPayment(true);
     const res = await loadRazorpayScript();
     if (!res) {
@@ -146,7 +163,7 @@ export default function Pricing() {
           // Verify payment with your backend
           const verifyRes = await fetch("http://localhost:8000/payment/verify", {
             method: "POST",
-            headers: { 
+            headers: {
               "Content-Type": "application/json",
               "Authorization": `Bearer ${token}`
             },
@@ -176,12 +193,12 @@ export default function Pricing() {
           setProcessingPayment(false);
         },
         modal: {
-          ondismiss: function() {
+          ondismiss: function () {
             setProcessingPayment(false);
           }
         },
         theme: {
-          color: "#6366f1", // indigo
+          color: "#3b82f6", // blue-500
         },
         prefill: {
           name: user?.displayName || '',
@@ -200,7 +217,7 @@ export default function Pricing() {
 
   const handleCancelSubscription = async () => {
     if (!user || subscriptionStatus.subscription_type === 'free') return;
-    
+
     if (!confirm('Are you sure you want to cancel your subscription? You will be downgraded to the free plan.')) {
       return;
     }
@@ -245,54 +262,80 @@ export default function Pricing() {
     if (!subscriptionStatus.subscription_type || subscriptionStatus.subscription_type === 'free') {
       return 'Free Plan';
     }
-    
+
     const type = subscriptionStatus.subscription_type.toLowerCase();
     if (type === 'pro') return 'Pro Plan';
     if (type === 'premium') return 'Premium Plan';
-    
+
     // Fallback - capitalize first letter
-    return subscriptionStatus.subscription_type.charAt(0).toUpperCase() + 
-           subscriptionStatus.subscription_type.slice(1) + ' Plan';
+    return subscriptionStatus.subscription_type.charAt(0).toUpperCase() +
+      subscriptionStatus.subscription_type.slice(1) + ' Plan';
   };
 
   if (loading) {
     return (
-      <section className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-16 px-6 flex items-center justify-center">
+      <section className="min-h-screen bg-gradient-to-br from-black to-gray-900 py-16 px-6 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-gray-300">Loading...</p>
         </div>
       </section>
     );
   }
 
   return (
-    <section className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-16 px-6">
-      <div className="max-w-7xl mx-auto text-center">
-        <h2 className="text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
+    <section className="min-h-screen bg-gradient-to-br from-black to-gray-900 py-38 px-6 relative overflow-hidden">
+      {/* Decorative gradient orbs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        {/* Main gradient orb following mouse */}
+        <div
+          className="absolute w-[800px] h-[800px] opacity-30 transition-all duration-1000 ease-out"
+          style={{
+            left: mousePosition.x - 400,
+            top: mousePosition.y - 400,
+            background:
+              "radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(147, 51, 234, 0.1) 50%, transparent 70%)",
+            filter: "blur(100px)",
+          }}
+        />
+
+        {/* Static gradient overlays */}
+        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-900/5 via-purple-900/5 to-cyan-900/5" />
+        <div className="absolute top-1/4 right-0 w-96 h-96 bg-gradient-to-l from-purple-600/10 to-transparent rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-1/4 w-80 h-80 bg-gradient-to-t from-blue-600/10 to-transparent rounded-full blur-3xl" />
+
+        {/* Subtle grid pattern */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=\\'60\\' height=\\'60\\' viewBox=\\'0 0 60 60\\' xmlns=\\'http://www.w3.org/2000/svg\\'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] pointer-events-none z-0" />
+      </div>
+      <Header />
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-r from-purple-600/20 to-cyan-600/20 rounded-full blur-3xl"></div>
+
+      <div className="max-w-7xl mx-auto text-center relative z-10">
+        <h2 className="text-6xl font-light text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-purple-100 mb-6 tracking-tight">
           Pricing Plans for Every Stage
         </h2>
-        <p className="text-lg text-gray-500 mb-16">
+        <p className="text-xl text-gray-300 mb-16 font-light">
           Whether you're just starting out or scaling up, we've got a plan that
           fits.
         </p>
 
         {/* Success Message */}
         {paymentSuccess && (
-          <div className="fixed top-4 right-4 z-50 bg-green-500 text-white p-6 rounded-lg shadow-lg max-w-md">
+          <div className="fixed top-4 right-4 z-50 bg-gradient-to-r from-green-500 to-emerald-500 text-white p-6 rounded-2xl shadow-2xl max-w-md backdrop-blur-xl border border-green-400/20">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <CheckCircle className="w-6 h-6 mr-3" />
                 <div>
                   <h3 className="font-semibold">Payment Successful! 🎉</h3>
-                  <p className="text-sm mt-1">
+                  <p className="text-sm mt-1 text-green-100">
                     Welcome to {purchasedPlan} plan! Your subscription is now active.
                   </p>
                 </div>
               </div>
-              <button 
+              <button
                 onClick={() => setPaymentSuccess(false)}
-                className="ml-4 text-white hover:text-gray-200"
+                className="ml-4 text-green-100 hover:text-white transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -302,25 +345,25 @@ export default function Pricing() {
 
         {/* Current Subscription Status */}
         {user && subscriptionStatus.subscription_type !== 'free' && subscriptionStatus.is_active && (
-          <div className="mb-8 bg-blue-50 border border-blue-200 rounded-lg p-6 max-w-2xl mx-auto">
+          <div className="mb-12 bg-gradient-to-r from-white/5 to-white/[0.02] border border-white/10 rounded-2xl p-6 max-w-2xl mx-auto backdrop-blur-xl">
             <div className="flex items-center justify-between">
-              <div className="flex items-center text-blue-700">
+              <div className="flex items-center text-blue-400">
                 <Shield className="w-6 h-6 mr-3" />
                 <div className="text-left">
-                  <h3 className="font-semibold text-lg">Active Subscription</h3>
-                  <p className="text-sm">
-                    Current Plan: <strong className="capitalize">{subscriptionStatus.subscription_type}</strong>
+                  <h3 className="font-semibold text-lg text-white">Active Subscription</h3>
+                  <p className="text-sm text-gray-300">
+                    Current Plan: <strong className="capitalize text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">{subscriptionStatus.subscription_type}</strong>
                   </p>
                   {subscriptionStatus.subscription_end && (
-                    <p className="text-sm">
-                      Valid until: <strong>{formatDate(subscriptionStatus.subscription_end)}</strong>
+                    <p className="text-sm text-gray-400">
+                      Valid until: <strong className="text-gray-300">{formatDate(subscriptionStatus.subscription_end)}</strong>
                     </p>
                   )}
                 </div>
               </div>
               <button
                 onClick={handleCancelSubscription}
-                className="px-4 py-2 text-sm bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors"
+                className="px-4 py-2 text-sm bg-red-500/20 text-red-400 rounded-xl hover:bg-red-500/30 transition-all duration-300 border border-red-500/20"
               >
                 Cancel Subscription
               </button>
@@ -328,45 +371,43 @@ export default function Pricing() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Free Plan */}
-          <div className={`relative bg-white rounded-3xl border p-8 shadow-lg transition-all duration-300 ${
-            isCurrentPlan('free') 
-              ? 'border-green-500 border-2 bg-green-50' 
-              : 'border-gray-200 hover:shadow-xl hover:border-indigo-600'
-          }`}>
+          <div className={`relative bg-gradient-to-br from-white/5 to-white/[0.02] rounded-3xl border p-8 shadow-2xl transition-all duration-500 backdrop-blur-xl ${isCurrentPlan('free')
+            ? 'border-green-500/50 bg-gradient-to-br from-green-500/10 to-emerald-500/10'
+            : 'border-white/10 hover:border-white/20 hover:shadow-blue-500/25 hover:scale-[1.02]'
+            }`}>
             {isCurrentPlan('free') && (
-              <span className="absolute top-4 right-4 text-xs bg-green-500 text-white font-bold px-3 py-1 rounded-full shadow-md">
+              <span className="absolute top-4 right-4 text-xs bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold px-3 py-1 rounded-full shadow-lg">
                 Current Plan
               </span>
             )}
 
-            <div className="flex justify-center mb-4">
+            <div className="flex justify-center mb-6">
               <Star className="w-12 h-12 text-gray-400" />
             </div>
 
-            <h3 className="text-2xl font-semibold text-gray-800">Free</h3>
-            <p className="text-4xl font-semibold text-black mt-4">₹0</p>
-            <p className="text-sm text-gray-500 mb-6 mt-1">
+            <h3 className="text-2xl font-light text-white mb-2">Free</h3>
+            <p className="text-5xl font-light text-white mb-2">₹0</p>
+            <p className="text-sm text-gray-400 mb-8">
               Perfect for beginners
             </p>
 
-            <ul className="space-y-4 text-left mb-6">
+            <ul className="space-y-4 text-left mb-8">
               {["5 video summaries per month", "Basic analytics", "Standard support"].map((feature, i) => (
-                <li key={i} className="flex items-center text-gray-700">
-                  <CheckCircle className="text-green-500 w-5 h-5 mr-2 flex-shrink-0" />
-                  {feature}
+                <li key={i} className="flex items-center text-gray-300">
+                  <CheckCircle className="text-green-500 w-5 h-5 mr-3 flex-shrink-0" />
+                  <span className="font-light">{feature}</span>
                 </li>
               ))}
             </ul>
 
             <button
               onClick={() => navigate("/shortify")}
-              className={`w-full py-3 px-6 rounded-xl font-semibold transition duration-300 ${
-                isCurrentPlan('free')
-                  ? 'bg-green-500 text-white cursor-default'
-                  : 'border border-gray-300 bg-white text-black hover:border-black hover:shadow-md'
-              }`}
+              className={`w-full py-4 px-6 rounded-xl font-medium transition-all duration-300 ${isCurrentPlan('free')
+                ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white cursor-default'
+                : 'border border-white/20 bg-white/5 text-white hover:bg-white/10 hover:border-white/30 backdrop-blur-xl'
+                }`}
               disabled={isCurrentPlan('free')}
             >
               {isCurrentPlan('free') ? 'Current Plan' : 'Get Started'}
@@ -374,48 +415,46 @@ export default function Pricing() {
           </div>
 
           {/* Pro Plan */}
-          <div className={`relative rounded-3xl p-8 shadow-2xl text-white transform scale-105 z-10 transition-all duration-300 ${
-            isCurrentPlan('pro')
-              ? 'bg-gradient-to-br from-green-600 to-green-700 border-4 border-green-500'
-              : 'bg-gradient-to-br from-indigo-600 to-purple-600 border-4 border-indigo-700 hover:scale-110 hover:shadow-xl hover:border-white'
-          }`}>
-            <span className="absolute top-4 right-4 text-xs bg-white font-bold px-3 py-1 rounded-full">
+          <div className={`relative rounded-3xl p-8 shadow-2xl text-white transform scale-105 z-10 transition-all duration-500 backdrop-blur-xl ${isCurrentPlan('pro')
+            ? 'bg-gradient-to-br from-green-600/20 to-emerald-700/20 border-2 border-green-500/50'
+            : 'bg-gradient-to-br from-blue-600/20 to-purple-600/20 border-2 border-blue-500/50 hover:scale-110 hover:shadow-blue-500/50 hover:border-blue-400/70'
+            }`}>
+            <span className="absolute top-4 right-4 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
               {isCurrentPlan('pro') ? (
-                <span className="text-green-600">Current Plan</span>
+                <span className="bg-gradient-to-r from-green-500 to-emerald-500 text-white">Current Plan</span>
               ) : (
-                <span className="text-pink-600">Most Popular</span>
+                <span className="bg-gradient-to-r from-pink-500 to-rose-500 text-white">Most Popular</span>
               )}
             </span>
 
-            <div className="flex justify-center mb-4">
+            <div className="flex justify-center mb-6">
               <Zap className="w-12 h-12 text-white" />
             </div>
 
-            <h3 className="text-2xl font-semibold">Pro</h3>
-            <p className="text-4xl font-semibold text-white mt-4">₹49/mo</p>
-            <p className="text-sm text-indigo-100 mb-6 mt-1">
+            <h3 className="text-2xl font-light mb-2">Pro</h3>
+            <p className="text-5xl font-light text-white mb-2">₹49/mo</p>
+            <p className="text-sm text-blue-200 mb-8">
               Great for growing teams
             </p>
 
-            <ul className="space-y-4 text-left mb-6">
+            <ul className="space-y-4 text-left mb-8">
               {["50 video summaries per month", "Advanced analytics", "Priority support", "Custom branding"].map((feature, i) => (
                 <li key={i} className="flex items-center">
-                  <CheckCircle className="text-white w-5 h-5 mr-2 flex-shrink-0" />
-                  {feature}
+                  <CheckCircle className="text-white w-5 h-5 mr-3 flex-shrink-0" />
+                  <span className="font-light">{feature}</span>
                 </li>
               ))}
             </ul>
 
             <button
-              className={`w-full py-3 px-6 rounded-xl font-bold transition flex items-center justify-center ${
-                isCurrentPlan('pro')
-                  ? 'bg-white text-green-600 cursor-default'
-                  : processingPayment
-                  ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
+              className={`w-full py-4 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center ${isCurrentPlan('pro')
+                ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white cursor-default'
+                : processingPayment
+                  ? 'bg-gray-600/50 text-gray-400 cursor-not-allowed'
                   : !user
-                  ? 'bg-white hover:bg-gray-100 text-indigo-700'
-                  : 'bg-white hover:bg-gray-100 text-indigo-700'
-              }`}
+                    ? 'bg-white text-blue-600 hover:bg-gray-100'
+                    : 'bg-white text-blue-600 hover:bg-gray-100'
+                }`}
               onClick={() => handlePaymentClick("Pro", 49)}
               disabled={isCurrentPlan('pro') || processingPayment}
             >
@@ -435,44 +474,42 @@ export default function Pricing() {
           </div>
 
           {/* Premium Plan */}
-          <div className={`relative bg-white rounded-3xl border p-8 shadow-lg transition-all duration-300 ${
-            isCurrentPlan('premium')
-              ? 'border-green-500 border-2 bg-green-50'
-              : 'border-gray-200 hover:shadow-xl hover:border-indigo-600'
-          }`}>
+          <div className={`relative bg-gradient-to-br from-white/5 to-white/[0.02] rounded-3xl border p-8 shadow-2xl transition-all duration-500 backdrop-blur-xl ${isCurrentPlan('premium')
+            ? 'border-green-500/50 bg-gradient-to-br from-green-500/10 to-emerald-500/10'
+            : 'border-white/10 hover:border-white/20 hover:shadow-purple-500/25 hover:scale-[1.02]'
+            }`}>
             {isCurrentPlan('premium') && (
-              <span className="absolute top-4 right-4 text-xs bg-green-500 text-white font-bold px-3 py-1 rounded-full shadow-md">
+              <span className="absolute top-4 right-4 text-xs bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold px-3 py-1 rounded-full shadow-lg">
                 Current Plan
               </span>
             )}
 
-            <div className="flex justify-center mb-4">
-              <Crown className="w-12 h-12 text-yellow-500" />
+            <div className="flex justify-center mb-6">
+              <Crown className="w-12 h-12 text-yellow-400" />
             </div>
 
-            <h3 className="text-2xl font-semibold text-gray-800">Premium</h3>
-            <p className="text-4xl font-semibold text-black mt-4">₹99/mo</p>
-            <p className="text-sm text-gray-500 mb-6 mt-1">
+            <h3 className="text-2xl font-light text-white mb-2">Premium</h3>
+            <p className="text-5xl font-light text-white mb-2">₹99/mo</p>
+            <p className="text-sm text-gray-400 mb-8">
               Built for power users
             </p>
 
-            <ul className="space-y-4 text-left mb-6">
+            <ul className="space-y-4 text-left mb-8">
               {["Unlimited video summaries", "Enterprise analytics", "24/7 dedicated support", "API access"].map((feature, i) => (
-                <li key={i} className="flex items-center text-gray-700">
-                  <CheckCircle className="text-green-500 w-5 h-5 mr-2 flex-shrink-0" />
-                  {feature}
+                <li key={i} className="flex items-center text-gray-300">
+                  <CheckCircle className="text-green-500 w-5 h-5 mr-3 flex-shrink-0" />
+                  <span className="font-light">{feature}</span>
                 </li>
               ))}
             </ul>
 
             <button
-              className={`w-full py-3 px-6 rounded-xl font-semibold transition duration-300 flex items-center justify-center ${
-                isCurrentPlan('premium')
-                  ? 'bg-green-500 text-white cursor-default'
-                  : processingPayment
-                  ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
-                  : 'border border-gray-300 bg-white text-black hover:border-black hover:shadow-md'
-              }`}
+              className={`w-full py-4 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center ${isCurrentPlan('premium')
+                ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white cursor-default'
+                : processingPayment
+                  ? 'bg-gray-600/50 text-gray-400 cursor-not-allowed'
+                  : 'border border-white/20 bg-white/5 text-white hover:bg-white/10 hover:border-white/30 backdrop-blur-xl'
+                }`}
               onClick={() => handlePaymentClick("Premium", 99)}
               disabled={isCurrentPlan('premium') || processingPayment}
             >
@@ -492,49 +529,135 @@ export default function Pricing() {
           </div>
         </div>
 
-        {/* Auth Status Indicator - Updated Logic */}
+        {/* Auth Status Indicator */}
         {user && (
-          <div className={`mt-12 border rounded-lg p-4 max-w-md mx-auto ${
-            subscriptionStatus.subscription_type === 'free' || !subscriptionStatus.is_active
-              ? 'bg-green-50 border-green-200'
-              : subscriptionStatus.subscription_type === 'pro'
-              ? 'bg-indigo-50 border-indigo-200'
-              : 'bg-yellow-50 border-yellow-200'
-          }`}>
-            <div className={`flex items-center ${
-              subscriptionStatus.subscription_type === 'free' || !subscriptionStatus.is_active
-                ? 'text-green-700'
-                : subscriptionStatus.subscription_type === 'pro'
-                ? 'text-indigo-700'
-                : 'text-yellow-700'
+          <div className={`mt-16 border rounded-2xl p-6 max-w-md mx-auto backdrop-blur-xl transition-all duration-300 ${subscriptionStatus.subscription_type === 'free' || !subscriptionStatus.is_active
+            ? 'bg-gradient-to-r from-green-500/10 to-emerald-500/10 border-green-500/30'
+            : subscriptionStatus.subscription_type === 'pro'
+              ? 'bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-blue-500/30'
+              : 'bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border-yellow-500/30'
             }`}>
-              <User className="w-5 h-5 mr-2" />
-              <span className="text-sm">
-                Logged in as <strong>{user.email}</strong> - {getSubscriptionDisplayName()}
+            <div className={`flex items-center ${subscriptionStatus.subscription_type === 'free' || !subscriptionStatus.is_active
+              ? 'text-green-400'
+              : subscriptionStatus.subscription_type === 'pro'
+                ? 'text-blue-400'
+                : 'text-yellow-400'
+              }`}>
+              <User className="w-5 h-5 mr-3" />
+              <span className="text-sm font-light">
+                Logged in as <strong className="text-white">{user.email}</strong> - <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">{getSubscriptionDisplayName()}</span>
               </span>
             </div>
           </div>
         )}
 
         {!user && (
-          <div className="mt-12 bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-md mx-auto">
-            <div className="flex items-center text-blue-700">
-              <Lock className="w-5 h-5 mr-2" />
-              <span className="text-sm">
-                <button 
+          <div className="mt-16 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/30 rounded-2xl p-6 max-w-md mx-auto backdrop-blur-xl">
+            <div className="flex items-center text-blue-400">
+              <Lock className="w-5 h-5 mr-3" />
+              <span className="text-sm font-light">
+                <button
                   onClick={() => {
                     setAuthMode('login');
                     setShowAuthModal(true);
                   }}
-                  className="underline hover:no-underline"
+                  className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 hover:from-blue-300 hover:to-purple-300 transition-all duration-300 font-medium"
                 >
                   Login
-                </button> to access premium features
+                </button> <span className="text-gray-300">to access premium features</span>
               </span>
             </div>
           </div>
         )}
       </div>
+
+      {/*footer*/}
+      <footer className="relative z-10 mt-10">
+        <div className="mx-auto max-w-7xl px-4 py-2">
+          <div className="flex flex-col lg:flex-row justify-between items-start gap-10 bg-gray-800/10 backdrop-blur-md rounded-2xl border border-white/30 shadow-md px-8 py-6">
+            {/* Brand Name */}
+            <div className="text-center lg:text-left flex-1">
+              <h1 className="text-3xl font-extrabold text-white">
+                Kwix<span className="text-green-500">Lab</span>
+              </h1>
+              <p className="mt-2 text-gray-300 text-md h-6">
+                <Typewriter
+                  words={[
+                    "Your all-in-one AI-powered platform for video, document, and productivity tools.",
+                    "Generate viral YouTube Shorts in seconds with AI.",
+                    "Summarize YouTube videos into bite-sized insights instantly.",
+                    "Get instant PDF and article summaries with a single click.",
+                    "Analyze resumes and generate tailored cover letters effortlessly.",
+                    "Boost your productivity with AI-powered assignment and research tools.",
+                    "Transform data into insights with our smart Data Analyzer.",
+                    "Optimize your professional presence with the LinkedIn Helper.",
+                  ]}
+                  loop={0}
+                  cursor
+                  cursorStyle="_"
+                  typeSpeed={50}
+                  deleteSpeed={40}
+                  delaySpeed={1000}
+                />
+              </p>
+            </div>
+
+            {/* Legal and Contact Section Combined */}
+            <div className="flex flex-col md:flex-row gap-8 text-center lg:text-left">
+              {/* Legal Section */}
+              <div className="space-y-4">
+                <h2 className="text-lg font-semibold text-white">Legal</h2>
+                <div className="space-y-2">
+                  <div>
+                    <a
+                      href="/refund-policy"
+                      className="text-sm text-gray-300 hover:text-green-500 transition-colors duration-200 hover:underline"
+                    >
+                      Refund Policy
+                    </a>
+                  </div>
+                  <div>
+                    <a
+                      href="/terms-of-service"
+                      className="text-sm text-gray-300 hover:text-green-500 transition-colors duration-200 hover:underline"
+                    >
+                      Terms of Service
+                    </a>
+                  </div>
+                  <div>
+                    <a
+                      href="/privacy-policy"
+                      className="text-sm text-gray-300 hover:text-green-500 transition-colors duration-200 hover:underline"
+                    >
+                      Privacy Policy
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              {/* Contact Section */}
+              <div className="space-y-4">
+                <h2 className="text-lg font-semibold text-white">Contact Us</h2>
+
+                <div className="flex items-center justify-center lg:justify-start space-x-2 text-gray-300">
+                  <Mail className="w-5 h-5" />
+                  <a
+                    href="mailto:info@kwixlab.com"
+                    className="text-sm hover:text-green-500 transition-colors duration-200"
+                  >
+                    info@kwixlab.com
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Copyright */}
+          <div className="text-center mt-6 text-sm text-gray-300">
+            Made with ❤️ and ☕.
+          </div>
+        </div>
+      </footer>
 
       {/* Auth Modal */}
       {showAuthModal && (
@@ -545,5 +668,6 @@ export default function Pricing() {
         />
       )}
     </section>
+    
   );
 }

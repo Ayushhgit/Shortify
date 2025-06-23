@@ -50,6 +50,7 @@ const LayoutWrapper = ({ children }) => {
     "/features/Clip-generator",
     "/features/quiz-generator" ,
     "/features/InterviewPrepAssistant" ,
+    "/pricing",
     "/",
     
   ];

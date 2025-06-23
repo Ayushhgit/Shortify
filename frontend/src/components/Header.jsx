@@ -240,7 +240,7 @@ const renderMobileDropdown = (item) => {
   return (
     <header className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] max-w-7xl rounded-full bg-gray-800/10 backdrop-blur-lg shadow-xl border border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-extrabold text-white-900">
+        <h1 className="text-3xl font-extrabold text-white">
           <a href="/">
             Kwix<span className="text-green-400">Lab</span>
           </a>
@@ -262,7 +262,7 @@ const renderMobileDropdown = (item) => {
               }}
             >
               <div className="flex flex-col">
-                <button className="text-white-900 font-semibold hover:text-green-500 transition-colors duration-200 flex items-center">
+                <button className="text-white font-semibold hover:text-green-500 transition-colors duration-200 flex items-center">
                   {item.name}
                   <ChevronDown className="ml-1 h-4 w-4" />
                 </button>
@@ -271,7 +271,7 @@ const renderMobileDropdown = (item) => {
             </div>
           ))}
           <a href="/pricing">
-            <button className="text-white-900 font-semibold hover:text-green-500 transition-colors duration-200">
+            <button className="text-white font-semibold hover:text-green-500 transition-colors duration-200">
               Pricing
             </button>
           </a>
@@ -305,9 +305,9 @@ const renderMobileDropdown = (item) => {
         <div className="md:hidden">
           <button onClick={() => setMobileNavOpen(!mobileNavOpen)}>
             {mobileNavOpen ? (
-              <X className="h-6 w-6 text-white-800" />
+              <X className="h-6 w-6 text-white" />
             ) : (
-              <Menu className="h-6 w-6 text-white-500" />
+              <Menu className="h-6 w-6 " />
             )}
           </button>
         </div>
