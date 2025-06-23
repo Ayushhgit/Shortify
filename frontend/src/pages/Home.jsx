@@ -256,7 +256,7 @@ const ShortifyLanding = () => {
           <h1 className="text-[clamp(4rem,10vw,8rem)] font-black mb-8 tracking-tight leading-tight break-words">
             <span className="bg-gradient-to-r from-white via-green-200 to-green-300 bg-clip-text text-transparent">
               Kwix
-              <span className="bg-gradient-to-r from-green-300 to-green-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-green-300 to-emerald-400 bg-clip-text text-transparent">
                 Lab
               </span>
             </span>
@@ -490,53 +490,96 @@ const ShortifyLanding = () => {
           </div>
         </div>
       </section>
-      <footer className="relative z-10 mt-10">
-        <div className="mx-auto max-w-7xl px-4 py-10">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-10 bg-gray-800/10 backdrop-blur-md rounded-2xl border border-white/30 shadow-md px-8 py-6">
-            {/* Brand Name */}
-            <div className="text-center md:text-left">
-              <h1 className="text-3xl font-extrabold text-white-900">
-                Kwix<span className="text-green-500">Lab</span>
-              </h1>
-              <p className="mt-2 text-white-600 text-md h-6">
-                <Typewriter
-                  words={[
-                    "Your all-in-one AI-powered platform for video, document, and productivity tools.",
-                    "Generate viral YouTube Shorts in seconds with AI.",
-                    "Summarize YouTube videos into bite-sized insights instantly.",
-                    "Get instant PDF and article summaries with a single click.",
-                    "Analyze resumes and generate tailored cover letters effortlessly.",
-                    "Boost your productivity with AI-powered assignment and research tools.",
-                    "Transform data into insights with our smart Data Analyzer.",
-                    "Optimize your professional presence with the LinkedIn Helper.",
-                  ]}
-                  loop={0}
-                  cursor
-                  cursorStyle="_"
-                  typeSpeed={50}
-                  deleteSpeed={40}
-                  delaySpeed={1000}
-                />
-              </p>
+
+      {/*footer*/}
+     <footer className="relative z-10 mt-10">
+      <div className="mx-auto max-w-7xl px-4 py-10">
+        <div className="flex flex-col lg:flex-row justify-between items-start gap-10 bg-gray-800/10 backdrop-blur-md rounded-2xl border border-white/30 shadow-md px-8 py-6">
+          {/* Brand Name */}
+          <div className="text-center lg:text-left flex-1">
+            <h1 className="text-3xl font-extrabold text-white">
+              Kwix<span className="text-green-500">Lab</span>
+            </h1>
+            <p className="mt-2 text-gray-300 text-md h-6">
+              <Typewriter
+                words={[
+                  "Your all-in-one AI-powered platform for video, document, and productivity tools.",
+                  "Generate viral YouTube Shorts in seconds with AI.",
+                  "Summarize YouTube videos into bite-sized insights instantly.",
+                  "Get instant PDF and article summaries with a single click.",
+                  "Analyze resumes and generate tailored cover letters effortlessly.",
+                  "Boost your productivity with AI-powered assignment and research tools.",
+                  "Transform data into insights with our smart Data Analyzer.",
+                  "Optimize your professional presence with the LinkedIn Helper.",
+                ]}
+                loop={0}
+                cursor
+                cursorStyle="_"
+                typeSpeed={50}
+                deleteSpeed={40}
+                delaySpeed={1000}
+              />
+            </p>
+          </div>
+          
+          {/* Legal and Contact Section Combined */}
+          <div className="flex flex-col md:flex-row gap-8 text-center lg:text-left">
+            {/* Legal Section */}
+            <div className="space-y-4">
+              <h2 className="text-lg font-semibold text-white">Legal</h2>
+              <div className="space-y-2">
+                <div>
+                  <a 
+                    href="/refund-policy" 
+                    className="text-sm text-gray-300 hover:text-green-500 transition-colors duration-200 hover:underline"
+                  >
+                    Refund Policy
+                  </a>
+                </div>
+                <div>
+                  <a 
+                    href="/terms-of-service" 
+                    className="text-sm text-gray-300 hover:text-green-500 transition-colors duration-200 hover:underline"
+                  >
+                    Terms of Service
+                  </a>
+                </div>
+                <div>
+                  <a 
+                    href="/privacy-policy" 
+                    className="text-sm text-gray-300 hover:text-green-500 transition-colors duration-200 hover:underline"
+                  >
+                    Privacy Policy
+                  </a>
+                </div>
+              </div>
             </div>
 
-            {/* Contribution Section */}
-            <div className="text-center space-y-4 mt-8">
+            {/* Contact Section */}
+            <div className="space-y-4">
               <h2 className="text-lg font-semibold text-white">Contact Us</h2>
-
-              <div className="flex items-center justify-center space-x-2 text-gray-300">
+              
+              <div className="flex items-center justify-center lg:justify-start space-x-2 text-gray-300">
                 <Mail className="w-5 h-5" />
-                <p className="text-sm">info@kwixlab.com</p>
+                <a 
+                  href="mailto:info@kwixlab.com"
+                  className="text-sm hover:text-green-500 transition-colors duration-200"
+                >
+                  info@kwixlab.com
+                </a>
               </div>
             </div>
           </div>
-
-          {/* Bottom Copyright */}
-          <div className="text-center mt-6 text-sm text-white-700">
-            Made with ❤️ and ☕.
-          </div>
         </div>
-      </footer>
+
+        {/* Bottom Copyright */}
+        <div className="text-center mt-6 text-sm text-gray-300">
+          Made with ❤️ and ☕.
+        </div>
+      </div>
+    </footer>
+
+    
       <Toast
         show={showToast}
         message={toastMessage}

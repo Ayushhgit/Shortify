@@ -25,6 +25,8 @@ import EDAUploader from "./pages/EDAUploader";
 import QuizGenerator from "./pages/QuizGenerator";
 import ClipGenerator from "./pages/ClipGenerator";
 import InterviewPrepAssistant from "./pages/InterviewPrepAssistant";
+import RefundPolicy from "./pages/RefundPolicy";
+import TermsOService from "./pages/TOS";
 
 const LayoutWrapper = ({ children }) => {
   const location = useLocation();
@@ -91,6 +93,8 @@ function App() {
           <Route path="/features/InterviewPrepAssistant"  element={<InterviewPrepAssistant />}/>
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/refund-policy"  element={<RefundPolicy />}/>
+          <Route path="/terms-of-service"  element={<TermsOService />}/>
         </Routes>
       </LayoutWrapper>
     </BrowserRouter>
