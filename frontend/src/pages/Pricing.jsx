@@ -284,7 +284,7 @@ export default function Pricing() {
   }
 
   return (
-    <section className="min-h-screen bg-gradient-to-br from-black to-gray-900 py-38 px-6 relative overflow-hidden">
+    <section className="min-h-screen bg-gradient-to-br from-black to-gray-900 pt-38 px-6 relative overflow-hidden">
       {/* Decorative gradient orbs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         {/* Main gradient orb following mouse */}

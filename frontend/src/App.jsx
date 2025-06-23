@@ -51,6 +51,9 @@ const LayoutWrapper = ({ children }) => {
     "/features/quiz-generator" ,
     "/features/InterviewPrepAssistant" ,
     "/pricing",
+    "/use-cases/creators",
+    "/use-cases/educators",
+    "/use-cases/corporate",
     "/",
     
   ];
