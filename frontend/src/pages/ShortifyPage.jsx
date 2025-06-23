@@ -61,6 +61,7 @@ import {
 import AuthModalSystem from "../components/AuthModalSystem";
 import logo from "../assets/logo.png";
 import { useNavigate } from "react-router-dom";
+import Toast from "../components/Toast";
 import { Linkedin } from "lucide-react";
 
 export default function ShortifyPage() {
@@ -68,6 +69,9 @@ export default function ShortifyPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState("success");
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [animatedStats, setAnimatedStats] = useState({
     documents: 0,
@@ -75,6 +79,11 @@ export default function ShortifyPage() {
     accuracy: 0,
     processing: 0,
   });
+  const displayToast = (message, type = "success") => {
+    setToastMessage(message);
+    setToastType(type);
+    setShowToast(true);
+  };
 
   const navigate = useNavigate();
   // Animated counter effect
@@ -121,10 +130,16 @@ export default function ShortifyPage() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser && !currentUser.emailVerified) {
-        signOut(auth); // force logout if not verified
+        signOut(auth);
         setUser(null);
-      } else {
+        setIsModalOpen(true); // Show login modal
+      } else if (currentUser) {
         setUser(currentUser);
+        setIsModalOpen(false); // User is logged in, hide modal
+        displayToast("✅ Successfully authenticated!");
+      } else {
+        setUser(null);
+        setIsModalOpen(true); // No user, show login modal
       }
     });
 
@@ -696,11 +711,11 @@ export default function ShortifyPage() {
 
                         {/* Action Button */}
                         <div
-                        
+
                           onClick={() => navigate(feature.link)}
                           className={`w-full bg-gradient-to-r ${feature.gradient} hover:shadow-2xl text-white py-4 px-6 rounded-2xl font-semibold transition-all duration-300 flex items-center justify-center gap-3 group-hover:gap-4 text-lg shadow-lg cursor-pointer`}
                         >
-                          
+
                           <span>{feature.label}</span>
                           <ArrowRight
                             size={20}
@@ -2257,6 +2272,13 @@ export default function ShortifyPage() {
               <Sparkles className="w-4 h-4" />
             </div>
           </div>
+          {/* Toast */}
+          <Toast
+            show={showToast}
+            message={toastMessage}
+            type={toastType}
+            onClose={() => setShowToast(false)}
+          />
         </div>
       </div>
     </div>
