@@ -95,91 +95,147 @@ export default function Header() {
     };
   }, [mobileNavOpen]);
 
-  const renderDesktopDropdown = (item) => {
-    if (item.name === "Features") {
-      return (
-        <div className="absolute top-full left-0 mt-2 w-[600px] bg-white shadow-lg rounded-md border border-gray-100 py-4 z-50">
-          <div className="grid grid-cols-3 gap-6 px-4">
-            {item.dropdown.map((section, sectionIndex) => (
-              <div key={sectionIndex} className="space-y-3">
-                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+ const renderDesktopDropdown = (item) => {
+  if (item.name === "Features") {
+    return (
+      <div className="absolute top-full left-0 mt-3 w-[700px] bg-white/90 backdrop-blur-md shadow-2xl rounded-xl border border-white/20 py-6 z-50 animate-in fade-in slide-in-from-top-2 duration-300">
+        <div className="grid grid-cols-3 gap-8 px-6">
+          {item.dropdown.map((section, sectionIndex) => (
+            <div key={sectionIndex} className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <div className="w-1 h-4 bg-gradient-to-b from-green-500 to-green-600 rounded-full"></div>
+                <h3 className="text-xs font-bold text-gray-600 uppercase tracking-wider">
                   {section.category}
                 </h3>
-                <div className="space-y-2">
-                  {section.items.map((option) => (
-                    <button
-                      key={option.label}
-                      onClick={() => handleSelect(option.path)}
-                      className="w-full text-left px-2 py-1.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600 rounded-md transition duration-200"
-                    >
-                      {option.label}
-                    </button>
-                  ))}
-                </div>
               </div>
-            ))}
-          </div>
-        </div>
-      );
-    } else {
-      // Regular dropdown for other nav items
-      return (
-        <div className="absolute top-full left-0 mt-2 w-44 bg-white shadow-lg rounded-md border border-gray-100 py-1 z-50 text-sm">
-          {item.dropdown.map((option) => (
-            <button
-              key={option.label}
-              onClick={() => handleSelect(option.path)}
-              className="w-full text-left px-3 py-1.5 text-gray-700 hover:bg-gray-100 hover:text-green-600 transition duration-200"
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
-      );
-    }
-  };
-
-  const renderMobileDropdown = (item) => {
-    if (item.name === "Features") {
-      return (
-        <div className="ml-3 space-y-3">
-          {item.dropdown.map((section, sectionIndex) => (
-            <div key={sectionIndex}>
-              <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-                {section.category}
-              </h4>
-              <div className="space-y-2 ml-2">
-                {section.items.map((option) => (
+              <div className="space-y-1">
+                {section.items.map((option, index) => (
                   <button
                     key={option.label}
                     onClick={() => handleSelect(option.path)}
-                    className="block text-left text-gray-600 text-sm hover:text-green-500 transition"
+                    className="group w-full text-left px-3 py-2.5 text-sm text-gray-800 hover:bg-white/60 hover:backdrop-blur-sm hover:text-green-700 rounded-lg transition-all duration-300 ease-out transform hover:translate-x-1 hover:shadow-sm"
+                    style={{
+                      animationDelay: `${index * 50}ms`
+                    }}
                   >
-                    {option.label}
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium">{option.label}</span>
+                      <svg 
+                        className="w-4 h-4 text-gray-400 group-hover:text-green-500 transition-all duration-300 opacity-0 group-hover:opacity-100 transform translate-x-0 group-hover:translate-x-1" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
                   </button>
                 ))}
               </div>
             </div>
           ))}
         </div>
-      );
-    } else {
-      // Regular mobile dropdown for other nav items
-      return (
-        <div className="ml-3 space-y-2">
-          {item.dropdown.map((option) => (
+        {/* Elegant bottom border */}
+        <div className="absolute bottom-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
+      </div>
+    );
+  } else {
+    // Enhanced regular dropdown for other nav items
+    return (
+      <div className="absolute top-full left-0 mt-3 w-52 bg-white/80 backdrop-blur-md shadow-xl rounded-lg border border-white/20 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="py-1">
+          {item.dropdown.map((option, index) => (
             <button
               key={option.label}
               onClick={() => handleSelect(option.path)}
-              className="block text-left text-gray-600 text-sm hover:text-green-500 transition"
+              className="group w-full text-left px-4 py-2.5 text-sm text-gray-800 hover:bg-white/60 hover:backdrop-blur-sm hover:text-green-700 transition-all duration-200 ease-out flex items-center justify-between"
+              style={{
+                animationDelay: `${index * 30}ms`
+              }}
             >
-              {option.label}
+              <span className="font-medium">{option.label}</span>
+              <svg 
+                className="w-3 h-3 text-gray-400 group-hover:text-green-500 transition-all duration-200 opacity-0 group-hover:opacity-100" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
             </button>
           ))}
         </div>
-      );
-    }
-  };
+      </div>
+    );
+  }
+};
+
+const renderMobileDropdown = (item) => {
+  if (item.name === "Features") {
+    return (
+      <div className="ml-4 mt-3 space-y-4 animate-in fade-in slide-in-from-top-1 duration-300">
+        {item.dropdown.map((section, sectionIndex) => (
+          <div key={sectionIndex} className="pb-3 border-b border-gray-100 last:border-b-0">
+            <div className="flex items-center space-x-2 mb-3">
+              <div className="w-0.5 h-3 bg-gradient-to-b from-green-500 to-green-600 rounded-full"></div>
+              <h4 className="text-xs font-bold text-gray-600 uppercase tracking-wider">
+                {section.category}
+              </h4>
+            </div>
+            <div className="space-y-2 ml-3">
+              {section.items.map((option, index) => (
+                <button
+                  key={option.label}
+                  onClick={() => handleSelect(option.path)}
+                  className="group flex items-center justify-between w-full text-left py-2 px-3 text-gray-800 text-sm hover:text-green-600 hover:bg-white/40 hover:backdrop-blur-sm rounded-md transition-all duration-200 ease-out"
+                  style={{
+                    animationDelay: `${index * 40}ms`
+                  }}
+                >
+                  <span className="font-medium">{option.label}</span>
+                  <svg 
+                    className="w-3 h-3 text-gray-400 group-hover:text-green-500 transition-all duration-200 opacity-70 group-hover:opacity-100" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  } else {
+    // Enhanced regular mobile dropdown for other nav items
+    return (
+      <div className="ml-4 mt-2 space-y-1 animate-in fade-in slide-in-from-top-1 duration-200">
+        {item.dropdown.map((option, index) => (
+          <button
+            key={option.label}
+            onClick={() => handleSelect(option.path)}
+            className="group flex items-center justify-between w-full text-left py-2.5 px-3 text-gray-800 text-sm hover:text-green-600 hover:bg-white/40 hover:backdrop-blur-sm rounded-md transition-all duration-200 ease-out"
+            style={{
+              animationDelay: `${index * 30}ms`
+            }}
+          >
+            <span className="font-medium">{option.label}</span>
+            <svg 
+              className="w-3 h-3 text-gray-400 group-hover:text-green-500 transition-all duration-200 opacity-70 group-hover:opacity-100" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        ))}
+      </div>
+    );
+  }
+};
 
   return (
     <header className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] max-w-7xl rounded-full bg-gray-800/10 backdrop-blur-lg shadow-xl border border-gray-200 px-6 py-4">
