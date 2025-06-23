@@ -27,6 +27,7 @@ import ClipGenerator from "./pages/ClipGenerator";
 import InterviewPrepAssistant from "./pages/InterviewPrepAssistant";
 import RefundPolicy from "./pages/RefundPolicy";
 import TermsOService from "./pages/TOS";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 const LayoutWrapper = ({ children }) => {
   const location = useLocation();
@@ -95,6 +96,7 @@ function App() {
           <Route path="/settings" element={<Settings />} />
           <Route path="/refund-policy"  element={<RefundPolicy />}/>
           <Route path="/terms-of-service"  element={<TermsOService />}/>
+          <Route path="/privacy-policy"  element={<PrivacyPolicy />}/>
         </Routes>
       </LayoutWrapper>
     </BrowserRouter>
