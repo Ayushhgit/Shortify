@@ -107,6 +107,47 @@ const LinkwiseAI = () => {
         }
     };
 
+    const makeAPICall = async (endpoint, data, idToken) => {
+        try {
+            // DEBUG: Log the data being sent to API
+            console.log('Making API call to:', `${API_BASE}${endpoint}`);
+            console.log('With data:', JSON.stringify(data, null, 2));
+
+            const response = await fetch(`${API_BASE}${endpoint}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Authorization": `Bearer ${idToken}`,
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                console.error('API Error:', errorData);
+                console.error('Full validation errors:', errorData.detail);
+
+                // DEBUG: Show detailed validation errors
+                if (errorData.detail && Array.isArray(errorData.detail)) {
+                    console.error('Detailed validation errors:');
+                    errorData.detail.forEach((error, index) => {
+                        console.error(`Error ${index + 1}:`, error);
+                    });
+                }
+
+                throw new Error(errorData.detail || `HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            return response.json();
+        } catch (error) {
+            if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                throw new Error('Unable to connect to server. Please check if the API is running.');
+            }
+            throw error;
+        }
+    };
+
+    // Update handleProfileAnalysis to pass idToken
     const handleProfileAnalysis = async (e) => {
         e.preventDefault();
 
@@ -122,6 +163,7 @@ const LinkwiseAI = () => {
                 displayToast("Authentication failed. Please try logging in again.", "error");
                 return;
             }
+
             // Clean and prepare the payload - ONLY include non-empty fields
             const cleanPayload = {};
 
@@ -170,7 +212,8 @@ const LinkwiseAI = () => {
 
             console.log('Clean payload being sent:', JSON.stringify(cleanPayload, null, 2));
 
-            const result = await makeAPICall('/analyze-profile', cleanPayload);
+            // Pass idToken as third parameter
+            const result = await makeAPICall('/analyze-profile', cleanPayload, idToken);
             setResults({ type: 'analysis', data: result });
 
             setTimeout(() => {
@@ -183,46 +226,7 @@ const LinkwiseAI = () => {
         }
     };
 
-    const makeAPICall = async (endpoint, data) => {
-        try {
-            // DEBUG: Log the data being sent to API
-            console.log('Making API call to:', `${API_BASE}${endpoint}`);
-            console.log('With data:', JSON.stringify(data, null, 2));
-
-            const response = await fetch(`${API_BASE}${endpoint}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    "Authorization": `Bearer ${idToken}`,
-                },
-                body: JSON.stringify(data)
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                console.error('API Error:', errorData);
-                console.error('Full validation errors:', errorData.detail);
-
-                // DEBUG: Show detailed validation errors
-                if (errorData.detail && Array.isArray(errorData.detail)) {
-                    console.error('Detailed validation errors:');
-                    errorData.detail.forEach((error, index) => {
-                        console.error(`Error ${index + 1}:`, error);
-                    });
-                }
-
-                throw new Error(errorData.detail || `HTTP ${response.status}: ${response.statusText}`);
-            }
-
-            return response.json();
-        } catch (error) {
-            if (error.name === 'TypeError' && error.message.includes('fetch')) {
-                throw new Error('Unable to connect to server. Please check if the API is running.');
-            }
-            throw error;
-        }
-    };
-
+    // Update handleContentGeneration similarly
     const handleContentGeneration = async (e) => {
         e.preventDefault();
 
@@ -232,11 +236,6 @@ const LinkwiseAI = () => {
         setError('');
 
         try {
-            const payload = {
-                ...contentForm,
-                skills: contentForm.skills.split(',').map(s => s.trim())
-            };
-
             const idToken = await getToken();
             if (!idToken) {
                 console.error("User not authenticated");
@@ -244,8 +243,14 @@ const LinkwiseAI = () => {
                 return;
             }
 
-            const result = await makeAPICall('/generate-content', payload);
-            console.log('API Response:', result); // Add this line
+            const payload = {
+                ...contentForm,
+                skills: contentForm.skills.split(',').map(s => s.trim())
+            };
+
+            // Pass idToken as third parameter
+            const result = await makeAPICall('/generate-content', payload, idToken);
+            console.log('API Response:', result);
 
             if (!result.headlines || !result.about_sections || !result.posts) {
                 throw new Error('Invalid response format from server');
@@ -934,13 +939,13 @@ const LinkwiseAI = () => {
                 </div>
             </div>
             {/* Footer */}
-      <footer className="relative z-10 bg-white/5 backdrop-blur-sm border-t border-white/20 mt-8">
-        <div className="max-w-7xl mx-auto px-6 py-8 flex items-center justify-center">
-          <p className="text-gray-300 text-center">
-            Made with ❤️ and ☕ | Powered by AI.
-          </p>
-        </div>
-      </footer>
+            <footer className="relative z-10 bg-white/5 backdrop-blur-sm border-t border-white/20 mt-8">
+                <div className="max-w-7xl mx-auto px-6 py-8 flex items-center justify-center">
+                    <p className="text-gray-300 text-center">
+                        Made with ❤️ and ☕ | Powered by AI.
+                    </p>
+                </div>
+            </footer>
 
             <Toast
                 show={showToast}

@@ -28,6 +28,7 @@ from app.routers import linkwise_router
 from app.routers import eda_router
 from app.routers import quiz_router , stock_clip_router
 from app.routers import interview_prep_router
+from app.auth import firebase_auth as firebase
 
 
 logging.basicConfig(
@@ -99,7 +100,9 @@ async def root():
 async def health():
     return {"status": "healthy"}
 #hi
-
+@app.on_event("startup")
+async def startup_event():
+    firebase.initialize_firebase()
 
 print("Creating tables...")
 Base.metadata.create_all(bind=engine)

@@ -24,7 +24,7 @@ def generate_summary(transcript: str, details: dict = None) -> str:
         context += "\n"
     
     # Enhanced prompt with context and structured output
-    prompt = f"""You are an expert content analyst specializing in YouTube video summarization. Your task is to create a comprehensive yet concise summary that captures the essence and key insights of the video.
+    prompt = f"""You are an expert content analyst specializing in video summarization. Your task is to create a comprehensive yet concise summary that captures the essence and key insights of the video.
 
 {context}**Instructions:**
 1. Analyze the video content in relation to its title and context

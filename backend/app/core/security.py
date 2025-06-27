@@ -1,12 +1,27 @@
 from firebase_admin import auth, credentials
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+import os
 import firebase_admin
+from app.core.config import settings
 
 # Initialize Firebase Admin SDK only once
-cred = credentials.Certificate(r"C:\Hari om\Shortify\backend\shortify-876e7-firebase-adminsdk-fbsvc-9193bebcff.json")
-if not firebase_admin._apps:
-    firebase_admin.initialize_app(cred)
+def initialize_firebase():
+    """Initialize Firebase Admin SDK if not already initialized"""
+    if not firebase_admin._apps:
+        # Use environment variable for credentials path
+        cred_path = settings.GOOGLE_APPLICATION_CREDENTIALS or '/app/firebase-credentials.json'
+        
+        try:
+            cred = credentials.Certificate(cred_path)
+            firebase_admin.initialize_app(cred)
+            print(f"Firebase initialized with credentials from: {cred_path}")
+        except Exception as e:
+            print(f"Failed to initialize Firebase: {e}")
+            raise e
+
+# Initialize Firebase when module is imported
+initialize_firebase()
 
 security = HTTPBearer()
 

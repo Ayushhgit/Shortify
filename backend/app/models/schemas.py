@@ -379,3 +379,16 @@ class InterviewSessionSummary(BaseModel):
     company: str
     role: str
     created_at: str
+
+class ProfileScore(BaseModel):
+    score: int
+    strengths: List[str]
+    weaknesses: List[str]
+    suggestions: List[str]
+    usage_info: Optional[Dict[str, Any]] = None
+
+class GeneratedContent(BaseModel):
+    headlines: List[str]
+    about_sections: List[str]
+    posts: List[str]
+    usage_info: Optional[Dict[str, Any]] = None

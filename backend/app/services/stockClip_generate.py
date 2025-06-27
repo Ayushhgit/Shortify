@@ -19,7 +19,7 @@ from app.core.config import settings
 from pydantic import BaseModel
 
 # Configure ImageMagick path
-change_settings({"IMAGEMAGICK_BINARY": "C:\\Program Files\\ImageMagick-7.1.1-Q16-HDRI\\magick.exe"})
+change_settings({"IMAGEMAGICK_BINARY": "/usr/bin/convert"})
 
 logger = logging.getLogger(__name__)
 load_dotenv()

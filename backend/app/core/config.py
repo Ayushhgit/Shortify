@@ -2,7 +2,7 @@ from datetime import timedelta
 import os
 import pathlib
 from typing import Optional, Dict, Any
-from pydantic import field_validator
+from pydantic import Field, field_validator, ConfigDict
 from pydantic_settings import BaseSettings
 import razorpay
 from dotenv import load_dotenv
@@ -11,6 +11,12 @@ from celery.schedules import crontab
 load_dotenv()
 
 class Settings(BaseSettings):
+    model_config = ConfigDict(
+        case_sensitive=True,
+        env_file=".env",
+        env_file_encoding='utf-8',
+    )
+    
     # General
     API_V1_STR: str = "/api"
     PROJECT_NAME: str = "Shortify"
@@ -57,9 +63,9 @@ class Settings(BaseSettings):
     ANTHROPIC_API_KEY:str = os.getenv("ANTHROPIC_API_KEY")
     PROXYCURL_API_KEY: str = os.getenv("PROXYCURL_API_KEY")
     GOOGLE_AI_API_KEY: str = os.getenv("GOOGLE_AI_API_KEY")
-
+    GOOGLE_APPLICATION_CREDENTIALS: Optional[str] = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
     # Video Clip Settings
-    MIN_CLIP_DURATION: int = 60  # in seconds
+    MIN_CLIP_DURATION: int = 5  # in seconds
     MAX_CLIP_DURATION: int = 60  # in seconds
     MAX_CLIPS: int = 4
 
@@ -103,13 +109,6 @@ class Settings(BaseSettings):
     @field_validator("USE_WHISPER", mode="before")
     def enable_whisper_if_key_exists(cls, v: Optional[bool], values: Dict[str, Any]) -> bool:
         return bool(values.get("OPENAI_API_KEY")) if v is None else v
-
-    
-    
-    class Config:
-        case_sensitive = True
-        env_file = ".env"
-        env_file_encoding = 'utf-8'
 
 
 settings = Settings()

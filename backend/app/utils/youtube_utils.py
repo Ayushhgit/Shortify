@@ -283,7 +283,7 @@ def transcribe_audio(video_url: str) -> str:
             model = faster_whisper.WhisperModel("base", device="cpu", compute_type="int8")
             
             # Transcribe the audio
-            segments, info = model.transcribe(audio_file, language="auto")
+            segments, info = model.transcribe(audio_file, language="en")
             
             # Extract text from segments
             transcript_text = " ".join([segment.text for segment in segments])

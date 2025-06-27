@@ -52,8 +52,7 @@ def generate_shorts(self, url: str, use_whisper: bool = False, use_gpt: bool = F
         # ✅ Return model_dumpionary instead of Pydantic model
         if hasattr(result, "model_dump"):
             return result.model_dump()
-        model_dump: Any
-        return model_dump(result)
+        return result.__dict__ if hasattr(result, '__dict__') else result
 
     except Exception as e:
         logger.exception("Error in shorts generation task")

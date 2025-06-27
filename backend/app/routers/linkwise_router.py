@@ -807,25 +807,23 @@ async def analyze_profile(
         
         logger.info(f"Analyzing profile data for: {profile_data.get('name', 'Unknown')}")
         result = await analyze_profile_with_ai(profile_data)
-        
-        # Add usage info to response (you'll need to modify ProfileScore model or handle this differently)
-        if hasattr(result, '__dict__'):
-            result.usage_info = {
-                "remaining": rate_info['remaining'],
-                "limit": rate_info['limit'],
-                "subscription": rate_info['subscription']
-            }
-        
-        return result
-        
-    except HTTPException:
-        raise
+        usage_info_data = {
+            "remaining": rate_info['remaining'],
+            "limit": rate_info['limit'],
+            "subscription": rate_info['subscription']
+        }
+
+        # Create new instance with usage_info
+        return ProfileScore(
+            score=result.score,
+            strengths=result.strengths,
+            weaknesses=result.weaknesses,
+            suggestions=result.suggestions,
+            usage_info=usage_info_data
+        )
     except Exception as e:
         logger.error(f"Profile analysis failed: {str(e)}")
-        raise HTTPException(
-            status_code=Status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to analyze profile: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/generate-content", response_model=GeneratedContent)
 async def generate_headlines_and_bio(
@@ -838,22 +836,26 @@ async def generate_headlines_and_bio(
         rate_info = rate_limit_data['rate_limit_info']
         
         result = await generate_headlines_bio(request)
-        
-        # Add usage info to response (you'll need to modify GeneratedContent model or handle this differently)
-        if hasattr(result, '__dict__'):
-            result.usage_info = {
-                "remaining": rate_info['remaining'],
-                "limit": rate_info['limit'],
-                "subscription": rate_info['subscription']
-            }
+        usage_info_data = {
+            "remaining": rate_info['remaining'],
+            "limit": rate_info['limit'],
+            "subscription": rate_info['subscription']
+        }
+
+        return GeneratedContent(
+            headlines=result.headlines,
+            about_sections=result.about_sections,
+            posts=result.posts,
+            usage_info=usage_info_data
+        )
         
         return result
         
     except Exception as e:
         logger.error(f"Content generation failed: {str(e)}")
         raise HTTPException(
-            status_code=Status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to generate content: {str(e)}"
+            status_code=500,
+            detail=f"Failed to analyze profile: {str(e)}"
         )
 
 @router.get("/health")
