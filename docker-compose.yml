@@ -12,6 +12,7 @@ services:
   backend:
     build:
       context: ./backend
+    image: shortify-backend:latest  # ✅ Named image for reuse
     ports:
       - "8000:8000"
     env_file:
@@ -21,7 +22,7 @@ services:
       - redis
     volumes:
       - ./backend:/app
-      - ./backend/shortify-876e7-firebase-adminsdk-fbsvc-9193bebcff.json:/app/firebase-credentials.json  # ✅ Mount Firebase credentials
+      - ./backend/shortify-876e7-firebase-adminsdk-fbsvc-9193bebcff.json:/app/firebase-credentials.json
       - ./backend/uploads:/app/uploads
 
   db:
@@ -42,8 +43,7 @@ services:
       - "6379:6379"
 
   celery:
-    build:
-      context: ./backend
+    image: shortify-backend:latest  # ✅ Reuse backend image
     command: celery -A app.core.celery_app worker --loglevel=info --pool=solo --queues=shorts
     depends_on:
       - backend
@@ -52,12 +52,11 @@ services:
       - ./backend/.env
     volumes:
       - ./backend:/app
-      - ./backend/shortify-876e7-firebase-adminsdk-fbsvc-9193bebcff.json:/app/firebase-credentials.json  # ✅ Mount Firebase credentials
+      - ./backend/shortify-876e7-firebase-adminsdk-fbsvc-9193bebcff.json:/app/firebase-credentials.json
       - ./backend/uploads:/app/uploads
-      
+
   celery-beat:
-    build:
-      context: ./backend
+    image: shortify-backend:latest  # ✅ Reuse backend image
     command: celery -A app.core.celery_app beat --loglevel=info
     depends_on:
       - backend
@@ -66,7 +65,7 @@ services:
       - ./backend/.env
     volumes:
       - ./backend:/app
-      - ./backend/shortify-876e7-firebase-adminsdk-fbsvc-9193bebcff.json:/app/firebase-credentials.json  # ✅ Mount Firebase credentials
+      - ./backend/shortify-876e7-firebase-adminsdk-fbsvc-9193bebcff.json:/app/firebase-credentials.json
 
 volumes:
   db_data: {}
