@@ -80,12 +80,12 @@ services:
       - frontend
 
   certbot:
-  image: certbot/certbot
-  container_name: certbot
-  volumes:
-    - ./nginx/certbot/conf:/etc/letsencrypt
-    - ./nginx/certbot/www:/var/www/certbot
-  command: certonly --webroot --webroot-path=/var/www/certbot --email singh.omhari715@gmail.com --agree-tos --no-eff-email --non-interactive -d kwixlab.com -d www.kwixlab.com
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./nginx/certbot/conf:/etc/letsencrypt
+      - ./nginx/certbot/www:/var/www/certbot
+    command: certonly --webroot --webroot-path=/var/www/certbot --email singh.omhari715@gmail.com --agree-tos --no-eff-email --non-interactive -d kwixlab.com -d www.kwixlab.com
 
 volumes:
   db_data: {}
