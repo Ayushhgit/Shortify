@@ -168,7 +168,7 @@ const AssignmentHelper = () => {
 
                 console.log('Sending request body:', requestBody); // Debug log
 
-                response = await fetch('http://kwixlab.com:8000/ai/generate-solutions', {
+                response = await fetch('https://kwixlab.com/ai/generate-solutions', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -206,7 +206,7 @@ const AssignmentHelper = () => {
 
                 console.log('Uploading file...'); // Debug log
 
-                response = await fetch('http://kwixlab.com:8000/ai/upload-and-solve', {
+                response = await fetch('https://kwixlab.com/ai/upload-and-solve', {
                     method: 'POST',
                     headers: {
                         "Authorization": `Bearer ${idToken}`,
@@ -286,7 +286,7 @@ const AssignmentHelper = () => {
 
             console.log("Sending text to handwriting:", textToRender);
 
-            const response = await fetch('http://kwixlab.com:8000/render/handwriting', {
+            const response = await fetch('https://kwixlab.com/render/handwriting', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -308,7 +308,7 @@ const AssignmentHelper = () => {
                     imageFilenames = data.image_paths.map(path => path.split('/').pop());
 
                     // Display the first page immediately
-                    const firstImageUrl = `http://kwixlab.com:8000/outputs/${imageFilenames[0]}`;
+                    const firstImageUrl = `https://kwixlab.com/outputs/${imageFilenames[0]}`;
                     setRenderedImage(firstImageUrl);
 
                     displayToast(`Handwriting rendered successfully! ${data.total_pages} pages created.`);
@@ -317,7 +317,7 @@ const AssignmentHelper = () => {
                     const filename = data.image_path.split('/').pop();
                     imageFilenames = [filename];
 
-                    const imageUrl = `http://kwixlab.com:8000/outputs/${filename}`;
+                    const imageUrl = `https://kwixlab.com/outputs/${filename}`;
                     setRenderedImage(imageUrl);
 
                     displayToast("Handwriting image rendered successfully!");
@@ -349,7 +349,7 @@ const AssignmentHelper = () => {
 
             console.log("Generating PDF with images:", imagePaths);
 
-            const response = await fetch('http://kwixlab.com:8000/export/pdf', {
+            const response = await fetch('https://kwixlab.com/export/pdf', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -363,7 +363,7 @@ const AssignmentHelper = () => {
                 const data = await response.json();
                 const pdfFilename = data.pdf_path.split('/').pop();
 
-                const pdfResponse = await fetch(`http://kwixlab.com:8000/outputs/${pdfFilename}`);
+                const pdfResponse = await fetch(`https://kwixlab.com/outputs/${pdfFilename}`);
                 if (!pdfResponse.ok) {
                     throw new Error('Failed to fetch the generated PDF');
                 }
@@ -1054,7 +1054,7 @@ const AssignmentHelper = () => {
                                                             Page {index + 1}
                                                         </h5>
                                                         <img
-                                                            src={`http://kwixlab.com:8000/outputs/${filename}`}
+                                                            src={`https://kwixlab.com/outputs/${filename}`}
                                                             alt={`Rendered Handwriting Page ${index + 1}`}
                                                             className="w-full max-w-4xl mx-auto rounded-xl shadow-2xl"
                                                             style={{ maxHeight: '800px', objectFit: 'contain' }}

@@ -63,7 +63,7 @@ export default function Pricing() {
   const fetchSubscriptionStatus = async (currentUser) => {
     try {
       const token = await currentUser.getIdToken();
-      const response = await fetch("http://kwixlab.com:8000/payment/subscription-status", {
+      const response = await fetch("https://kwixlab.com/payment/subscription-status", {
         headers: {
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json"
@@ -135,7 +135,7 @@ export default function Pricing() {
 
       // 1. Create order from backend
       const result = await fetch(
-        `http://kwixlab.com:8000/payment/create-order?amount=${amount}`,
+        `https://kwixlab.com/payment/create-order?amount=${amount}`,
         {
           method: "POST",
           headers: {
@@ -161,7 +161,7 @@ export default function Pricing() {
         order_id: data.order_id,
         handler: async function (response) {
           // Verify payment with your backend
-          const verifyRes = await fetch("http://kwixlab.com:8000/payment/verify", {
+          const verifyRes = await fetch("https://kwixlab.com/payment/verify", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -224,7 +224,7 @@ export default function Pricing() {
 
     try {
       const token = await user.getIdToken();
-      const response = await fetch("http://kwixlab.com:8000/payment/cancel-subscription", {
+      const response = await fetch("https://kwixlab.com/payment/cancel-subscription", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`,

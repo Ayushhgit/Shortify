@@ -62,7 +62,7 @@ const LinkwiseAI = () => {
 
     const resultRef = useRef(null);
 
-    const API_BASE = 'http://kwixlab.com:8000/linkwise';
+    const API_BASE = 'https://kwixlab.com/linkwise';
 
     const validateProfileForm = () => {
         const errors = {};

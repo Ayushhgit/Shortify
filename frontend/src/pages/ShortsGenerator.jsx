@@ -185,7 +185,7 @@ export default function ShortsGenerator() {
 
       // Step 1: Send URL to backend
       const response = await fetch(
-        "http://kwixlab.com:8000/api/shorts/generate",
+        "https://kwixlab.com/api/shorts/generate",
         {
           method: "POST",
           headers: {
@@ -235,7 +235,7 @@ export default function ShortsGenerator() {
 
       while (status !== "completed") {
         const pollRes = await fetch(
-          `http://kwixlab.com:8000/api/shorts/status/${task_id}`
+          `https://kwixlab.com/api/shorts/status/${task_id}`
         );
 
         if (!pollRes.ok) {
@@ -719,7 +719,7 @@ export default function ShortsGenerator() {
                       <video
                         controls
                         className="rounded-lg w-full aspect-[9/16] bg-black"
-                        src={`http://kwixlab.com:8000${clip.url}`}
+                        src={`https://kwixlab.com${clip.url}`}
                       />
                       <div className="mt-3 text-sm text-gray-700">
                         <div>
@@ -731,7 +731,7 @@ export default function ShortsGenerator() {
                       </div>
                       <div className="flex justify-between mt-2 text-xs text-gray-500">
                         <a
-                          href={`http://kwixlab.com:8000${clip.url}`}
+                          href={`https://kwixlab.com${clip.url}`}
                           download
                           className="text-indigo-600 hover:underline"
                         >
@@ -740,7 +740,7 @@ export default function ShortsGenerator() {
                         <button
                           onClick={() => {
                             navigator.clipboard.writeText(
-                              `http://kwixlab.com:8000${clip.url}`
+                              `https://kwixlab.com${clip.url}`
                             );
                             displayToast(
                               "Link copied to clipboard!",

@@ -346,7 +346,7 @@ const renderMobileDropdown = (item) => {
           <a href="/shortify">
             <button className="w-full mt-3 bg-green-500 hover:bg-green-400 text-white font-semibold py-2.5 rounded-full transition-all duration-200 shadow-md hover:shadow-lg flex justify-center items-center">
               <Zap className="mr-2 h-5 w-5" />
-              Try ClariAI Now
+              Try KwixLab Now
             </button>
           </a>
         </div>

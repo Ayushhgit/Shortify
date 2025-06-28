@@ -66,7 +66,7 @@ export default function InterviewPrepAssistant() {
         setShowToast(true);
     };
 
-    const API_BASE_URL = 'http://kwixlab.com:8000'; // Adjust your backend URL
+    const API_BASE_URL = 'https://kwixlab.com'; // Adjust your backend URL
 
     const apiCall = async (endpoint, formData) => {
         const token = await getToken();

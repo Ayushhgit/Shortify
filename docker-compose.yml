@@ -67,5 +67,30 @@ services:
       - ./backend:/app
       - ./backend/shortify-876e7-firebase-adminsdk-fbsvc-9193bebcff.json:/app/firebase-credentials.json
 
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf:/etc/nginx/conf.d
+      - ./nginx/certbot/conf:/etc/letsencrypt
+      - ./nginx/certbot/www:/var/www/certbot
+    depends_on:
+      - frontend
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./nginx/certbot/conf:/etc/letsencrypt
+      - ./nginx/certbot/www:/var/www/certbot
+    entrypoint: >
+      sh -c "certbot certonly --webroot --webroot-path=/var/www/certbot
+             --email singh.omhari715@gmail.com --agree-tos --no-eff-email
+             -d kwixlab.com -d www.kwixlab.com"
+
 volumes:
   db_data: {}

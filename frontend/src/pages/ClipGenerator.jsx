@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Toast from "../components/Toast";
 import { getToken } from "../firebase";
 
-const API_BASE_URL = "http://kwixlab.com:8000";
+const API_BASE_URL = "https://kwixlab.com";
 
 const LoadingSpinner = () => (
     <div className="relative">

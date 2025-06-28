@@ -89,7 +89,7 @@ const EDAUploader = () => {
         );
         return;
       }
-      const response = await fetch('http://kwixlab.com:8000/eda/analyze', {
+      const response = await fetch('https://kwixlab.com/eda/analyze', {
         method: 'POST',
         headers: {
           "Authorization": `Bearer ${idToken}`,
@@ -121,7 +121,7 @@ const EDAUploader = () => {
     formData.append('file', file);
 
     try {
-      const response = await fetch('http://kwixlab.com:8000/eda/report', {
+      const response = await fetch('https://kwixlab.com/eda/report', {
         method: 'POST',
         body: formData,
       });
