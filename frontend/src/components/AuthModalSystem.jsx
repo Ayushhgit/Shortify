@@ -398,7 +398,7 @@ export default function AuthModalSystem({ onClose, initialMode = 'signup', onAut
             </div>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-center text-black">
             Create a new account
           </h2>
 
@@ -411,7 +411,7 @@ export default function AuthModalSystem({ onClose, initialMode = 'signup', onAut
                   id="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg py-3 px-4 pl-12 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 rounded-lg py-3 px-4 pl-12 text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Type your name here"
                   required
                 />
@@ -429,7 +429,7 @@ export default function AuthModalSystem({ onClose, initialMode = 'signup', onAut
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg py-3 px-4 pl-12 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 rounded-lg py-3 px-4 pl-12 text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Type your email here"
                   required
                 />
@@ -446,7 +446,7 @@ export default function AuthModalSystem({ onClose, initialMode = 'signup', onAut
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 rounded-lg py-3 px-4 text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Choose a strong password"
                 required
               />
@@ -476,7 +476,7 @@ export default function AuthModalSystem({ onClose, initialMode = 'signup', onAut
             Continue with Google
           </button>
 
-          <div className="text-center mt-5">
+          <div className="text-center mt-5 text-black">
             <p>
               Already have an account?{' '}
               <button

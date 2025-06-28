@@ -31,7 +31,7 @@ const ChatWithDocument = ({ documentContent, isVisible, onClose }) => {
     try {
       const idToken = await getToken();
 
-      const response = await fetch("http://localhost:8000/api/pdf/chat-simple", {
+      const response = await fetch("http://kwixlab.com:8000/api/pdf/chat-simple", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${idToken}`,
@@ -249,7 +249,7 @@ export default function PremiumPdfSummarizer() {
       formData.append("file", file);
       formData.append("analysis_type", analysisType);
 
-      const response = await fetch('http://localhost:8000/api/pdf/upload-analyze', {
+      const response = await fetch('http://kwixlab.com:8000/api/pdf/upload-analyze', {
         method: "POST",
         headers: {
           Authorization: `Bearer ${idToken}`,
@@ -355,7 +355,7 @@ export default function PremiumPdfSummarizer() {
 
   const exportToPDF = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/export/pdf', {
+      const response = await fetch('http://kwixlab.com:8000/api/export/pdf', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -387,7 +387,7 @@ export default function PremiumPdfSummarizer() {
 
   const shareReport = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/share', {
+      const response = await fetch('http://kwixlab.com:8000/api/share', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

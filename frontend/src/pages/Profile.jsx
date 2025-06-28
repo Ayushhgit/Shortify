@@ -103,7 +103,7 @@ export default function EnhancedProfile() {
 
       // Fetch subscription status
       try {
-        const subscriptionResponse = await fetch("http://localhost:8000/payment/subscription-status", {
+        const subscriptionResponse = await fetch("http://kwixlab.com:8000/payment/subscription-status", {
           headers
         });
 
@@ -138,7 +138,7 @@ export default function EnhancedProfile() {
     try {
       setLimitsLoading(true);
       const token = await currentUser.getIdToken();
-      const response = await fetch("http://localhost:8000/payment/feature-limits", {
+      const response = await fetch("http://kwixlab.com:8000/payment/feature-limits", {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'

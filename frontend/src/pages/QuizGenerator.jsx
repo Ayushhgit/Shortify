@@ -58,7 +58,7 @@ const QuizGenerator = () => {
     setStep(2);
 
     try {
-      const response = await fetch('http://localhost:8000/quiz/generate-quiz', {
+      const response = await fetch('http://kwixlab.com:8000/quiz/generate-quiz', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

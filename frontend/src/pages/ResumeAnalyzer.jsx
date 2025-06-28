@@ -96,7 +96,7 @@ const ResumeAnalyzer = () => {
       setLoading(true);
       setStep(3);
 
-      const response = await fetch("http://localhost:8000/analyze", {
+      const response = await fetch("http://kwixlab.com:8000/analyze", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${idToken}`,

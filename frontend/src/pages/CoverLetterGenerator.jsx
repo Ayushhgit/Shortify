@@ -58,7 +58,7 @@ export default function CoverLetterGenerator() {
   };
 
   // Backend API URL - change this to your deployed backend URL
-  const API_BASE_URL = "http://localhost:8000";
+  const API_BASE_URL = "http://kwixlab.com:8000";
 
   const toneOptions = [
     {

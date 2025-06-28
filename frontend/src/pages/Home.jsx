@@ -77,7 +77,7 @@ const ShortifyLanding = () => {
 
     try {
       // Fixed: Changed variable name from 'review' to 'response'
-      const response = await fetch("http://localhost:8000/api/reviews", {
+      const response = await fetch("http://kwixlab.com:8000/api/reviews", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -71,7 +71,7 @@ export default function YouTubeSummarizer() {
 
       setIsProcessing(true);
 
-      const response = await fetch("http://localhost:8000/api/ytSummary/summarize", {
+      const response = await fetch("http://kwixlab.com:8000/api/ytSummary/summarize", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

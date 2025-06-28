@@ -55,7 +55,7 @@ const ChatWithDocument = ({ documentContent, isVisible, onClose }) => {
         return;
       }
 
-      const response = await fetch("http://localhost:8000/api/article/chat-simple", {
+      const response = await fetch("http://kwixlab.com:8000/api/article/chat-simple", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${idToken}`,
@@ -238,7 +238,7 @@ export default function ArticleSummarizer() {
       setIsProcessing(true);
 
       const response = await fetch(
-        "http://localhost:8000/api/article/summarize",
+        "http://kwixlab.com:8000/api/article/summarize",
         {
           method: "POST",
           headers: {

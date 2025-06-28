@@ -315,7 +315,7 @@ const renderMobileDropdown = (item) => {
 
       {/* Mobile Menu - Fixed oval border issue */}
       {mobileNavOpen && (
-        <div className="md:hidden absolute top-full left-4 right-4 mt-2 bg-white rounded-xl p-4 shadow-lg border border-gray-200 space-y-3 z-50">
+        <div className="md:hidden absolute top-full left-4 right-4 mt-2 bg-white rounded-xl p-4 shadow-lg border border-gray-200 space-y-3 z-50 max-h-[80vh] overflow-y-auto">
           {navItems.map((item) => (
             <div key={item.name}>
               <button

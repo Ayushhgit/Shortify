@@ -63,7 +63,7 @@ export default function Pricing() {
   const fetchSubscriptionStatus = async (currentUser) => {
     try {
       const token = await currentUser.getIdToken();
-      const response = await fetch("http://localhost:8000/payment/subscription-status", {
+      const response = await fetch("http://kwixlab.com:8000/payment/subscription-status", {
         headers: {
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json"
@@ -135,7 +135,7 @@ export default function Pricing() {
 
       // 1. Create order from backend
       const result = await fetch(
-        `http://localhost:8000/payment/create-order?amount=${amount}`,
+        `http://kwixlab.com:8000/payment/create-order?amount=${amount}`,
         {
           method: "POST",
           headers: {
@@ -161,7 +161,7 @@ export default function Pricing() {
         order_id: data.order_id,
         handler: async function (response) {
           // Verify payment with your backend
-          const verifyRes = await fetch("http://localhost:8000/payment/verify", {
+          const verifyRes = await fetch("http://kwixlab.com:8000/payment/verify", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -224,7 +224,7 @@ export default function Pricing() {
 
     try {
       const token = await user.getIdToken();
-      const response = await fetch("http://localhost:8000/payment/cancel-subscription", {
+      const response = await fetch("http://kwixlab.com:8000/payment/cancel-subscription", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -311,7 +311,7 @@ export default function Pricing() {
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-full blur-3xl"></div>
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-r from-purple-600/20 to-cyan-600/20 rounded-full blur-3xl"></div>
 
-      <div className="max-w-7xl mx-auto text-center relative z-10">
+      <div className="max-w-none mx-auto text-center relative z-10 px-4">
         <h2 className="text-6xl font-light text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-purple-100 mb-6 tracking-tight">
           Pricing Plans for Every Stage
         </h2>
