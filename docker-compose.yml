@@ -4,8 +4,6 @@ services:
   frontend:
     build:
       context: ./frontend
-    ports:
-      - "80:80"
     depends_on:
       - backend
 
@@ -90,6 +88,7 @@ services:
     entrypoint: >
       sh -c "certbot certonly --webroot --webroot-path=/var/www/certbot
              --email singh.omhari715@gmail.com --agree-tos --no-eff-email
+             --non-interactive
              -d kwixlab.com -d www.kwixlab.com"
 
 volumes:
