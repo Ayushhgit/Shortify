@@ -1,9 +1,27 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Home, Settings, User, Upload, FileText, X, Check, Loader2, Download, Sparkles, Zap, Clock, BarChart3, Eye, Copy, Share2, MessageCircle, Send } from "lucide-react";
+import {
+  Home,
+  Settings,
+  User,
+  Upload,
+  FileText,
+  X,
+  Check,
+  Loader2,
+  Download,
+  Sparkles,
+  Zap,
+  Clock,
+  BarChart3,
+  Eye,
+  Copy,
+  Share2,
+  MessageCircle,
+  Send,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Toast from "../components/Toast";
-import { getToken } from '../firebase';
-
+import { getToken } from "../firebase";
 
 // Chat Component
 const ChatWithDocument = ({ documentContent, isVisible, onClose }) => {
@@ -25,7 +43,7 @@ const ChatWithDocument = ({ documentContent, isVisible, onClose }) => {
 
     const userMessage = inputMessage.trim();
     setInputMessage("");
-    setMessages(prev => [...prev, { type: "user", content: userMessage }]);
+    setMessages((prev) => [...prev, { type: "user", content: userMessage }]);
     setIsLoading(true);
 
     try {
@@ -39,7 +57,7 @@ const ChatWithDocument = ({ documentContent, isVisible, onClose }) => {
         },
         body: JSON.stringify({
           message: userMessage,
-          document_content: documentContent
+          document_content: documentContent,
         }),
       });
 
@@ -48,15 +66,26 @@ const ChatWithDocument = ({ documentContent, isVisible, onClose }) => {
       }
 
       const data = await response.json();
-      setMessages(prev => [...prev, { type: "ai", content: data.response || "Sorry, I couldn't process that." }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          type: "ai",
+          content: data.response || "Sorry, I couldn't process that.",
+        },
+      ]);
     } catch (error) {
       console.error(error);
-      setMessages(prev => [...prev, { type: "ai", content: "Sorry, I encountered an error. Please try again." }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          type: "ai",
+          content: "Sorry, I encountered an error. Please try again.",
+        },
+      ]);
     } finally {
       setIsLoading(false);
     }
   };
-
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -68,8 +97,8 @@ const ChatWithDocument = ({ documentContent, isVisible, onClose }) => {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-gray-900 rounded-2xl border border-gray-700 shadow-2xl w-full max-w-2xl h-[600px] flex flex-col">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
+      <div className="bg-gray-900 rounded-xl sm:rounded-2xl border border-gray-700 shadow-2xl w-full max-w-2xl h-[90vh] sm:h-[600px] flex flex-col">
         {/* Chat Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-700">
           <div className="flex items-center gap-3">
@@ -77,8 +106,12 @@ const ChatWithDocument = ({ documentContent, isVisible, onClose }) => {
               <MessageCircle className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-white">Chat with Document</h3>
-              <p className="text-sm text-gray-400">Ask questions about your PDF</p>
+              <h3 className="text-lg font-semibold text-white">
+                Chat with Document
+              </h3>
+              <p className="text-sm text-gray-400">
+                Ask questions about your PDF
+              </p>
             </div>
           </div>
           <button
@@ -99,11 +132,19 @@ const ChatWithDocument = ({ documentContent, isVisible, onClose }) => {
           )}
 
           {messages.map((message, index) => (
-            <div key={index} className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}>
-              <div className={`max-w-[80%] p-4 rounded-2xl ${message.type === "user"
-                ? "bg-emerald-600 text-white"
-                : "bg-gray-800 text-gray-300 border border-gray-700"
-                }`}>
+            <div
+              key={index}
+              className={`flex ${
+                message.type === "user" ? "justify-end" : "justify-start"
+              }`}
+            >
+              <div
+                className={`max-w-[80%] p-4 rounded-2xl ${
+                  message.type === "user"
+                    ? "bg-emerald-600 text-white"
+                    : "bg-gray-800 text-gray-300 border border-gray-700"
+                }`}
+              >
                 <p className="text-sm leading-relaxed">{message.content}</p>
               </div>
             </div>
@@ -232,7 +273,10 @@ export default function PremiumPdfSummarizer() {
       const idToken = await getToken();
       if (!idToken) {
         console.error("User not authenticated");
-        displayToast("Authentication failed. Please try logging in again.", "error");
+        displayToast(
+          "Authentication failed. Please try logging in again.",
+          "error"
+        );
         return;
       }
 
@@ -249,13 +293,16 @@ export default function PremiumPdfSummarizer() {
       formData.append("file", file);
       formData.append("analysis_type", analysisType);
 
-      const response = await fetch('https://kwixlab.com/api/pdf/upload-analyze', {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${idToken}`,
-        },
-        body: formData,
-      });
+      const response = await fetch(
+        "https://kwixlab.com/api/pdf/upload-analyze",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
         let errorMessage = `HTTP error! status: ${response.status}`;
@@ -264,13 +311,14 @@ export default function PremiumPdfSummarizer() {
           console.error("Error data:", errorData);
           if (errorData.detail) {
             if (Array.isArray(errorData.detail)) {
-              errorMessage = errorData.detail.map(
-                (err) => `${err.loc?.join('.')} ${err.msg}`
-              ).join(', ');
+              errorMessage = errorData.detail
+                .map((err) => `${err.loc?.join(".")} ${err.msg}`)
+                .join(", ");
             } else {
-              errorMessage = typeof errorData.detail === 'string'
-                ? errorData.detail
-                : JSON.stringify(errorData.detail);
+              errorMessage =
+                typeof errorData.detail === "string"
+                  ? errorData.detail
+                  : JSON.stringify(errorData.detail);
             }
           }
         } catch (e) {
@@ -291,7 +339,8 @@ export default function PremiumPdfSummarizer() {
 
       // FIXED: Store actual document content for chat
       // Check multiple possible fields where the extracted text might be
-      const extractedText = data.extracted_text ||
+      const extractedText =
+        data.extracted_text ||
         data.document_content ||
         data.content ||
         data.text ||
@@ -305,7 +354,9 @@ export default function PremiumPdfSummarizer() {
         setDocumentContent(extractedText);
       } else {
         // If no text content found, try to extract it separately
-        console.warn("No extracted text found in response, attempting separate extraction");
+        console.warn(
+          "No extracted text found in response, attempting separate extraction"
+        );
         await extractTextSeparately(file);
       }
 
@@ -322,7 +373,7 @@ export default function PremiumPdfSummarizer() {
           academic: data.analysis_data?.academic_score || 0,
         },
         keyPoints: data.analysis_data?.key_points || [],
-        documentType: data.analysis_data?.document_type || "document"
+        documentType: data.analysis_data?.document_type || "document",
       });
 
       displayToast("PDF analyzed successfully! 🎉");
@@ -355,29 +406,29 @@ export default function PremiumPdfSummarizer() {
 
   const exportToPDF = async () => {
     try {
-      const response = await fetch('https://kwixlab.com/api/export/pdf', {
-        method: 'POST',
+      const response = await fetch("https://kwixlab.com/api/export/pdf", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           summary: summary,
           analysisData: analysisData,
-          fileName: file.name
-        })
+          fileName: file.name,
+        }),
       });
 
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         a.href = url;
         a.download = `${file.name}_analysis.pdf`;
         a.click();
         window.URL.revokeObjectURL(url);
         displayToast("Report exported successfully! 📄");
       } else {
-        throw new Error('Export failed');
+        throw new Error("Export failed");
       }
     } catch (error) {
       displayToast("Export failed. Please try again.", "error");
@@ -387,16 +438,16 @@ export default function PremiumPdfSummarizer() {
 
   const shareReport = async () => {
     try {
-      const response = await fetch('https://kwixlab.com/api/share', {
-        method: 'POST',
+      const response = await fetch("https://kwixlab.com/api/share", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           summary: summary,
           analysisData: analysisData,
-          fileName: file.name
-        })
+          fileName: file.name,
+        }),
       });
 
       const data = await response.json();
@@ -404,7 +455,7 @@ export default function PremiumPdfSummarizer() {
         await navigator.clipboard.writeText(data.shareUrl);
         displayToast("Share link copied to clipboard! 🔗");
       } else {
-        throw new Error('Share failed');
+        throw new Error("Share failed");
       }
     } catch (error) {
       displayToast("Share failed. Please try again.", "error");
@@ -417,14 +468,20 @@ export default function PremiumPdfSummarizer() {
       {/* Animated Background Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-emerald-500/20 to-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-violet-500/20 to-purple-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-500/15 to-pink-500/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '4s' }}></div>
+        <div
+          className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-violet-500/20 to-purple-500/20 rounded-full blur-3xl animate-pulse"
+          style={{ animationDelay: "2s" }}
+        ></div>
+        <div
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-500/15 to-pink-500/15 rounded-full blur-3xl animate-pulse"
+          style={{ animationDelay: "4s" }}
+        ></div>
       </div>
 
       {/* Premium Glassmorphic Header */}
       {/* Header */}
-      <header className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] max-w-7xl rounded-2xl bg-white/20 backdrop-blur-xl shadow-2xl border border-white/30">
-        <div className="flex justify-between items-center h-16 px-6">
+      <header className="fixed top-2 sm:top-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] max-w-7xl rounded-xl sm:rounded-2xl bg-white/20 backdrop-blur-xl shadow-2xl border border-white/30">
+        <div className="flex justify-between items-center h-12 sm:h-16 px-3 sm:px-6">
           <div className="flex items-center">
             <div className="relative">
               <FileText className="h-8 w-8 text-teal-400 mr-3" />
@@ -435,29 +492,34 @@ export default function PremiumPdfSummarizer() {
             </span>
           </div>
           <div className="flex items-center space-x-2">
-            {[{ icon: Home, path: "/shortify" }, { icon: User, path: "/profile" }, { icon: Settings, path: "/settings" }].map(
-              (item, index) => (
-                <button
-                  key={index}
-                  className="p-3 rounded-xl hover:bg-white/20 transition-all duration-300 hover:scale-110 backdrop-blur-sm border border-white/10"
-                  onClick={() => navigate(item.path)}>
-                  <item.icon className="h-5 w-5 text-white/80 hover:text-white" />
-                </button>
-              )
-            )}
+            {[
+              { icon: Home, path: "/shortify" },
+              { icon: User, path: "/profile" },
+              { icon: Settings, path: "/settings" },
+            ].map((item, index) => (
+              <button
+                key={index}
+                className="p-3 rounded-xl hover:bg-white/20 transition-all duration-300 hover:scale-110 backdrop-blur-sm border border-white/10"
+                onClick={() => navigate(item.path)}
+              >
+                <item.icon className="h-5 w-5 text-white/80 hover:text-white" />
+              </button>
+            ))}
           </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <main className="relative pt-32 pb-16 px-6">
+     <main className="relative pt-20 sm:pt-32 pb-8 sm:pb-16 px-3 sm:px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 bg-gradient-to-r from-gray-800/50 to-gray-900/50 border border-emerald-500/30 rounded-full px-4 py-2 mb-6">
               <Zap className="h-4 w-4 text-emerald-400" />
-              <span className="text-sm font-medium text-emerald-300">Powered by Advanced AI</span>
+              <span className="text-sm font-medium text-emerald-300">
+                Powered by Advanced AI
+              </span>
             </div>
-            <h1 className="text-6xl sm:text-7xl font-bold tracking-tight mb-6">
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-6">
               <span className="bg-gradient-to-r from-white via-gray-200 to-gray-300 bg-clip-text text-transparent">
                 Transform
               </span>
@@ -466,26 +528,37 @@ export default function PremiumPdfSummarizer() {
                 Documents
               </span>
             </h1>
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
-              Experience the future of document analysis with AI-powered summaries,
-              insights, and intelligent processing.
+            <p className="text-base sm:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed px-4">
+              Experience the future of document analysis with AI-powered
+              summaries, insights, and intelligent processing.
             </p>
           </div>
 
           {/* Enhanced Progress Steps */}
-          <div className="flex justify-center items-center mb-16">
+          <div className="flex justify-center items-center mb-8 sm:mb-16 px-4">
             {[
               { step: 1, label: "Upload", completed: !!file, icon: Upload },
-              { step: 2, label: "Analyze", completed: !!summary, icon: BarChart3 },
-              { step: 3, label: "Insights", completed: !!summary, icon: Eye }
+              {
+                step: 2,
+                label: "Analyze",
+                completed: !!summary,
+                icon: BarChart3,
+              },
+              { step: 3, label: "Insights", completed: !!summary, icon: Eye },
             ].map(({ step, label, completed, icon: Icon }, index) => (
               <React.Fragment key={step}>
-                <div className={`flex flex-col items-center transition-all duration-500 ${completed ? "text-emerald-400" : "text-gray-500"
-                  }`}>
-                  <div className={`relative rounded-2xl p-4 border-2 transition-all duration-500 ${completed
-                    ? "border-emerald-500 bg-gradient-to-r from-emerald-900/50 to-emerald-800/50 shadow-lg shadow-emerald-500/25"
-                    : "border-gray-600 bg-gray-800/50"
-                    }`}>
+                <div
+                  className={`relative rounded-xl sm:rounded-2xl p-2 sm:p-4 border-2 transition-all duration-500 ${
+                    completed ? "text-emerald-400" : "text-gray-500"
+                  }`}
+                >
+                  <div
+                    className={`relative rounded-2xl p-4 border-2 transition-all duration-500 ${
+                      completed
+                        ? "border-emerald-500 bg-gradient-to-r from-emerald-900/50 to-emerald-800/50 shadow-lg shadow-emerald-500/25"
+                        : "border-gray-600 bg-gray-800/50"
+                    }`}
+                  >
                     {completed ? (
                       <div className="relative">
                         <Check className="h-6 w-6 text-emerald-400" />
@@ -496,31 +569,42 @@ export default function PremiumPdfSummarizer() {
                     )}
                   </div>
                   <span className="mt-3 font-semibold text-sm">{label}</span>
-                  <div className={`mt-1 w-2 h-2 rounded-full transition-all duration-500 ${completed ? "bg-emerald-400 shadow-lg shadow-emerald-500/50" : "bg-gray-600"
-                    }`}></div>
+                  <div
+                    className={`mt-1 w-2 h-2 rounded-full transition-all duration-500 ${
+                      completed
+                        ? "bg-emerald-400 shadow-lg shadow-emerald-500/50"
+                        : "bg-gray-600"
+                    }`}
+                  ></div>
                 </div>
                 {index < 2 && (
-                  <div className={`h-1 w-24 mx-6 rounded-full transition-all duration-500 ${completed ? "bg-gradient-to-r from-emerald-500 to-blue-500" : "bg-gray-600"
-                    }`}></div>
+                  <div
+                    className={`h-1 w-24 mx-6 rounded-full transition-all duration-500 ${
+                      completed
+                        ? "bg-gradient-to-r from-emerald-500 to-blue-500"
+                        : "bg-gray-600"
+                    }`}
+                  ></div>
                 )}
               </React.Fragment>
             ))}
           </div>
 
-          {/* Premium File Upload Zone */}
+          {/* File Upload Zone */}
           <div className="max-w-2xl mx-auto mb-12">
             <div
-              className={`relative rounded-3xl border-2 border-dashed transition-all duration-500 ${isDragOver
-                ? "border-emerald-400 bg-gradient-to-r from-emerald-900/30 to-blue-900/30 scale-105"
-                : file
+              className={`relative rounded-3xl border-2 border-dashed transition-all duration-500 ${
+                isDragOver
+                  ? "border-emerald-400 bg-gradient-to-r from-emerald-900/30 to-blue-900/30 scale-105"
+                  : file
                   ? "border-emerald-500 bg-gradient-to-r from-emerald-900/20 to-emerald-800/20"
                   : "border-gray-600 bg-gray-800/30 hover:border-emerald-500 hover:bg-emerald-900/20"
-                } backdrop-blur-sm shadow-xl`}
+              } backdrop-blur-sm shadow-xl`}
               onDrop={handleDrop}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
             >
-              <div className="p-12">
+              <div className="p-6 sm:p-12">
                 {!file ? (
                   <div className="text-center">
                     <div className="relative mb-6">
@@ -529,9 +613,16 @@ export default function PremiumPdfSummarizer() {
                         <Upload className="h-12 w-12 text-white" />
                       </div>
                     </div>
-                    <h3 className="text-2xl font-bold text-white mb-2">Upload Your PDF</h3>
-                    <p className="text-gray-300 mb-8">Drag and drop or click to select your document</p>
-                    <label htmlFor="file-upload" className="group cursor-pointer inline-block">
+                    <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">
+                      Upload Your PDF
+                    </h3>
+                    <p className="text-gray-300 mb-8">
+                      Drag and drop or click to select your document
+                    </p>
+                    <label
+                      htmlFor="file-upload"
+                      className="group cursor-pointer inline-block"
+                    >
                       <div className="bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white px-8 py-4 rounded-2xl font-semibold transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105 group-hover:-translate-y-1">
                         Choose File
                       </div>
@@ -544,7 +635,9 @@ export default function PremiumPdfSummarizer() {
                         onChange={handleFileChange}
                       />
                     </label>
-                    <p className="text-sm text-gray-400 mt-6">PDF files up to 50MB • Secure & Private</p>
+                    <p className="text-sm text-gray-400 mt-6">
+                      PDF files up to 50MB • Secure & Private
+                    </p>
                   </div>
                 ) : (
                   <div className="flex items-center justify-between">
@@ -556,12 +649,18 @@ export default function PremiumPdfSummarizer() {
                         </div>
                       </div>
                       <div>
-                        <h4 className="font-bold text-white text-lg truncate max-w-md">{file.name}</h4>
+                        <h4 className="font-bold text-white text-lg truncate max-w-md">
+                          {file.name}
+                        </h4>
                         <div className="flex items-center gap-4 mt-1">
-                          <span className="text-gray-400">{(file.size / 1024 / 1024).toFixed(2)} MB</span>
+                          <span className="text-gray-400">
+                            {(file.size / 1024 / 1024).toFixed(2)} MB
+                          </span>
                           <div className="flex items-center gap-1 text-emerald-400">
                             <Check className="h-4 w-4" />
-                            <span className="text-sm font-medium">Ready to process</span>
+                            <span className="text-sm font-medium">
+                              Ready to process
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -579,14 +678,15 @@ export default function PremiumPdfSummarizer() {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex justify-center gap-4 mb-16">
+          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mb-8 sm:mb-16 px-4">
             <button
               onClick={handleSubmit}
               disabled={!file || isProcessing}
-              className={`group relative overflow-hidden px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 ${!file || isProcessing
-                ? "bg-gray-700 text-gray-500 cursor-not-allowed"
-                : "bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-500 hover:to-blue-500 text-white shadow-xl hover:shadow-2xl hover:scale-105 hover:-translate-y-1"
-                }`}
+              className={`group relative overflow-hidden px-6 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-bold text-base text-center sm:text-lg transition-all duration-300 ${
+                !file || isProcessing
+                  ? "bg-gray-700 text-gray-500 cursor-not-allowed"
+                  : "bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-500 hover:to-blue-500 text-white shadow-xl hover:shadow-2xl hover:scale-105 hover:-translate-y-1"
+              }`}
             >
               {!file || isProcessing ? null : (
                 <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
@@ -610,7 +710,7 @@ export default function PremiumPdfSummarizer() {
             {summary && documentContent && (
               <button
                 onClick={() => setShowChat(true)}
-                className="group relative overflow-hidden px-8 py-4 rounded-2xl font-bold text-lg bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white shadow-xl hover:shadow-2xl hover:scale-105 hover:-translate-y-1 transition-all duration-300"
+                className="group relative overflow-hidden px-6 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white shadow-xl hover:shadow-2xl hover:scale-105 hover:-translate-y-1 transition-all duration-300"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                 <div className="relative flex items-center gap-3">
@@ -630,7 +730,6 @@ export default function PremiumPdfSummarizer() {
             )}
           </div>
 
-
           {/* Enhanced Results Section */}
           {summary && (
             <div className="max-w-5xl mx-auto">
@@ -639,8 +738,12 @@ export default function PremiumPdfSummarizer() {
                 <div className="bg-gradient-to-r from-emerald-600 to-blue-600 px-8 py-6 text-white">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h2 className="text-2xl font-bold">Document Intelligence Report</h2>
-                      <p className="text-emerald-200 mt-1">Complete analysis and insights</p>
+                      <h2 className="text-2xl font-bold">
+                        Document Intelligence Report
+                      </h2>
+                      <p className="text-emerald-200 mt-1">
+                        Complete analysis and insights
+                      </p>
                     </div>
                     <div className="flex items-center gap-3">
                       <button
@@ -669,18 +772,36 @@ export default function PremiumPdfSummarizer() {
                 {/* Quick Stats */}
                 {analysisData && (
                   <div className="px-8 py-6 border-b border-gray-700">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6">
                       {[
-                        { label: "Words", value: analysisData.wordCount.toLocaleString(), icon: FileText },
-                        { label: "Pages", value: analysisData.pageCount, icon: BarChart3 },
-                        { label: "Read Time", value: `${analysisData.readingTime}m`, icon: Clock },
-                        { label: "Complexity", value: analysisData.complexity, icon: Zap }
+                        {
+                          label: "Words",
+                          value: analysisData.wordCount.toLocaleString(),
+                          icon: FileText,
+                        },
+                        {
+                          label: "Pages",
+                          value: analysisData.pageCount,
+                          icon: BarChart3,
+                        },
+                        {
+                          label: "Read Time",
+                          value: `${analysisData.readingTime}m`,
+                          icon: Clock,
+                        },
+                        {
+                          label: "Complexity",
+                          value: analysisData.complexity,
+                          icon: Zap,
+                        },
                       ].map(({ label, value, icon: Icon }) => (
                         <div key={label} className="text-center">
                           <div className="flex items-center justify-center mb-2">
                             <Icon className="h-5 w-5 text-emerald-400" />
                           </div>
-                          <div className="text-2xl font-bold text-white">{value}</div>
+                          <div className="text-2xl font-bold text-white">
+                            {value}
+                          </div>
                           <div className="text-sm text-gray-400">{label}</div>
                         </div>
                       ))}
@@ -689,19 +810,24 @@ export default function PremiumPdfSummarizer() {
                 )}
 
                 {/* Tab Navigation */}
-                <div className="flex border-b border-gray-700">
+                <div className="flex overflow-x-auto border-b border-gray-700">
                   {[
-                    { id: "summary", label: "Executive Summary", icon: FileText },
+                    {
+                      id: "summary",
+                      label: "Executive Summary",
+                      icon: FileText,
+                    },
                     { id: "insights", label: "Key Insights", icon: Sparkles },
-                    { id: "metrics", label: "Analytics", icon: BarChart3 }
+                    { id: "metrics", label: "Analytics", icon: BarChart3 },
                   ].map(({ id, label, icon: Icon }) => (
                     <button
                       key={id}
                       onClick={() => setActiveTab(id)}
-                      className={`flex items-center gap-2 px-6 py-4 font-medium transition-all ${activeTab === id
-                        ? "text-emerald-400 border-b-2 border-emerald-400 bg-emerald-900/30"
-                        : "text-gray-400 hover:text-gray-200 hover:bg-gray-800/50"
-                        }`}
+                      className={`flex items-center gap-2 px-3 sm:px-6 py-3 sm:py-4 font-medium whitespace-nowrap transition-all ${
+                        activeTab === id
+                          ? "text-emerald-400 border-b-2 border-emerald-400 bg-emerald-900/30"
+                          : "text-gray-400 hover:text-gray-200 hover:bg-gray-800/50"
+                      }`}
                     >
                       <Icon className="h-4 w-4" />
                       {label}
@@ -714,8 +840,10 @@ export default function PremiumPdfSummarizer() {
                   {activeTab === "summary" && (
                     <div className="prose max-w-none">
                       <div className="text-lg leading-relaxed text-gray-300 space-y-6">
-                        {summary.split('\n\n').map((paragraph, index) => (
-                          <p key={index} className="leading-8">{paragraph}</p>
+                        {summary.split("\n\n").map((paragraph, index) => (
+                          <p key={index} className="leading-8">
+                            {paragraph}
+                          </p>
                         ))}
                       </div>
                     </div>
@@ -724,20 +852,29 @@ export default function PremiumPdfSummarizer() {
                   {activeTab === "insights" && analysisData && (
                     <div className="space-y-6">
                       <div>
-                        <h3 className="text-xl font-bold text-white mb-4">Key Topics</h3>
+                        <h3 className="text-xl font-bold text-white mb-4">
+                          Key Topics
+                        </h3>
                         <div className="flex flex-wrap gap-3">
                           {analysisData.topics.map((topic, index) => (
-                            <span key={index} className="px-4 py-2 bg-gradient-to-r from-emerald-900/50 to-blue-900/50 border border-emerald-500/30 text-emerald-300 rounded-full font-medium">
+                            <span
+                              key={index}
+                              className="px-4 py-2 bg-gradient-to-r from-emerald-900/50 to-blue-900/50 border border-emerald-500/30 text-emerald-300 rounded-full font-medium"
+                            >
                               {topic}
                             </span>
                           ))}
                         </div>
                       </div>
                       <div>
-                        <h3 className="text-xl font-bold text-white mb-4">Document Sentiment</h3>
+                        <h3 className="text-xl font-bold text-white mb-4">
+                          Document Sentiment
+                        </h3>
                         <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-800 rounded-xl border border-gray-600">
                           <div className="w-3 h-3 bg-gray-400 rounded-full"></div>
-                          <span className="font-medium text-gray-300">{analysisData.sentiment}</span>
+                          <span className="font-medium text-gray-300">
+                            {analysisData.sentiment}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -745,20 +882,29 @@ export default function PremiumPdfSummarizer() {
 
                   {activeTab === "metrics" && analysisData && (
                     <div className="grid md:grid-cols-3 gap-6">
-                      {Object.entries(analysisData.keyMetrics).map(([category, score]) => (
-                        <div key={category} className="bg-gray-800/50 border border-gray-700 rounded-2xl p-6">
-                          <h4 className="font-bold text-white mb-3 capitalize">{category} Score</h4>
-                          <div className="relative">
-                            <div className="w-full bg-gray-700 rounded-full h-3">
-                              <div
-                                className="bg-gradient-to-r from-emerald-500 to-blue-500 h-3 rounded-full transition-all duration-1000"
-                                style={{ width: `${score}%` }}
-                              ></div>
+                      {Object.entries(analysisData.keyMetrics).map(
+                        ([category, score]) => (
+                          <div
+                            key={category}
+                            className="bg-gray-800/50 border border-gray-700 rounded-2xl p-6"
+                          >
+                            <h4 className="font-bold text-white mb-3 capitalize">
+                              {category} Score
+                            </h4>
+                            <div className="relative">
+                              <div className="w-full bg-gray-700 rounded-full h-3">
+                                <div
+                                  className="bg-gradient-to-r from-emerald-500 to-blue-500 h-3 rounded-full transition-all duration-1000"
+                                  style={{ width: `${score}%` }}
+                                ></div>
+                              </div>
+                              <span className="text-xl font-bold text-white mt-2 block">
+                                {score}%
+                              </span>
                             </div>
-                            <span className="text-xl font-bold text-white mt-2 block">{score}%</span>
                           </div>
-                        </div>
-                      ))}
+                        )
+                      )}
                     </div>
                   )}
                 </div>
@@ -771,7 +917,7 @@ export default function PremiumPdfSummarizer() {
       <footer className="relative z-10 bg-white/5 backdrop-blur-sm border-t border-white/20 mt-8">
         <div className="max-w-7xl mx-auto px-6 py-8 flex items-center justify-center">
           <p className="text-gray-300 text-center">
-             © 2025 KwixLab. All Rights Reserved.
+            © 2025 KwixLab. All Rights Reserved.
           </p>
         </div>
       </footer>
