@@ -64,7 +64,7 @@ export default function Header() {
       name: "Resources",
       dropdown: [
         { label: "Blog", path: "/resources/blog" },
-        { label: "Buy Me a Coffee", path: "https://buymeacoffee.com" },
+        { label: "Buy Me a Coffee", path: "https://coff.ee/kwixlab" },
         { label: "Tutorials", path: "/shortify" },
       ],
     },
@@ -281,7 +281,7 @@ const renderMobileDropdown = (item) => {
         <div className="hidden md:flex items-center space-x-3">
           <div className="h-9 w-9 p-1 rounded-full bg-white shadow-md">
             <a
-              href="https://www.buymeacoffee.com/yourusername"
+              href="https://coff.ee/kwixlab"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block"

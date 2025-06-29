@@ -588,7 +588,7 @@ export default function ShortifyPage() {
           <div className="p-6 border-t border-gray-800">
             <div className="flex items-center gap-3 mb-4">
               <a
-                href="https://buymeacoffee.com/"
+                href="https://coff.ee/kwixlab"
                 className="p-3 rounded-xl bg-gray-800 hover:bg-gray-700 transition-colors border border-gray-700 hover:border-gray-600"
               >
                 <Coffee size={18} className="text-gray-300" />
