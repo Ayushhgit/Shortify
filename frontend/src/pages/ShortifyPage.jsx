@@ -157,7 +157,7 @@ export default function ShortifyPage() {
   const getTitle = () => {
     switch (activeTab) {
       case "home":
-        return "AI Command Center";
+        return "Command Center";
       case "shorts":
         return "YouTube Clips Forger";
       case "summarizer":
@@ -320,7 +320,7 @@ export default function ShortifyPage() {
       icon: Eye,
       desc: "Advanced machine learning analyzes resumes and provides strategic insights to maximize your job application success rate.",
       gradient: "from-violet-500 via-purple-600 to-indigo-600",
-      link: "/features/resumeAnalyzer",
+      link: "/features/resume-analyzer",
       label: "Analyze Now",
       badge: "LIVE",
       animation: "radar",
@@ -331,7 +331,7 @@ export default function ShortifyPage() {
       icon: Chrome,
       desc: "Summarize long articles into clear, concise points using AI—perfect for quick reading, research, or content repurposing and supports multiple pages.",
       gradient: "from-pink-500 via-purple-600 to-orange-600",
-      link: "/features/ArticleSummarizer",
+      link: "/features/article-summarizer",
       label: "Summarize Now",
       badge: "LIVE",
       animation: "radar",
@@ -343,18 +343,18 @@ export default function ShortifyPage() {
       icon: SquareChartGantt,
       desc: "Effortlessly generate personalized, job-specific cover letters using AI that tailors content based on your resume and the job role.",
       gradient: "from-violet-500 via-blue-600 to-indigo-600",
-      link: "/features/coverLetterGenerator",
+      link: "/features/cover-letter-generator",
       label: "Generate Now",
       badge: "LIVE",
       animation: "radar",
       bgPattern: "radar",
     },
     {
-      title: "AI Assignment Helper",
+      title: "Handwritten Notes Maker",
       icon: Pencil,
       desc: "Convert AI-generated answers into realistic handwritten assignments with ruled paper styling – perfect for fast, smart submissions.",
       gradient: "from-yellow-500 via-orange-400 to-amber-200",
-      link: "/features/AssignmentHelper",
+      link: "/features/notes-generator",
       label: "Try Now",
       badge: "LIVE",
       animation: "pulse",
@@ -365,7 +365,7 @@ export default function ShortifyPage() {
       icon: Binoculars,
       desc: "AI-powered assistant that searches research papers, summarizes concepts, and answers your academic queries using real citations.",
       gradient: "from-rose-500 via-cyan-600 to-fuchsia-600",
-      link: "/features/ResearchAssistant",
+      link: "/features/research-assistant",
       label: "Explore",
       badge: "LIVE",
       animation: "radar",
@@ -376,7 +376,7 @@ export default function ShortifyPage() {
       icon: BarChart3,
       desc: "Intelligent data exploration that automatically generates insights, visualizations, and statistical summaries from your datasets with zero manual effort.",
       gradient: "from-blue-500 via-cyan-600 to-purple-600",
-      link: "/features/EDA",
+      link: "/features/eda",
       label: "Analyze",
       badge: "LIVE",
       animation: "pulse",
@@ -387,7 +387,7 @@ export default function ShortifyPage() {
       icon: Linkedin,
       desc: "AI-powered profile optimization that enhances your LinkedIn presence with keyword analysis, content suggestions, and engagement strategies to maximize professional visibility.",
       gradient: "from-blue-600 via-indigo-600 to-purple-700",
-      link: "/features/LinkwiseAI",
+      link: "/features/linkwise-ai",
       label: "Optimize",
       badge: "NEW",
       animation: "bounce",
@@ -398,7 +398,7 @@ export default function ShortifyPage() {
       icon: Video,
       desc: "Transform any topic into an engaging short video, complete with an AI-generated script, natural voiceover, and synchronized captions over a ready to use minecraft gameplay stock video, ready in seconds.",
       gradient: "from-fuchsia-600 via-purple-600 to-indigo-700",
-      link: "/tools/ai-video-generator",
+      link: "/features/clip-generator",
       label: "Create Video",
       badge: "POPULAR",
       animation: "pulse",
@@ -409,7 +409,7 @@ export default function ShortifyPage() {
       icon: BrainCircuit,
       desc: "Instantly create challenging and engaging quizzes on any topic. Our AI generates diverse question types, including MCQ, QnA and Numericals, complete with correct answers to streamline learning.",
       gradient: "from-green-500 via-teal-600 to-cyan-700",
-      link: "/tools/quiz-generator",
+      link: "/features/quiz-generator",
       label: "Generate Quiz",
       badge: "EDUCATION",
       animation: "none",
@@ -2268,7 +2268,7 @@ export default function ShortifyPage() {
           <div className="h-16 flex items-center justify-center border-t border-gray-900 bg-gray-950/90 backdrop-blur-xl mt-16">
             <div className="flex items-center gap-2 text-gray-400">
               <Sparkles className="w-4 h-4" />
-              <span className="text-sm">Made with ❤️ and ☕.</span>
+              <span className="text-sm"> © 2025 KwixLab. All Rights Reserved.</span>
               <Sparkles className="w-4 h-4" />
             </div>
           </div>

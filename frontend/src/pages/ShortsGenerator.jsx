@@ -929,7 +929,7 @@ export default function ShortsGenerator() {
       <div className="h-16 flex items-center justify-center border-t border-gray-900 bg-gray-950/90 backdrop-blur-xl mt-16">
         <div className="flex items-center gap-2 text-gray-400">
           <Sparkles className="w-4 h-4" />
-          <span className="text-sm">Made with ❤️ and ☕.</span>
+          <span className="text-sm"> © 2025 KwixLab. All Rights Reserved.</span>
           <Sparkles className="w-4 h-4" />
         </div>
       </div>

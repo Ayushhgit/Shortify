@@ -18,7 +18,7 @@ export default function Header() {
           items: [
             { label: "YouTube Clipper", path: "/features/shorts-generator" },
             { label: "YT-Video Summarizer", path: "/features/summarizer" },
-            { label: "MineCraft Clip Maker", path: "/features/Clip-generator" },
+            { label: "MineCraft Clip Maker", path: "/features/clip-generator" },
           ],
         },
         {
@@ -27,27 +27,27 @@ export default function Header() {
             { label: "PDF Summarizer", path: "/features/pdf-summarizer" },
             {
               label: "Article Summarizer",
-              path: "/features/ArticleSummarizer",
+              path: "/features/article-summarizer",
             },
-            { label: "Resume Analyzer", path: "/features/ResumeAnalyzer" },
+            { label: "Resume Analyzer", path: "/features/resume-analyzer" },
             {
               label: "Cover Letter Generator",
-              path: "/features/coverLetterGenerator",
+              path: "/features/cover-letter-generator",
             },
             {
               label: "InterviewPrep Assitant",
-              path: "/features/InterviewPrepAssistant",
+              path: "/features/interview-prep-assistant",
             },
           ],
         },
         {
           category: "PRODUCTIVITY TOOLS",
           items: [
-            { label: "Notes Generator", path: "/features/AssignmentHelper" },
-            { label: "Research Assistant", path: "/features/ResearchAssistant"},
-            { label: "Data Analyzer", path: "/features/EDA" },
+            { label: "Notes Generator", path: "/features/notes-generator" },
+            { label: "Research Assistant", path: "/features/research-assistant"},
+            { label: "Data Analyzer", path: "/features/eda" },
             { label: "Quiz Generator", path: "/features/quiz-generator" },
-            { label: "LinkedIn Helper", path: "/features/LinkwiseAI" },
+            { label: "LinkedIn Helper", path: "/features/linkwise-ai" },
           ],
         },
       ],

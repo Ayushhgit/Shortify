@@ -28,42 +28,64 @@ import InterviewPrepAssistant from "./pages/InterviewPrepAssistant";
 import RefundPolicy from "./pages/RefundPolicy";
 import TermsOService from "./pages/TOS";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import NotFound from "./pages/NotFound";
+
 
 const LayoutWrapper = ({ children }) => {
   const location = useLocation();
 
-  // Add all paths where Header and Footer should be hidden
+  // Define paths where Header and Footer should be hidden
   const hideLayoutPaths = [
+    // Core app pages (full-screen experiences)
+    "/",
     "/shortify",
+    "/pricing",
+    
+    // Feature pages (focus on functionality)
     "/features/pdf-summarizer",
     "/features/shorts-generator",
     "/features/summarizer",
-    "/features/ResumeAnalyzer",
-    "/features/ArticleSummarizer",
+    "/features/resume-analyzer",
+    "/features/article-summarizer",
+    "/features/cover-letter-generator",
+    "/features/assignment-helper",
+    "/features/research-assistant",
+    "/features/linkwise-ai",
+    "/features/eda",
+    "/features/quiz-generator",
+    "/features/clip-generator",
+    "/features/interview-prep-assistant",
+    
+    // User account pages
     "/profile",
     "/settings",
-    "/features/EDA", 
-    "/features/coverLetterGenerator",
-    "/features/AssignmentHelper",
-    "/features/ResearchAssistant",
-    "/features/LinkwiseAI",
-    "/features/Clip-generator",
-    "/features/quiz-generator" ,
-    "/features/InterviewPrepAssistant" ,
-    "/pricing",
+
     "/use-cases/creators",
     "/use-cases/educators",
     "/use-cases/corporate",
-    "/",
-    
   ];
   
-  const shouldHideLayout = hideLayoutPaths.includes(location.pathname);
+  // Check if current path should hide layout
+  // Also hide layout for 404 pages (any path not defined in routes)
+  const isKnownRoute = [
+ 
+    "/refund-policy",
+    "/terms-of-service",
+    "/privacy-policy",
+    ...hideLayoutPaths
+  ].includes(location.pathname);
+  
+  const shouldHideLayout = hideLayoutPaths.includes(location.pathname) || !isKnownRoute;
+
+  // Add dynamic class for layout spacing
+  const mainClasses = shouldHideLayout 
+    ? "flex-grow" 
+    : "flex-grow pt-28";
 
   return (
     <div className="min-h-screen flex flex-col justify-between">
       {!shouldHideLayout && <Header />}
-      <main className={shouldHideLayout ? "flex-grow" : "flex-grow pt-28"}>
+      <main className={mainClasses}>
         {children}
       </main>
       {!shouldHideLayout && <Footer />}
@@ -77,30 +99,44 @@ function App() {
     <BrowserRouter>
       <LayoutWrapper>
         <Routes>
+          {/* Home and Marketing Pages */}
           <Route path="/" element={<Home />} />
           <Route path="/pricing" element={<Pricing />} />
+          
+          {/* Use Case Pages */}
           <Route path="/use-cases/creators" element={<CreatorsUseCase />} />
           <Route path="/use-cases/educators" element={<EducatorsUseCase />} />
           <Route path="/use-cases/corporate" element={<CorporateSection />} />
+          
+          {/* Core App */}
           <Route path="/shortify" element={<ShortifyPage />} />
+          
+          {/* Feature Pages - Standardized kebab-case URLs */}
           <Route path="/features/summarizer" element={<Summarizer />} />
           <Route path="/features/shorts-generator" element={<ShortsGenerator />} />
           <Route path="/features/pdf-summarizer" element={<PdfSummarizer />} />
-          <Route path="/features/ResumeAnalyzer" element={<ResumeAnalyzer />}/>
-          <Route path="/features/ArticleSummarizer" element={<ArticleSummarizer />}/>
-          <Route path="/features/coverLetterGenerator" element={<CoverLetterGenerator />}/>
-          <Route path="/features/AssignmentHelper" element={<AssignmentHelper />}/>
-          <Route path="/features/ResearchAssistant"  element={<ResearchAssistantChat />}/>
-          <Route path="/features/quiz-generator"  element={<QuizGenerator />}/>
-          <Route path="/features/Clip-generator"  element={<ClipGenerator />}/>
-          <Route path="/features/LinkwiseAI"  element={<LinkwiseAI />}/>
-          <Route path="/features/EDA"  element={<EDAUploader />}/>
-          <Route path="/features/InterviewPrepAssistant"  element={<InterviewPrepAssistant />}/>
+          <Route path="/features/resume-analyzer" element={<ResumeAnalyzer />} />
+          <Route path="/features/article-summarizer" element={<ArticleSummarizer />} />
+          <Route path="/features/cover-letter-generator" element={<CoverLetterGenerator />} />
+          <Route path="/features/notes-generator" element={<AssignmentHelper />} />
+          <Route path="/features/research-assistant" element={<ResearchAssistantChat />} />
+          <Route path="/features/quiz-generator" element={<QuizGenerator />} />
+          <Route path="/features/clip-generator" element={<ClipGenerator />} />
+          <Route path="/features/linkwise-ai" element={<LinkwiseAI />} />
+          <Route path="/features/eda" element={<EDAUploader />} />
+          <Route path="/features/interview-prep-assistant" element={<InterviewPrepAssistant />} />
+          
+          {/* User Account Pages */}
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
-          <Route path="/refund-policy"  element={<RefundPolicy />}/>
-          <Route path="/terms-of-service"  element={<TermsOService />}/>
-          <Route path="/privacy-policy"  element={<PrivacyPolicy />}/>
+          
+          {/* Legal Pages */}
+          <Route path="/refund-policy" element={<RefundPolicy />} />
+          <Route path="/terms-of-service" element={<TermsOService />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          
+          {/* 404 Catch-all - Must be last */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </LayoutWrapper>
     </BrowserRouter>

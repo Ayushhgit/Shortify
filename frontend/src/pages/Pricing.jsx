@@ -654,7 +654,7 @@ export default function Pricing() {
 
           {/* Bottom Copyright */}
           <div className="text-center mt-6 text-sm text-gray-300">
-            Made with ❤️ and ☕.
+             © 2025 KwixLab. All Rights Reserved.
           </div>
         </div>
       </footer>

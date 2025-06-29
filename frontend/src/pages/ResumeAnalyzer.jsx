@@ -674,7 +674,7 @@ const ResumeAnalyzer = () => {
       <footer className="relative z-10 bg-white/5 backdrop-blur-sm border-t border-white/20 mt-8">
         <div className="max-w-7xl mx-auto px-6 py-8 flex items-center justify-center">
           <p className="text-gray-300 text-center">
-            Made with ❤️ and ☕ for Job Hunters everywhere.
+             © 2025 KwixLab. All Rights Reserved.
           </p>
         </div>
       </footer>
