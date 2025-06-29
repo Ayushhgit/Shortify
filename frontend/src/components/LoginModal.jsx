@@ -30,7 +30,7 @@ export default function LoginModal({ onClose, onSwitchToSignUp }) {
       const token = await userCredential.user.getIdToken();
 
       // You might want to send this to your backend to validate the session
-      await fetch("http://localhost:8000/api/auth/login", {
+      await fetch("https://kwixlab.com/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -65,7 +65,7 @@ export default function LoginModal({ onClose, onSwitchToSignUp }) {
       const token = await user.getIdToken();
       
       // Send to backend
-      await fetch("http://localhost:8000/api/auth/firebase", {
+      await fetch("https://kwixlab.com/api/auth/firebase", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -91,7 +91,7 @@ export default function AuthModalSystem({ onClose, initialMode = 'signup', onAut
 
             try {
               // Register user
-              const registerResponse = await fetch("http://localhost:8000/api/auth/firebase", {
+              const registerResponse = await fetch("https://kwixlab.com/api/auth/firebase", {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
@@ -110,7 +110,7 @@ export default function AuthModalSystem({ onClose, initialMode = 'signup', onAut
               }
 
               // Login user
-              const loginResponse = await fetch("http://localhost:8000/api/auth/login", {
+              const loginResponse = await fetch("https://kwixlab.com/api/auth/login", {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
@@ -170,7 +170,7 @@ export default function AuthModalSystem({ onClose, initialMode = 'signup', onAut
 
       const token = await user.getIdToken();
 
-      const response = await fetch("http://localhost:8000/api/auth/login", {
+      const response = await fetch("https://kwixlab.com/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -205,7 +205,7 @@ export default function AuthModalSystem({ onClose, initialMode = 'signup', onAut
 
       const token = await user.getIdToken();
 
-      const response = await fetch("http://localhost:8000/api/auth/firebase", {
+      const response = await fetch("https://kwixlab.com/api/auth/firebase", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
