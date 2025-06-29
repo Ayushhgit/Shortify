@@ -7,8 +7,10 @@ import {
   SquareChartGantt,
   FileText,
   Zap,
+  Shield,
   User,
   Users,
+  BarChart,
   Subtitles,
   Clapperboard,
   ClipboardList,
@@ -19,6 +21,7 @@ import {
   Mic,
   BarChart3,
   Menu,
+  Handshake,
   X,
   Edit,
   Droplets,
@@ -171,7 +174,7 @@ export default function ShortifyPage() {
       case "coverLetter":
         return "Cover Letter Maker";
       case "assignment":
-        return "Assignment Helper";
+        return "Notes Generator";
       case "research":
         return "Research Assistant";
       case "autoeda":
@@ -182,6 +185,8 @@ export default function ShortifyPage() {
         return "Quiz Generator";
       case "clip":
         return "Clip Maker";
+      case "interview":
+        return "Interview Assistant";
       default:
         return "Shortify";
     }
@@ -240,7 +245,7 @@ export default function ShortifyPage() {
     {
       id: "assignment",
       icon: Pencil,
-      label: "Assignment Helper",
+      label: "Notes Generator",
       gradient: "from-yellow-500 via-orange-400 to-amber-200",
       glow: "shadow-violet-500/25",
     },
@@ -277,7 +282,14 @@ export default function ShortifyPage() {
       icon: Video,
       label: "Clip Maker",
       gradient: "from-emerald-500 via-teal-500 to-green-500",
-      glow: "shadow-purple-500/25",
+      glow: "shadow-rose-500/25",
+    },
+    {
+      id: "interview",
+      icon: Handshake,
+      label: "Interview Assistant",
+      gradient: "from-pink-500 to-purple-500",
+      glow: "shadow-green-500/25",
     },
   ];
 
@@ -352,7 +364,7 @@ export default function ShortifyPage() {
     {
       title: "Handwritten Notes Maker",
       icon: Pencil,
-      desc: "Convert AI-generated answers into realistic handwritten assignments with ruled paper styling – perfect for fast, smart submissions.",
+      desc: "Transform structured content into beautiful, handwritten-style notes on ruled paper - great for study, revision, or personalized documentation.",
       gradient: "from-yellow-500 via-orange-400 to-amber-200",
       link: "/features/notes-generator",
       label: "Try Now",
@@ -412,6 +424,17 @@ export default function ShortifyPage() {
       link: "/features/quiz-generator",
       label: "Generate Quiz",
       badge: "EDUCATION",
+      animation: "none",
+      bgPattern: "plus",
+    },
+    {
+      title: "AI Interview Prep Assistant",
+      icon: Handshake,
+      desc: "Master your next interview with AI-powered practice sessions and personalized feedback. Get realistic interview simulations, behavioral scenarios, and industry-specific questions to boost your confidence.",
+      gradient: "from-emerald-500 via-green-600 to-teal-700",
+      link: "/features/interview-prep-assistant",
+      label: "Start Practice",
+      badge: "CAREER",
       animation: "none",
       bgPattern: "plus",
     },
@@ -516,17 +539,19 @@ export default function ShortifyPage() {
                       setActiveTab(item.id);
                       setSidebarOpen(false);
                     }}
-                    className={`w-full group relative overflow-hidden rounded-2xl p-4 transition-all duration-300 ${isActive
-                      ? `bg-gradient-to-r ${item.gradient} shadow-2xl ${item.glow}`
-                      : "bg-slate-800/50 hover:bg-slate-800 border border-slate-700 hover:border-slate-600 hover:shadow-lg"
-                      }`}
+                    className={`w-full group relative overflow-hidden rounded-2xl p-4 transition-all duration-300 ${
+                      isActive
+                        ? `bg-gradient-to-r ${item.gradient} shadow-2xl ${item.glow}`
+                        : "bg-slate-800/50 hover:bg-slate-800 border border-slate-700 hover:border-slate-600 hover:shadow-lg"
+                    }`}
                   >
                     <div className="flex items-center gap-4 relative z-10">
                       <div
-                        className={`p-3 rounded-xl transition-all duration-300 ${isActive
-                          ? "bg-white/20 shadow-lg"
-                          : "bg-slate-700 group-hover:bg-slate-600"
-                          }`}
+                        className={`p-3 rounded-xl transition-all duration-300 ${
+                          isActive
+                            ? "bg-white/20 shadow-lg"
+                            : "bg-slate-700 group-hover:bg-slate-600"
+                        }`}
                       >
                         <Icon
                           size={20}
@@ -535,8 +560,9 @@ export default function ShortifyPage() {
                       </div>
                       <div className="text-left">
                         <div
-                          className={`font-semibold ${isActive ? "text-white" : "text-slate-300"
-                            }`}
+                          className={`font-semibold ${
+                            isActive ? "text-white" : "text-slate-300"
+                          }`}
                         >
                           {item.label}
                         </div>
@@ -711,11 +737,9 @@ export default function ShortifyPage() {
 
                         {/* Action Button */}
                         <div
-
                           onClick={() => navigate(feature.link)}
                           className={`w-full bg-gradient-to-r ${feature.gradient} hover:shadow-2xl text-white py-4 px-6 rounded-2xl font-semibold transition-all duration-300 flex items-center justify-center gap-3 group-hover:gap-4 text-lg shadow-lg cursor-pointer`}
                         >
-
                           <span>{feature.label}</span>
                           <ArrowRight
                             size={20}
@@ -1387,104 +1411,104 @@ export default function ShortifyPage() {
           )}
 
           {/* Assignment Maker */}
-          {activeTab === "assignment" && (
+          {activeTab === "notes" && (
             <div className="max-w-4xl mx-auto space-y-8">
               <div className="text-center mb-12">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-600/20 border border-orange-600/30 mb-6">
-                  <FileText className="w-5 h-5 text-yellow-400" />
-                  <span className="text-yellow-400 font-medium">
-                    ASSIGNMENT INTELLIGENCE
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600/20 border border-indigo-600/30 mb-6">
+                  <FileText className="w-5 h-5 text-blue-400" />
+                  <span className="text-blue-400 font-medium">
+                    SMART STUDY TOOLS
                   </span>
                 </div>
-                <h2 className="text-4xl font-bold bg-gradient-to-r from-yellow-400 via-orange-400 to-rose-400 bg-clip-text text-transparent mb-4">
-                  AI-Powered Assignment Maker
+                <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent mb-4">
+                  AI-Powered Notes Generator
                 </h2>
                 <p className="text-xl text-gray-400 leading-relaxed">
-                  Upload questions in any format and let AI solve them with
+                  Transform study materials into comprehensive notes with
                   customizable formatting, handwriting styles, and downloadable
-                  PDF outputs.
+                  PDF outputs for effective learning.
                 </p>
               </div>
 
               <div className="grid md:grid-cols-2 gap-8 mb-8">
-                <div className="bg-gradient-to-br from-yellow-600/10 to-orange-600/10 border border-yellow-600/20 rounded-3xl p-8">
-                  <h3 className="text-2xl font-bold text-yellow-400 mb-4 flex items-center gap-3">
+                <div className="bg-gradient-to-br from-blue-600/10 to-indigo-600/10 border border-blue-600/20 rounded-3xl p-8">
+                  <h3 className="text-2xl font-bold text-blue-400 mb-4 flex items-center gap-3">
                     <Upload className="w-8 h-8" />
-                    Input Capabilities
+                    Content Sources
                   </h3>
                   <ul className="space-y-4 text-gray-300">
                     <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" />
-                      <span>PDF question paper recognition and parsing</span>
+                      <CheckCircle className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
+                      <span>PDF textbook and study material processing</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-orange-400 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="w-5 h-5 text-indigo-400 mt-0.5 flex-shrink-0" />
                       <span>
-                        DOCX file processing with formatting preservation
+                        DOCX lecture notes with formatting preservation
                       </span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-rose-400 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" />
                       <span>
-                        Direct text input with smart question detection
+                        Direct text input for topic-based note generation
                       </span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" />
-                      <span>Image-based question extraction from photos</span>
+                      <CheckCircle className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
+                      <span>Image-based content extraction from photos</span>
                     </li>
                   </ul>
                 </div>
 
-                <div className="bg-gradient-to-br from-orange-600/10 to-rose-600/10 border border-orange-600/20 rounded-3xl p-8">
-                  <h3 className="text-2xl font-bold text-orange-400 mb-4 flex items-center gap-3">
+                <div className="bg-gradient-to-br from-indigo-600/10 to-purple-600/10 border border-indigo-600/20 rounded-3xl p-8">
+                  <h3 className="text-2xl font-bold text-indigo-400 mb-4 flex items-center gap-3">
                     <Palette className="w-8 h-8" />
-                    Customization Options
+                    Study Customization
                   </h3>
                   <ul className="space-y-4 text-gray-300">
                     <li className="flex items-start gap-3">
-                      <Paintbrush className="w-5 h-5 text-orange-400 mt-0.5 flex-shrink-0" />
-                      <span>Multiple handwriting fonts and styles</span>
+                      <Paintbrush className="w-5 h-5 text-indigo-400 mt-0.5 flex-shrink-0" />
+                      <span>Multiple handwriting fonts for natural notes</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <FileImage className="w-5 h-5 text-rose-400 mt-0.5 flex-shrink-0" />
-                      <span>Blank, ruled, or graph paper backgrounds</span>
+                      <FileImage className="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" />
+                      <span>Cornell, outline, or mind-map note formats</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <Droplets className="w-5 h-5 text-orange-400 mt-0.5 flex-shrink-0" />
-                      <span>Customizable ink colors and thickness</span>
+                      <Droplets className="w-5 h-5 text-indigo-400 mt-0.5 flex-shrink-0" />
+                      <span>Customizable colors and highlighting options</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <Edit className="w-5 h-5 text-rose-400 mt-0.5 flex-shrink-0" />
-                      <span>Real-time editing and formatting controls</span>
+                      <Edit className="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" />
+                      <span>Real-time editing and content organization</span>
                     </li>
                   </ul>
                 </div>
               </div>
 
               {/* Statistics Section */}
-              <div className="bg-gradient-to-br from-yellow-600/10 to-orange-600/10 border border-yellow-600/20 rounded-3xl p-8 mb-8">
+              <div className="bg-gradient-to-br from-blue-600/10 to-indigo-600/10 border border-blue-600/20 rounded-3xl p-8 mb-8">
                 <div className="grid md:grid-cols-4 gap-6 text-center">
                   <div>
-                    <div className="text-3xl font-bold text-yellow-400 mb-2">
-                      95%
+                    <div className="text-3xl font-bold text-blue-400 mb-2">
+                      98%
                     </div>
-                    <div className="text-gray-400">Solution Accuracy</div>
+                    <div className="text-gray-400">Content Accuracy</div>
                   </div>
                   <div>
-                    <div className="text-3xl font-bold text-orange-400 mb-2">
-                      10x
+                    <div className="text-3xl font-bold text-indigo-400 mb-2">
+                      5x
                     </div>
-                    <div className="text-gray-400">Faster Completion</div>
+                    <div className="text-gray-400">Faster Note Taking</div>
                   </div>
                   <div>
-                    <div className="text-3xl font-bold text-rose-400 mb-2">
-                      5+
+                    <div className="text-3xl font-bold text-purple-400 mb-2">
+                      8+
                     </div>
-                    <div className="text-gray-400">Font Styles</div>
+                    <div className="text-gray-400">Note Formats</div>
                   </div>
                   <div>
-                    <div className="text-3xl font-bold text-yellow-400 mb-2">
+                    <div className="text-3xl font-bold text-blue-400 mb-2">
                       HD
                     </div>
                     <div className="text-gray-400">PDF Quality</div>
@@ -1492,37 +1516,37 @@ export default function ShortifyPage() {
                 </div>
               </div>
 
-              {/* Assignment Process */}
-              <div className="bg-gradient-to-br from-orange-600/10 to-rose-600/10 border border-orange-600/20 rounded-3xl p-8 mb-8">
-                <h3 className="text-2xl font-bold text-orange-400 mb-6 flex items-center gap-3">
+              {/* Notes Process */}
+              <div className="bg-gradient-to-br from-indigo-600/10 to-purple-600/10 border border-indigo-600/20 rounded-3xl p-8 mb-8">
+                <h3 className="text-2xl font-bold text-indigo-400 mb-6 flex items-center gap-3">
                   <Cpu className="w-8 h-8" />
-                  Assignment Process
+                  Note Generation Process
                 </h3>
                 <div className="grid md:grid-cols-4 gap-6">
                   {[
                     {
                       step: "01",
-                      title: "Upload & Parse",
-                      desc: "AI extracts questions from PDF, DOCX, or text input",
-                      color: "yellow",
+                      title: "Import Content",
+                      desc: "AI analyzes study materials from various sources",
+                      color: "blue",
                     },
                     {
                       step: "02",
-                      title: "Solve & Generate",
-                      desc: "Advanced AI provides accurate solutions with working",
-                      color: "orange",
+                      title: "Extract & Organize",
+                      desc: "Key concepts are identified and structured logically",
+                      color: "indigo",
                     },
                     {
                       step: "03",
                       title: "Format & Style",
-                      desc: "Choose fonts, colors, and paper styles for natural look",
-                      color: "rose",
+                      desc: "Choose note formats and visual styles for clarity",
+                      color: "purple",
                     },
                     {
                       step: "04",
-                      title: "Edit & Download",
-                      desc: "Real-time editing with high-quality PDF export",
-                      color: "yellow",
+                      title: "Review & Export",
+                      desc: "Edit content and download as organized study notes",
+                      color: "blue",
                     },
                   ].map((item, idx) => (
                     <div key={idx} className="text-center">
@@ -1542,51 +1566,51 @@ export default function ShortifyPage() {
 
               {/* Features Grid */}
               <div className="grid md:grid-cols-3 gap-6 mb-8">
-                <div className="bg-gradient-to-br from-yellow-600/10 to-orange-600/10 border border-yellow-600/20 rounded-2xl p-6 text-center">
-                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 flex items-center justify-center">
+                <div className="bg-gradient-to-br from-blue-600/10 to-indigo-600/10 border border-blue-600/20 rounded-2xl p-6 text-center">
+                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center">
                     <Download className="w-6 h-6 text-white" />
                   </div>
-                  <h4 className="text-lg font-bold text-yellow-400 mb-2">
-                    Instant PDF Export
+                  <h4 className="text-lg font-bold text-blue-400 mb-2">
+                    Study-Ready PDFs
                   </h4>
                   <p className="text-gray-400 text-sm">
-                    Download completed assignments as high-quality PDFs ready
-                    for submission
+                    Export organized notes as high-quality PDFs perfect for
+                    studying and review sessions
                   </p>
                 </div>
 
-                <div className="bg-gradient-to-br from-orange-600/10 to-rose-600/10 border border-orange-600/20 rounded-2xl p-6 text-center">
-                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-orange-500 to-rose-500 flex items-center justify-center">
+                <div className="bg-gradient-to-br from-indigo-600/10 to-purple-600/10 border border-indigo-600/20 rounded-2xl p-6 text-center">
+                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center">
                     <Zap className="w-6 h-6 text-white" />
                   </div>
-                  <h4 className="text-lg font-bold text-orange-400 mb-2">
-                    Smart Recognition
+                  <h4 className="text-lg font-bold text-indigo-400 mb-2">
+                    Smart Content Analysis
                   </h4>
                   <p className="text-gray-400 text-sm">
-                    Advanced OCR technology recognizes complex mathematical
-                    equations and diagrams
+                    Advanced AI identifies key concepts, definitions, and
+                    important formulas automatically
                   </p>
                 </div>
 
-                <div className="bg-gradient-to-br from-rose-600/10 to-yellow-600/10 border border-rose-600/20 rounded-2xl p-6 text-center">
-                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-rose-500 to-yellow-500 flex items-center justify-center">
+                <div className="bg-gradient-to-br from-purple-600/10 to-blue-600/10 border border-purple-600/20 rounded-2xl p-6 text-center">
+                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center">
                     <Settings className="w-6 h-6 text-white" />
                   </div>
-                  <h4 className="text-lg font-bold text-rose-400 mb-2">
-                    Live Customization
+                  <h4 className="text-lg font-bold text-purple-400 mb-2">
+                    Personalized Learning
                   </h4>
                   <p className="text-gray-400 text-sm">
-                    Real-time preview with instant font, color, and layout
-                    adjustments
+                    Customize note structure and style to match your preferred
+                    learning and study methods
                   </p>
                 </div>
               </div>
 
               <div className="text-center">
-                <a href="/features/AssignmentHelper">
-                  <button className="bg-gradient-to-r from-yellow-400 via-orange-600 to-rose-400 hover:from-yellow-500 hover:via-orange-700 hover:to-rose-500 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-yellow-500/25 flex items-center gap-3 mx-auto group">
+                <a href="/features/NotesGenerator">
+                  <button className="bg-gradient-to-r from-blue-400 via-indigo-600 to-purple-400 hover:from-blue-500 hover:via-indigo-700 hover:to-purple-500 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-blue-500/25 flex items-center gap-3 mx-auto group">
                     <FileText className="w-6 h-6 group-hover:scale-110 transition-transform" />
-                    Finish Assignment
+                    Generate Study Notes
                     <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
                   </button>
                 </a>
@@ -1954,8 +1978,9 @@ export default function ShortifyPage() {
                   AI-Powered Clip Generator
                 </h2>
                 <p className="text-xl text-gray-400 leading-relaxed">
-                  Turn any topic into a viral-style short video with AI-generated
-                  scripts, voiceovers, background footage, and synchronized captions.
+                  Turn any topic into a viral-style short video with
+                  AI-generated scripts, voiceovers, background footage, and
+                  synchronized captions.
                 </p>
               </div>
 
@@ -2049,16 +2074,40 @@ export default function ShortifyPage() {
                 </h3>
                 <div className="grid md:grid-cols-4 gap-6">
                   {[
-                    { step: "01", title: "Topic to Script", desc: "AI writes an engaging script based on your input topic", color: "blue" },
-                    { step: "02", title: "Text to Voice", desc: "A natural voiceover is generated from the AI script", color: "fuchsia" },
-                    { step: "03", title: "Video Assembly", desc: "Footage, audio & captions are synced and compiled", color: "purple" },
-                    { step: "04", title: "Final Render", desc: "Your final video is rendered in HD and ready for download", color: "blue" },
+                    {
+                      step: "01",
+                      title: "Topic to Script",
+                      desc: "AI writes an engaging script based on your input topic",
+                      color: "blue",
+                    },
+                    {
+                      step: "02",
+                      title: "Text to Voice",
+                      desc: "A natural voiceover is generated from the AI script",
+                      color: "fuchsia",
+                    },
+                    {
+                      step: "03",
+                      title: "Video Assembly",
+                      desc: "Footage, audio & captions are synced and compiled",
+                      color: "purple",
+                    },
+                    {
+                      step: "04",
+                      title: "Final Render",
+                      desc: "Your final video is rendered in HD and ready for download",
+                      color: "blue",
+                    },
                   ].map((item) => (
                     <div key={item.step} className="text-center">
-                      <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-${item.color}-500 to-${item.color}-600 flex items-center justify-center text-white font-bold text-xl`}>
+                      <div
+                        className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-${item.color}-500 to-${item.color}-600 flex items-center justify-center text-white font-bold text-xl`}
+                      >
                         {item.step}
                       </div>
-                      <h4 className="text-lg font-bold text-white mb-2">{item.title}</h4>
+                      <h4 className="text-lg font-bold text-white mb-2">
+                        {item.title}
+                      </h4>
                       <p className="text-gray-400 text-sm">{item.desc}</p>
                     </div>
                   ))}
@@ -2071,22 +2120,37 @@ export default function ShortifyPage() {
                   <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-blue-500 to-fuchsia-500 flex items-center justify-center">
                     <Library className="w-6 h-6 text-white" />
                   </div>
-                  <h4 className="text-lg font-bold text-blue-400 mb-2">Stock Footage</h4>
-                  <p className="text-gray-400 text-sm">Access to a vast library of high-quality background videos for any topic.</p>
+                  <h4 className="text-lg font-bold text-blue-400 mb-2">
+                    Stock Footage
+                  </h4>
+                  <p className="text-gray-400 text-sm">
+                    Access to a vast library of high-quality background videos
+                    for any topic.
+                  </p>
                 </div>
                 <div className="bg-gradient-to-br from-fuchsia-600/10 to-purple-600/10 border border-fuchsia-600/20 rounded-2xl p-6 text-center">
                   <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-fuchsia-500 to-purple-500 flex items-center justify-center">
                     <Subtitles className="w-6 h-6 text-white" />
                   </div>
-                  <h4 className="text-lg font-bold text-fuchsia-400 mb-2">Burnt-in Captions</h4>
-                  <p className="text-gray-400 text-sm">Automatically generated and animated captions are embedded into your video.</p>
+                  <h4 className="text-lg font-bold text-fuchsia-400 mb-2">
+                    Burnt-in Captions
+                  </h4>
+                  <p className="text-gray-400 text-sm">
+                    Automatically generated and animated captions are embedded
+                    into your video.
+                  </p>
                 </div>
                 <div className="bg-gradient-to-br from-purple-600/10 to-blue-600/10 border border-purple-600/20 rounded-2xl p-6 text-center">
                   <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center">
                     <Download className="w-6 h-6 text-white" />
                   </div>
-                  <h4 className="text-lg font-bold text-purple-400 mb-2">One-Click Export</h4>
-                  <p className="text-gray-400 text-sm">Download your finished video as a high-quality MP4 file, ready to be shared.</p>
+                  <h4 className="text-lg font-bold text-purple-400 mb-2">
+                    One-Click Export
+                  </h4>
+                  <p className="text-gray-400 text-sm">
+                    Download your finished video as a high-quality MP4 file,
+                    ready to be shared.
+                  </p>
                 </div>
               </div>
 
@@ -2116,8 +2180,9 @@ export default function ShortifyPage() {
                   AI-Powered Quiz Generator
                 </h2>
                 <p className="text-xl text-gray-400 leading-relaxed">
-                  Effortlessly create engaging and challenging quizzes on any subject
-                  with diverse question types and automatic answer key generation.
+                  Effortlessly create engaging and challenging quizzes on any
+                  subject with diverse question types and automatic answer key
+                  generation.
                 </p>
               </div>
 
@@ -2142,7 +2207,9 @@ export default function ShortifyPage() {
                     </li>
                     <li className="flex items-start gap-3">
                       <CheckCircle className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
-                      <span>Specify number of questions and difficulty level</span>
+                      <span>
+                        Specify number of questions and difficulty level
+                      </span>
                     </li>
                   </ul>
                 </div>
@@ -2211,16 +2278,40 @@ export default function ShortifyPage() {
                 </h3>
                 <div className="grid md:grid-cols-4 gap-6">
                   {[
-                    { step: "01", title: "Provide Content", desc: "Input a topic, paste text, or upload a document for analysis", color: "green" },
-                    { step: "02", title: "AI Comprehension", desc: "The AI reads and understands the key concepts in your material", color: "teal" },
-                    { step: "03", title: "Question Crafting", desc: "Relevant questions are generated in various formats with answers", color: "cyan" },
-                    { step: "04", title: "Review & Export", desc: "Edit your quiz and download it in your desired file format", color: "green" },
+                    {
+                      step: "01",
+                      title: "Provide Content",
+                      desc: "Input a topic, paste text, or upload a document for analysis",
+                      color: "green",
+                    },
+                    {
+                      step: "02",
+                      title: "AI Comprehension",
+                      desc: "The AI reads and understands the key concepts in your material",
+                      color: "teal",
+                    },
+                    {
+                      step: "03",
+                      title: "Question Crafting",
+                      desc: "Relevant questions are generated in various formats with answers",
+                      color: "cyan",
+                    },
+                    {
+                      step: "04",
+                      title: "Review & Export",
+                      desc: "Edit your quiz and download it in your desired file format",
+                      color: "green",
+                    },
                   ].map((item) => (
                     <div key={item.step} className="text-center">
-                      <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-${item.color}-500 to-${item.color}-600 flex items-center justify-center text-white font-bold text-xl`}>
+                      <div
+                        className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-${item.color}-500 to-${item.color}-600 flex items-center justify-center text-white font-bold text-xl`}
+                      >
                         {item.step}
                       </div>
-                      <h4 className="text-lg font-bold text-white mb-2">{item.title}</h4>
+                      <h4 className="text-lg font-bold text-white mb-2">
+                        {item.title}
+                      </h4>
                       <p className="text-gray-400 text-sm">{item.desc}</p>
                     </div>
                   ))}
@@ -2233,22 +2324,37 @@ export default function ShortifyPage() {
                   <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-green-500 to-teal-500 flex items-center justify-center">
                     <FileText className="w-6 h-6 text-white" />
                   </div>
-                  <h4 className="text-lg font-bold text-green-400 mb-2">Multiple Formats</h4>
-                  <p className="text-gray-400 text-sm">Export your quizzes and answer keys as printable PDF or editable DOCX files.</p>
+                  <h4 className="text-lg font-bold text-green-400 mb-2">
+                    Multiple Formats
+                  </h4>
+                  <p className="text-gray-400 text-sm">
+                    Export your quizzes and answer keys as printable PDF or
+                    editable DOCX files.
+                  </p>
                 </div>
                 <div className="bg-gradient-to-br from-teal-600/10 to-cyan-600/10 border border-teal-600/20 rounded-2xl p-6 text-center">
                   <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 flex items-center justify-center">
                     <SlidersHorizontal className="w-6 h-6 text-white" />
                   </div>
-                  <h4 className="text-lg font-bold text-teal-400 mb-2">Adjustable Difficulty</h4>
-                  <p className="text-gray-400 text-sm">Fine-tune the complexity of your quizzes to suit any audience, from beginners to experts.</p>
+                  <h4 className="text-lg font-bold text-teal-400 mb-2">
+                    Adjustable Difficulty
+                  </h4>
+                  <p className="text-gray-400 text-sm">
+                    Fine-tune the complexity of your quizzes to suit any
+                    audience, from beginners to experts.
+                  </p>
                 </div>
                 <div className="bg-gradient-to-br from-cyan-600/10 to-green-600/10 border border-cyan-600/20 rounded-2xl p-6 text-center">
                   <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 flex items-center justify-center">
                     <KeyRound className="w-6 h-6 text-white" />
                   </div>
-                  <h4 className="text-lg font-bold text-cyan-400 mb-2">Answer Key Included</h4>
-                  <p className="text-gray-400 text-sm">Every quiz comes with a corresponding answer key for quick and easy grading.</p>
+                  <h4 className="text-lg font-bold text-cyan-400 mb-2">
+                    Answer Key Included
+                  </h4>
+                  <p className="text-gray-400 text-sm">
+                    Every quiz comes with a corresponding answer key for quick
+                    and easy grading.
+                  </p>
                 </div>
               </div>
 
@@ -2261,14 +2367,278 @@ export default function ShortifyPage() {
                   </button>
                 </a>
               </div>
-            </div>)}
+            </div>
+          )}
 
+          {/*Interview Assistant*/}
+          {activeTab === "interview" && (
+            <div className="max-w-4xl mx-auto space-y-8">
+              <div className="text-center mb-12">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-600/20 border border-green-600/30 mb-6">
+                  <Users className="w-5 h-5 text-emerald-400" />
+                  <span className="text-emerald-400 font-medium">
+                    CAREER SUCCESS TOOLS
+                  </span>
+                </div>
+                <h2 className="text-4xl font-bold bg-gradient-to-r from-emerald-400 via-green-400 to-teal-400 bg-clip-text text-transparent mb-4">
+                  AI Interview Prep Assistant
+                </h2>
+                <p className="text-xl text-gray-400 leading-relaxed">
+                  Master your next interview with AI-powered practice sessions,
+                  personalized feedback, and industry-specific question banks
+                  tailored to your career goals.
+                </p>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-8 mb-8">
+                <div className="bg-gradient-to-br from-emerald-600/10 to-green-600/10 border border-emerald-600/20 rounded-3xl p-8">
+                  <h3 className="text-2xl font-bold text-emerald-400 mb-4 flex items-center gap-3">
+                    <Target className="w-8 h-8" />
+                    Practice Modes
+                  </h3>
+                  <ul className="space-y-4 text-gray-300">
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0" />
+                      <span>
+                        Technical interview simulations with coding challenges
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
+                      <span>
+                        Behavioral interview scenarios with STAR method guidance
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-teal-400 mt-0.5 flex-shrink-0" />
+                      <span>
+                        Industry-specific questions for your target role
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0" />
+                      <span>Mock video interviews with real-time feedback</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="bg-gradient-to-br from-green-600/10 to-teal-600/10 border border-green-600/20 rounded-3xl p-8">
+                  <h3 className="text-2xl font-bold text-green-400 mb-4 flex items-center gap-3">
+                    <Brain className="w-8 h-8" />
+                    AI-Powered Analysis
+                  </h3>
+                  <ul className="space-y-4 text-gray-300">
+                    <li className="flex items-start gap-3">
+                      <MessageSquare className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
+                      <span>Speech analysis for clarity and confidence</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Clock className="w-5 h-5 text-teal-400 mt-0.5 flex-shrink-0" />
+                      <span>Response timing and pacing optimization</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <TrendingUp className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
+                      <span>Performance tracking and improvement metrics</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Lightbulb className="w-5 h-5 text-teal-400 mt-0.5 flex-shrink-0" />
+                      <span>Personalized improvement recommendations</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Statistics Section */}
+              <div className="bg-gradient-to-br from-emerald-600/10 to-green-600/10 border border-emerald-600/20 rounded-3xl p-8 mb-8">
+                <div className="grid md:grid-cols-4 gap-6 text-center">
+                  <div>
+                    <div className="text-3xl font-bold text-emerald-400 mb-2">
+                      92%
+                    </div>
+                    <div className="text-gray-400">Success Rate</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-green-400 mb-2">
+                      500+
+                    </div>
+                    <div className="text-gray-400">Practice Questions</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-teal-400 mb-2">
+                      15+
+                    </div>
+                    <div className="text-gray-400">Industries Covered</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-emerald-400 mb-2">
+                      24/7
+                    </div>
+                    <div className="text-gray-400">AI Availability</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Interview Prep Process */}
+              <div className="bg-gradient-to-br from-green-600/10 to-teal-600/10 border border-green-600/20 rounded-3xl p-8 mb-8">
+                <h3 className="text-2xl font-bold text-green-400 mb-6 flex items-center gap-3">
+                  <Cpu className="w-8 h-8" />
+                  Interview Preparation Journey
+                </h3>
+                <div className="grid md:grid-cols-4 gap-6">
+                  {[
+                    {
+                      step: "01",
+                      title: "Profile Setup",
+                      desc: "Define your role, industry, and experience level",
+                      color: "emerald",
+                    },
+                    {
+                      step: "02",
+                      title: "Practice Sessions",
+                      desc: "Engage in realistic interview simulations",
+                      color: "green",
+                    },
+                    {
+                      step: "03",
+                      title: "AI Feedback",
+                      desc: "Receive detailed analysis and improvement tips",
+                      color: "teal",
+                    },
+                    {
+                      step: "04",
+                      title: "Ready to Excel",
+                      desc: "Confidently tackle your real interview",
+                      color: "emerald",
+                    },
+                  ].map((item, idx) => (
+                    <div key={idx} className="text-center">
+                      <div
+                        className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-${item.color}-500 to-${item.color}-600 flex items-center justify-center text-white font-bold text-xl`}
+                      >
+                        {item.step}
+                      </div>
+                      <h4 className="text-lg font-bold text-white mb-2">
+                        {item.title}
+                      </h4>
+                      <p className="text-gray-400 text-sm">{item.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Features Grid */}
+              <div className="grid md:grid-cols-3 gap-6 mb-8">
+                <div className="bg-gradient-to-br from-emerald-600/10 to-green-600/10 border border-emerald-600/20 rounded-2xl p-6 text-center">
+                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-emerald-500 to-green-500 flex items-center justify-center">
+                    <Video className="w-6 h-6 text-white" />
+                  </div>
+                  <h4 className="text-lg font-bold text-emerald-400 mb-2">
+                    Mock Video Interviews
+                  </h4>
+                  <p className="text-gray-400 text-sm">
+                    Practice with realistic video interview scenarios and
+                    receive feedback on body language and presentation
+                  </p>
+                </div>
+
+                <div className="bg-gradient-to-br from-green-600/10 to-teal-600/10 border border-green-600/20 rounded-2xl p-6 text-center">
+                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-green-500 to-teal-500 flex items-center justify-center">
+                    <BarChart className="w-6 h-6 text-white" />
+                  </div>
+                  <h4 className="text-lg font-bold text-green-400 mb-2">
+                    Performance Analytics
+                  </h4>
+                  <p className="text-gray-400 text-sm">
+                    Track your progress with detailed metrics on response
+                    quality, confidence levels, and improvement areas
+                  </p>
+                </div>
+
+                <div className="bg-gradient-to-br from-teal-600/10 to-emerald-600/10 border border-teal-600/20 rounded-2xl p-6 text-center">
+                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-teal-500 to-emerald-500 flex items-center justify-center">
+                    <BookOpen className="w-6 h-6 text-white" />
+                  </div>
+                  <h4 className="text-lg font-bold text-teal-400 mb-2">
+                    Custom Question Banks
+                  </h4>
+                  <p className="text-gray-400 text-sm">
+                    Access curated questions specific to your industry, role
+                    level, and company type for targeted preparation
+                  </p>
+                </div>
+              </div>
+
+              {/* Additional Features */}
+              <div className="grid md:grid-cols-2 gap-8 mb-8">
+                <div className="bg-gradient-to-br from-emerald-600/10 to-green-600/10 border border-emerald-600/20 rounded-2xl p-6">
+                  <h4 className="text-xl font-bold text-emerald-400 mb-4 flex items-center gap-3">
+                    <Shield className="w-6 h-6" />
+                    Confidence Building
+                  </h4>
+                  <ul className="space-y-3 text-gray-300">
+                    <li className="flex items-start gap-2">
+                      <div className="w-2 h-2 bg-emerald-400 rounded-full mt-2 flex-shrink-0"></div>
+                      <span>
+                        Anxiety management techniques and breathing exercises
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-2 h-2 bg-green-400 rounded-full mt-2 flex-shrink-0"></div>
+                      <span>Power posing and body language coaching</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-2 h-2 bg-teal-400 rounded-full mt-2 flex-shrink-0"></div>
+                      <span>
+                        Mindset preparation and positive visualization
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="bg-gradient-to-br from-green-600/10 to-teal-600/10 border border-green-600/20 rounded-2xl p-6">
+                  <h4 className="text-xl font-bold text-green-400 mb-4 flex items-center gap-3">
+                    <Award className="w-6 h-6" />
+                    Career Advancement
+                  </h4>
+                  <ul className="space-y-3 text-gray-300">
+                    <li className="flex items-start gap-2">
+                      <div className="w-2 h-2 bg-green-400 rounded-full mt-2 flex-shrink-0"></div>
+                      <span>Salary negotiation strategies and scripts</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-2 h-2 bg-teal-400 rounded-full mt-2 flex-shrink-0"></div>
+                      <span>Leadership and management interview prep</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-2 h-2 bg-emerald-400 rounded-full mt-2 flex-shrink-0"></div>
+                      <span>
+                        Executive presence and senior role preparation
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="text-center">
+                <a href="/features/InterviewPrep">
+                  <button className="bg-gradient-to-r from-emerald-400 via-green-600 to-teal-400 hover:from-emerald-500 hover:via-green-700 hover:to-teal-500 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-emerald-500/25 flex items-center gap-3 mx-auto group">
+                    <Users className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                    Start Interview Prep
+                    <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                </a>
+              </div>
+            </div>
+          )}
 
           {/* Footer */}
           <div className="h-16 flex items-center justify-center border-t border-gray-900 bg-gray-950/90 backdrop-blur-xl mt-16">
             <div className="flex items-center gap-2 text-gray-400">
               <Sparkles className="w-4 h-4" />
-              <span className="text-sm"> © 2025 KwixLab. All Rights Reserved.</span>
+              <span className="text-sm">
+                {" "}
+                © 2025 KwixLab. All Rights Reserved.
+              </span>
               <Sparkles className="w-4 h-4" />
             </div>
           </div>
