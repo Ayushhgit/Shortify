@@ -28,7 +28,7 @@ export default function Chatbot() {
     setInputValue('');
 
     try {
-      const response = await fetch('/chat', {
+      const response = await fetch('https://kwixlab.com/chat', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({user_input: userMessage.text}),
