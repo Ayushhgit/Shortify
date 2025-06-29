@@ -114,7 +114,7 @@ export default function EnhancedSettings() {
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       const settings = {
         darkMode,
         emailNotifications,
@@ -153,6 +153,7 @@ export default function EnhancedSettings() {
       }, 2000);
     }
   };
+
 
   const handleExportData = () => {
     setSuccess("Data export initiated. Download link will be sent to your email.");
@@ -215,22 +216,29 @@ export default function EnhancedSettings() {
       {/* Mobile Menu Button */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-3 rounded-xl bg-slate-800/90 backdrop-blur-sm border border-slate-700 hover:border-cyan-400/50 transition-all duration-300"
+        className="lg:hidden fixed top-6 left-6 z-50 p-2 rounded-xl bg-slate-800/90 backdrop-blur-sm border border-slate-700 hover:border-cyan-400/50 transition-all duration-300"
       >
-        {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+        {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
       </button>
+
+      {sidebarOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black/50 z-30"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
 
       {/* Enhanced Sidebar */}
       <div
         className={`${sidebarOpen ? "translate-x-0" : "-translate-x-full"} 
-          lg:translate-x-0 fixed lg:relative z-40 w-80 h-full transition-all duration-300 ease-in-out`}
+    lg:translate-x-0 fixed lg:relative z-40 w-80 h-full transition-all duration-300 ease-in-out`}
       >
         <div className="h-full bg-gray-950/98 backdrop-blur-xl border-r border-gray-900 flex flex-col relative overflow-hidden">
           {/* Glow Effect */}
           <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-blue-500/5 pointer-events-none" />
 
           {/* Logo Section */}
-          <div className="p-8 border-b border-gray-800">
+          <div className="p-8 pr-16 lg:pr-8 border-b border-gray-800">
             <div className="flex items-center gap-3">
               <a href="/">
                 <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
@@ -256,17 +264,15 @@ export default function EnhancedSettings() {
                   <Link
                     key={item.id}
                     to={item.path}
-                    className={`block w-full group relative overflow-hidden rounded-2xl p-4 transition-all duration-300 ${
-                      isActive
-                        ? "bg-gradient-to-r from-cyan-500/20 to-blue-500/20 shadow-2xl shadow-cyan-500/10"
-                        : "bg-slate-800/50 hover:bg-slate-800 border border-slate-700 hover:border-slate-600 hover:shadow-lg"
-                    }`}
+                    className={`block w-full group relative overflow-hidden rounded-2xl p-4 transition-all duration-300 ${isActive
+                      ? "bg-gradient-to-r from-cyan-500/20 to-blue-500/20 shadow-2xl shadow-cyan-500/10"
+                      : "bg-slate-800/50 hover:bg-slate-800 border border-slate-700 hover:border-slate-600 hover:shadow-lg"
+                      }`}
                   >
                     <div className="flex items-center gap-4 relative z-10">
                       <div
-                        className={`p-3 rounded-xl transition-all duration-300 ${
-                          isActive ? "bg-white/20 shadow-lg" : "bg-slate-700 group-hover:bg-slate-600"
-                        }`}
+                        className={`p-3 rounded-xl transition-all duration-300 ${isActive ? "bg-white/20 shadow-lg" : "bg-slate-700 group-hover:bg-slate-600"
+                          }`}
                       >
                         <Icon size={20} className={isActive ? "text-white" : "text-slate-300"} />
                       </div>
@@ -349,10 +355,11 @@ export default function EnhancedSettings() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden relative">
         {/* Enhanced Header */}
-        <div className="h-24 flex-shrink-0 flex items-center justify-between px-8 bg-gray-950/95 backdrop-blur-xl border-b border-gray-900/70">
-          <div className="flex items-center gap-6">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-white via-cyan-200 to-blue-300 bg-clip-text text-transparent">
-              Settings & Preferences
+        <div className="h-24 flex-shrink-0 flex items-center justify-between px-4 lg:px-8 bg-gray-950/95 backdrop-blur-xl border-b border-gray-900/70">
+          <div className="flex items-center gap-6 ml-16 lg:ml-0">
+            <h1 className="text-xl lg:text-3xl font-bold bg-gradient-to-r from-white via-cyan-200 to-blue-300 bg-clip-text text-transparent">
+              <span className="hidden sm:inline">Settings & Preferences</span>
+              <span className="sm:hidden">Settings</span>
             </h1>
             <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-emerald-500/20 border border-emerald-500/30 shadow-lg">
               <div className="w-3 h-3 bg-emerald-400 rounded-full animate-pulse shadow-lg shadow-emerald-400/50" />
@@ -364,7 +371,7 @@ export default function EnhancedSettings() {
         </div>
 
         {/* Settings Content */}
-        <div className="flex-1 overflow-auto p-8">
+        <div className="flex-1 overflow-auto p-4 lg:p-8">
           <div className="max-w-6xl mx-auto space-y-8">
             {/* Status Messages */}
             {error && (
@@ -379,7 +386,7 @@ export default function EnhancedSettings() {
               </div>
             )}
 
-            {/* General Settings */}
+            {/* General Settings 
             <div ref={generalRef} className="bg-slate-800/50 backdrop-blur-xl border border-slate-700 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-blue-500/5 pointer-events-none" />
               
@@ -436,12 +443,12 @@ export default function EnhancedSettings() {
                   </div>
                 </div>
               </div>
-            </div>
+            </div>*/}
 
             {/* Notifications Settings */}
             <div ref={notificationsRef} className="bg-slate-800/50 backdrop-blur-xl border border-slate-700 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 pointer-events-none" />
-              
+
               <div className="flex items-center justify-between mb-6 relative z-10">
                 <div className="flex items-center gap-3">
                   <Bell className="w-6 h-6 text-purple-400" />
@@ -470,7 +477,7 @@ export default function EnhancedSettings() {
             {/* Privacy & Security Settings */}
             <div ref={privacyRef} className="bg-slate-800/50 backdrop-blur-xl border border-slate-700 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-cyan-500/5 pointer-events-none" />
-              
+
               <div className="flex items-center justify-between mb-6 relative z-10">
                 <div className="flex items-center gap-3">
                   <Shield className="w-6 h-6 text-emerald-400" />
@@ -480,13 +487,6 @@ export default function EnhancedSettings() {
               </div>
 
               <div className="space-y-6 relative z-10">
-
-                <ToggleSwitch
-                  enabled={twoFactor}
-                  onToggle={() => setTwoFactor(!twoFactor)}
-                  label="Two-Factor Authentication"
-                  description="Add an extra layer of security to your account"
-                />
 
                 <ToggleSwitch
                   enabled={dataCollection}
@@ -500,7 +500,7 @@ export default function EnhancedSettings() {
             {/* Account Management */}
             <div ref={accountRef} className="bg-slate-800/50 backdrop-blur-xl border border-slate-700 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-orange-500/5 pointer-events-none" />
-              
+
               <div className="flex items-center justify-between mb-6 relative z-10">
                 <div className="flex items-center gap-3">
                   <Key className="w-6 h-6 text-red-400" />
@@ -528,7 +528,7 @@ export default function EnhancedSettings() {
                   </button>
                 </div>
 
-                <div className="border-t border-slate-700 pt-6">
+                {/*<div className="border-t border-slate-700 pt-6">
                   <h4 className="text-lg font-semibold text-red-400 mb-4">Danger Zone</h4>
                   <button
                     onClick={handleDeleteAccount}
@@ -540,7 +540,7 @@ export default function EnhancedSettings() {
                   <p className="text-sm text-slate-400 mt-2">
                     This action cannot be undone. All your data will be permanently deleted.
                   </p>
-                </div>
+                </div>*/}
               </div>
             </div>
 

@@ -284,7 +284,7 @@ export default function Pricing() {
   }
 
   return (
-    <section className="min-h-screen bg-gradient-to-br from-black to-gray-900 pt-38 px-6 relative overflow-hidden">
+    <section className="min-h-screen bg-gradient-to-br from-black to-gray-900 text-white pt-38 px-6 relative overflow-hidden">
       {/* Decorative gradient orbs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         {/* Main gradient orb following mouse */}
@@ -312,7 +312,7 @@ export default function Pricing() {
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-r from-purple-600/20 to-cyan-600/20 rounded-full blur-3xl"></div>
 
       <div className="max-w-none mx-auto text-center relative z-10 px-4">
-        <h2 className="text-6xl font-light text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-purple-100 mb-6 tracking-tight">
+        <h2 className="text-6xl font-light text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-purple-100 mb-8 tracking-tight">
           Pricing Plans for Every Stage
         </h2>
         <p className="text-xl text-gray-300 mb-16 font-light">
@@ -573,80 +573,161 @@ export default function Pricing() {
 
       {/*footer*/}
       <footer className="relative z-10 mt-10">
-        <div className="mx-auto max-w-7xl px-4 py-2">
-          <div className="flex flex-col lg:flex-row justify-between items-start gap-10 bg-gray-800/10 backdrop-blur-md rounded-2xl border border-white/30 shadow-md px-8 py-6">
-            {/* Brand Name */}
-            <div className="text-center lg:text-left flex-1">
-              <h1 className="text-3xl font-extrabold text-white">
-                Kwix<span className="text-green-500">Lab</span>
-              </h1>
-              <p className="mt-2 text-gray-300 text-md h-6">
-                <Typewriter
-                  words={[
-                    "Your all-in-one AI-powered platform for video, document, and productivity tools.",
-                    "Generate viral YouTube Shorts in seconds with AI.",
-                    "Summarize YouTube videos into bite-sized insights instantly.",
-                    "Get instant PDF and article summaries with a single click.",
-                    "Analyze resumes and generate tailored cover letters effortlessly.",
-                    "Boost your productivity with AI-powered assignment and research tools.",
-                    "Transform data into insights with our smart Data Analyzer.",
-                    "Optimize your professional presence with the LinkedIn Helper.",
-                  ]}
-                  loop={0}
-                  cursor
-                  cursorStyle="_"
-                  typeSpeed={50}
-                  deleteSpeed={40}
-                  delaySpeed={1000}
-                />
-              </p>
-            </div>
+        <div className="mx-auto max-w-7xl px-4 py-10">
+          <div className="bg-gray-800/10 backdrop-blur-md rounded-2xl border border-white/30 shadow-md px-6 sm:px-8 py-8">
 
-            {/* Legal and Contact Section Combined */}
-            <div className="flex flex-col md:flex-row gap-8 text-center lg:text-left">
-              {/* Legal Section */}
-              <div className="space-y-4">
-                <h2 className="text-lg font-semibold text-white">Legal</h2>
-                <div className="space-y-2">
-                  <div>
-                    <a
-                      href="/refund-policy"
-                      className="text-sm text-gray-300 hover:text-green-500 transition-colors duration-200 hover:underline"
-                    >
-                      Refund Policy
-                    </a>
+            {/* Mobile Layout - Hidden on Desktop */}
+            <div className="lg:hidden flex flex-col space-y-8">
+
+              {/* Brand Section - Mobile */}
+              <div className="text-center">
+                <h1 className="text-3xl font-extrabold text-white mb-3">
+                  Kwix<span className="text-green-500">Lab</span>
+                </h1>
+                <div className="text-gray-300 text-sm leading-relaxed h-6">
+                  <Typewriter
+                    words={[
+                      "Your all-in-one AI-powered platform for video, document, and productivity tools.",
+                      "Generate viral YouTube Shorts in seconds with AI.",
+                      "Summarize YouTube videos into bite-sized insights instantly.",
+                      "Get instant PDF and article summaries with a single click.",
+                      "Analyze resumes and generate tailored cover letters effortlessly.",
+                      "Boost your productivity with AI-powered assignment and research tools.",
+                      "Transform data into insights with our smart Data Analyzer.",
+                      "Optimize your professional presence with the LinkedIn Helper.",
+                    ]}
+                    typeSpeed={50}
+                    deleteSpeed={40}
+                    delaySpeed={1000}
+                  />
+                </div>
+              </div>
+
+              {/* Legal and Contact Section - Mobile */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-lg mx-auto">
+
+                {/* Legal Section */}
+                <div className="text-center">
+                  <h2 className="text-lg font-semibold text-white mb-4">Legal</h2>
+                  <div className="space-y-3">
+                    <div>
+                      <a
+                        href="/refund-policy"
+                        className="text-sm text-gray-300 hover:text-green-500 transition-colors duration-200 hover:underline block"
+                      >
+                        Refund Policy
+                      </a>
+                    </div>
+                    <div>
+                      <a
+                        href="/terms-of-service"
+                        className="text-sm text-gray-300 hover:text-green-500 transition-colors duration-200 hover:underline block"
+                      >
+                        Terms of Service
+                      </a>
+                    </div>
+                    <div>
+                      <a
+                        href="/privacy-policy"
+                        className="text-sm text-gray-300 hover:text-green-500 transition-colors duration-200 hover:underline block"
+                      >
+                        Privacy Policy
+                      </a>
+                    </div>
                   </div>
-                  <div>
+                </div>
+
+                {/* Contact Section */}
+                <div className="text-center">
+                  <h2 className="text-lg font-semibold text-white mb-4">Contact Us</h2>
+                  <div className="flex items-center justify-center space-x-2 text-gray-300">
+                    <Mail className="w-4 h-4 flex-shrink-0" />
                     <a
-                      href="/terms-of-service"
-                      className="text-sm text-gray-300 hover:text-green-500 transition-colors duration-200 hover:underline"
+                      href="mailto:info@kwixlab.com"
+                      className="text-sm hover:text-green-500 transition-colors duration-200 break-all"
                     >
-                      Terms of Service
-                    </a>
-                  </div>
-                  <div>
-                    <a
-                      href="/privacy-policy"
-                      className="text-sm text-gray-300 hover:text-green-500 transition-colors duration-200 hover:underline"
-                    >
-                      Privacy Policy
+                      info@kwixlab.com
                     </a>
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* Contact Section */}
-              <div className="space-y-4">
-                <h2 className="text-lg font-semibold text-white">Contact Us</h2>
+            {/* Desktop Layout - Hidden on Mobile */}
+            <div className="hidden lg:block">
+              <div className="flex justify-between items-start">
 
-                <div className="flex items-center justify-center lg:justify-start space-x-2 text-gray-300">
-                  <Mail className="w-5 h-5" />
-                  <a
-                    href="mailto:info@kwixlab.com"
-                    className="text-sm hover:text-green-500 transition-colors duration-200"
-                  >
-                    info@kwixlab.com
-                  </a>
+                {/* Brand Section for Desktop */}
+                <div className="flex-1 max-w-2xl">
+                  <h1 className="text-3xl font-extrabold text-white mb-3">
+                    Kwix<span className="text-green-500">Lab</span>
+                  </h1>
+                  <div className="text-gray-300 text-md leading-relaxed h-6">
+                    <Typewriter
+                      words={[
+                        "Your all-in-one AI-powered platform for video, document, and productivity tools.",
+                        "Generate viral YouTube Shorts in seconds with AI.",
+                        "Summarize YouTube videos into bite-sized insights instantly.",
+                        "Get instant PDF and article summaries with a single click.",
+                        "Analyze resumes and generate tailored cover letters effortlessly.",
+                        "Boost your productivity with AI-powered assignment and research tools.",
+                        "Transform data into insights with our smart Data Analyzer.",
+                        "Optimize your professional presence with the LinkedIn Helper.",
+                      ]}
+                      typeSpeed={50}
+                      deleteSpeed={40}
+                      delaySpeed={1000}
+                    />
+                  </div>
+                </div>
+
+                {/* Legal and Contact for Desktop */}
+                <div className="flex gap-12">
+
+                  {/* Legal Section */}
+                  <div>
+                    <h2 className="text-lg font-semibold text-white mb-4">Legal</h2>
+                    <div className="space-y-3">
+                      <div>
+                        <a
+                          href="/refund-policy"
+                          className="text-sm text-gray-300 hover:text-green-500 transition-colors duration-200 hover:underline block"
+                        >
+                          Refund Policy
+                        </a>
+                      </div>
+                      <div>
+                        <a
+                          href="/terms-of-service"
+                          className="text-sm text-gray-300 hover:text-green-500 transition-colors duration-200 hover:underline block"
+                        >
+                          Terms of Service
+                        </a>
+                      </div>
+                      <div>
+                        <a
+                          href="/privacy-policy"
+                          className="text-sm text-gray-300 hover:text-green-500 transition-colors duration-200 hover:underline block"
+                        >
+                          Privacy Policy
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Contact Section */}
+                  <div>
+                    <h2 className="text-lg font-semibold text-white mb-4">Contact Us</h2>
+                    <div className="flex items-center space-x-2 text-gray-300">
+                      <Mail className="w-4 h-4 flex-shrink-0" />
+                      <a
+                        href="mailto:info@kwixlab.com"
+                        className="text-sm hover:text-green-500 transition-colors duration-200"
+                      >
+                        info@kwixlab.com
+                      </a>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -654,7 +735,7 @@ export default function Pricing() {
 
           {/* Bottom Copyright */}
           <div className="text-center mt-6 text-sm text-gray-300">
-             © 2025 KwixLab. All Rights Reserved.
+            © 2025 KwixLab. All Rights Reserved.
           </div>
         </div>
       </footer>
@@ -668,6 +749,6 @@ export default function Pricing() {
         />
       )}
     </section>
-    
+
   );
 }

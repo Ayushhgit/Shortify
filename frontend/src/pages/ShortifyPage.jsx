@@ -493,10 +493,17 @@ export default function ShortifyPage() {
       {/* Mobile Menu Button */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-3 rounded-xl bg-slate-800/90 backdrop-blur-sm border border-slate-700 hover:border-cyan-400/50 transition-all duration-300"
+        className="lg:hidden fixed top-6 left-6 z-50 p-2 rounded-xl bg-slate-800/90 backdrop-blur-sm border border-slate-700 hover:border-cyan-400/50 transition-all duration-300"
       >
-        {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+        {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
       </button>
+
+      {sidebarOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black/50 z-30"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
 
       {/* Enhanced Sidebar */}
       <div
@@ -508,7 +515,7 @@ export default function ShortifyPage() {
           <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-blue-500/5 pointer-events-none" />
 
           {/* Logo Section */}
-          <div className="p-8 border-b border-gray-800">
+          <div className="p-8 pr-16 lg:pr-8 border-b border-gray-800">
             <div className="flex items-center gap-3">
               <a href="/">
                 <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
@@ -539,19 +546,17 @@ export default function ShortifyPage() {
                       setActiveTab(item.id);
                       setSidebarOpen(false);
                     }}
-                    className={`w-full group relative overflow-hidden rounded-2xl p-4 transition-all duration-300 ${
-                      isActive
-                        ? `bg-gradient-to-r ${item.gradient} shadow-2xl ${item.glow}`
-                        : "bg-slate-800/50 hover:bg-slate-800 border border-slate-700 hover:border-slate-600 hover:shadow-lg"
-                    }`}
+                    className={`w-full group relative overflow-hidden rounded-2xl p-4 transition-all duration-300 ${isActive
+                      ? `bg-gradient-to-r ${item.gradient} shadow-2xl ${item.glow}`
+                      : "bg-slate-800/50 hover:bg-slate-800 border border-slate-700 hover:border-slate-600 hover:shadow-lg"
+                      }`}
                   >
                     <div className="flex items-center gap-4 relative z-10">
                       <div
-                        className={`p-3 rounded-xl transition-all duration-300 ${
-                          isActive
-                            ? "bg-white/20 shadow-lg"
-                            : "bg-slate-700 group-hover:bg-slate-600"
-                        }`}
+                        className={`p-3 rounded-xl transition-all duration-300 ${isActive
+                          ? "bg-white/20 shadow-lg"
+                          : "bg-slate-700 group-hover:bg-slate-600"
+                          }`}
                       >
                         <Icon
                           size={20}
@@ -560,9 +565,8 @@ export default function ShortifyPage() {
                       </div>
                       <div className="text-left">
                         <div
-                          className={`font-semibold ${
-                            isActive ? "text-white" : "text-slate-300"
-                          }`}
+                          className={`font-semibold ${isActive ? "text-white" : "text-slate-300"
+                            }`}
                         >
                           {item.label}
                         </div>
@@ -624,19 +628,30 @@ export default function ShortifyPage() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden relative">
         {/* Enhanced Header */}
-        <div className="h-24 flex-shrink-0 flex items-center justify-between px-8 bg-gray-950/95 backdrop-blur-xl border-b border-gray-900/70">
-          <div className="flex items-center gap-6">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-white via-cyan-200 to-blue-300 bg-clip-text text-transparent">
+        <div className="h-24 flex-shrink-0 flex items-center justify-between px-4 lg:px-8 bg-gray-950/95 backdrop-blur-xl border-b border-gray-900/70">
+          <div className="flex items-center ml-12 lg:ml-0 flex-1 min-w-0">
+            <h1 className="text-lg sm:text-xl lg:text-3xl font-bold bg-gradient-to-r from-white via-cyan-200 to-blue-300 bg-clip-text text-transparent truncate">
               {getTitle()}
             </h1>
-            <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-emerald-500/20 border border-emerald-500/30 shadow-lg">
+          </div>
+
+          <div className="flex items-center gap-4">
+            {/* Desktop AI ONLINE Badge */}
+            <div className="hidden md:flex items-center gap-3 px-4 py-2 rounded-full bg-emerald-500/20 border border-emerald-500/30 shadow-lg">
               <div className="w-3 h-3 bg-emerald-400 rounded-full animate-pulse shadow-lg shadow-emerald-400/50" />
               <span className="text-sm text-emerald-400 font-semibold">
                 AI ONLINE
               </span>
             </div>
+
+            {/* Mobile AI Logo */}
+            <div className="md:hidden flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400 shadow-lg relative">
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400 animate-pulse opacity-75"></div>
+              <span className="relative text-xs font-bold text-white z-10">AI</span>
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full animate-ping"></div>
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full"></div>
+            </div>
           </div>
-          <div className="flex items-center gap-4"></div>
         </div>
 
         {/* Dynamic Content */}

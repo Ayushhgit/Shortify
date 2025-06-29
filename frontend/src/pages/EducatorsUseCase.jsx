@@ -140,7 +140,7 @@ export default function EducatorUseCase() {
             </span>
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-pink-400 to-cyan-400">
-              Shortify
+              Kwixlab
             </span>
           </h2>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
@@ -152,7 +152,7 @@ export default function EducatorUseCase() {
         {/* How It Works Section */}
         <div className="mb-20">
           <h3 className="text-2xl md:text-3xl font-bold text-center mb-12 text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300">
-            How Educators Use Shortify
+            How Educators Use Kwixlab
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">

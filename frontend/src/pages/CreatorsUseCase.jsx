@@ -267,7 +267,7 @@ export default function CreatorsUseCase() {
 
               <div className="mt-8">
                 <a href='/features/shorts-generator'><button className="bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white font-semibold py-4 px-8 rounded-full transition-all duration-300 shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 hover:scale-105">
-                  Try Shortify for Free
+                  Try Kwixlab for Free
                 </button> </a>
                 <p className="text-sm text-gray-400 mt-3 ml-2">Limited period only.</p>
               </div>
@@ -280,7 +280,7 @@ export default function CreatorsUseCase() {
                   Save 15+ Hours Weekly On Content Creation
                 </h4>
                 <p className="text-white/90 mb-6">
-                  Join thousands of content creators who are scaling their social media presence effortlessly
+                  Join Hundreds of content creators who are scaling their social media presence effortlessly
                   with Shortify's AI-powered video transformation.
                 </p>
 

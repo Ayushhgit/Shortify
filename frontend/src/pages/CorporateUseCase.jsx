@@ -183,7 +183,7 @@ const BenefitsTab = () => {
               Boost Team Productivity by up to 40%
             </h3>
             <p className="text-gray-300">
-              Our customers report significant time savings and improved information retention when using Shortify for
+              Our customers report significant time savings and improved information retention when using Kwixlab for
               corporate knowledge management.
             </p>
           </div>
