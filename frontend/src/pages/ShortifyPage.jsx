@@ -1110,7 +1110,7 @@ export default function ShortifyPage() {
                   </div>
                 </div>
                 <div className="text-center">
-                  <a href="/features/ResumeAnalyzer">
+                  <a href="/features/resume-analyzer">
                     <button className="bg-gradient-to-r from-[#8e2de2] via-purple-600 to-[#4A00E0] hover:from-[#9d3ef3] hover:via-purple-700 hover:to-[#5511f1] text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-purple-500/25 flex items-center gap-3 mx-auto group">
                       <Eye className="w-6 h-6 group-hover:scale-110 transition-transform" />
                       Analyze My Resume
@@ -1251,7 +1251,7 @@ export default function ShortifyPage() {
 
               {/* CTA */}
               <div className="text-center">
-                <a href="/features/coverLetterGenerator">
+                <a href="/features/cover-letter-generator">
                   <button className="bg-gradient-to-r from-violet-500 via-blue-600 to-indigo-600 hover:from-violet-600 hover:via-blue-700 hover:to-indigo-700 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-violet-500/25 flex items-center gap-3 mx-auto">
                     <SquareChartGantt className="w-6 h-6" />
                     Generate Now
@@ -1414,7 +1414,7 @@ export default function ShortifyPage() {
               </div>
 
               <div className="text-center">
-                <a href="/features/ResearchAssistant">
+                <a href="/features/research-assistant">
                   <button className="bg-gradient-to-r from-rose-400 via-cyan-600 to-fuchsia-400 hover:from-rose-500 hover:via-cyan-700 hover:to-fuchsia-500 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-emerald-500/25 flex items-center gap-3 mx-auto group">
                     <Search className="w-6 h-6 group-hover:scale-110 transition-transform" />
                     Start Research
@@ -1757,7 +1757,7 @@ export default function ShortifyPage() {
               </div>
 
               <div className="text-center">
-                <a href="/features/EDA">
+                <a href="/features/eda">
                   <button className="bg-gradient-to-r from-blue-500 via-cyan-500 to-purple-500 hover:from-blue-600 hover:via-cyan-600 hover:to-purple-600 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-blue-500/25 flex items-center gap-3 mx-auto">
                     <BarChart3 className="w-6 h-6" />
                     Start Auto EDA
@@ -1968,7 +1968,7 @@ export default function ShortifyPage() {
               </div>
 
               <div className="text-center">
-                <a href="/features/LinkwiseAI">
+                <a href="/features/linkwise-ai">
                   <button className="bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-500 hover:from-cyan-600 hover:via-indigo-600 hover:to-purple-600 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-cyan-500/25 flex items-center gap-3 mx-auto group">
                     <Users className="w-6 h-6 group-hover:scale-110 transition-transform" />
                     Optimize Your LinkedIn Now
@@ -2170,7 +2170,7 @@ export default function ShortifyPage() {
               </div>
 
               <div className="text-center">
-                <a href="/features/ClipGenerator">
+                <a href="/features/clip-generator">
                   <button className="bg-gradient-to-r from-blue-500 via-fuchsia-500 to-purple-500 hover:from-blue-600 hover:via-fuchsia-600 hover:to-purple-600 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-fuchsia-500/25 flex items-center gap-3 mx-auto group">
                     <Video className="w-6 h-6 group-hover:scale-110 transition-transform" />
                     Start Creating Clips
@@ -2635,7 +2635,7 @@ export default function ShortifyPage() {
               </div>
 
               <div className="text-center">
-                <a href="/features/InterviewPrep">
+                <a href="/features/interview-prep-assistant">
                   <button className="bg-gradient-to-r from-emerald-400 via-green-600 to-teal-400 hover:from-emerald-500 hover:via-green-700 hover:to-teal-500 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-emerald-500/25 flex items-center gap-3 mx-auto group">
                     <Users className="w-6 h-6 group-hover:scale-110 transition-transform" />
                     Start Interview Prep
