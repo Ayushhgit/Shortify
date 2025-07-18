@@ -2374,7 +2374,7 @@ export default function ShortifyPage() {
               </div>
 
               <div className="text-center">
-                <a href="/features/QuizGenerator">
+                <a href="/features/quiz-generator">
                   <button className="bg-gradient-to-r from-green-500 via-teal-500 to-cyan-500 hover:from-green-600 hover:via-teal-600 hover:to-cyan-600 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-teal-500/25 flex items-center gap-3 mx-auto group">
                     <BrainCircuit className="w-6 h-6 group-hover:scale-110 transition-transform" />
                     Start Building Quizzes
