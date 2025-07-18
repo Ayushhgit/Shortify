@@ -223,15 +223,15 @@ const ResearchAssistantChat = () => {
             }`}
         >
           <div
-            className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${isUser
+            className={`flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center ${isUser
               ? "bg-gradient-to-r from-emerald-500 to-emerald-600 ml-3"
               : "bg-gradient-to-r from-indigo-500 to-cyan-500 mr-3"
               } shadow-lg`}
           >
             {isUser ? (
-              <User size={18} className="text-white" />
+              <User size={14} className="md:w-[18px] md:h-[18px] text-white" />
             ) : (
-              <Bot size={18} className="text-white" />
+              <Bot size={14} className="md:w-[18px] md:h-[18px] text-white" />
             )}
           </div>
 
@@ -352,7 +352,7 @@ const ResearchAssistantChat = () => {
               <Brain className="h-8 w-8 text-purple-400 mr-3" />
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-purple-400 rounded-full animate-pulse"></div>
             </div>
-            <span className="text-xl font-bold text-white">
+            <span className="text-m md:text-xl font-bold text-white">
               Research<span className="text-purple-400">AI</span>
             </span>
           </div>
@@ -376,7 +376,7 @@ const ResearchAssistantChat = () => {
               </span>
             </button>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 md:gap-2">
               {[
                 { icon: Home, label: "Home", href: "/shortify" },
                 { icon: User, label: "Profile", href: "/profile" },
@@ -387,9 +387,9 @@ const ResearchAssistantChat = () => {
                   aria-label={label}
                   title={label}
                   onClick={() => navigate(href)}
-                  className="group p-3 rounded-xl hover:bg-gray-800/60 transition-all duration-300 hover:shadow-lg"
+                  className="group p-2 md:p-3 rounded-xl hover:bg-gray-800/60 transition-all duration-300 hover:shadow-lg"
                 >
-                  <Icon className="h-5 w-5 text-gray-400 group-hover:text-emerald-400 transition-colors" />
+                  <Icon className="h-4 w-4 md:h-5 md:w-5 text-gray-400 group-hover:text-emerald-400 transition-colors" />
                 </button>
               ))}
             </div>
@@ -418,7 +418,7 @@ const ResearchAssistantChat = () => {
       </div>
 
       {/* Chat Container */}
-      <div className="relative z-10 px-6 pb-6">
+      <div className="relative z-10 px-3 md:px-6 pb-6">
         <div className="max-w-6xl mx-auto">
           <div className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
             {/* Messages */}
@@ -481,10 +481,10 @@ const ResearchAssistantChat = () => {
             </div>
 
             {/* Input Area */}
-            <div className="p-6 border-t border-white/20 bg-white/5 backdrop-blur-xl">
-              <div className="flex space-x-4">
+            <div className="p-3 md:p-6 border-t border-white/20 bg-white/5 backdrop-blur-xl">
+              <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
                 <div className="flex-1 relative">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 md:pl-4 pointer-events-none">
                     <MessageCircle className="h-5 w-5 text-purple-400" />
                   </div>
                   <input
@@ -510,12 +510,12 @@ const ResearchAssistantChat = () => {
                   <div className="flex items-center space-x-2">
                     {isLoading ? (
                       <>
-                        <Loader2 size={18} className="animate-spin" />
+                        <Loader2 size={16} className="md:w-[18px] md:h-[18px] animate-spin" />
                         <span className="text-sm">Researching...</span>
                       </>
                     ) : (
                       <>
-                        <Send size={18} />
+                        <Send size={16} className="md:w-[18px] md:h-[18px]" />
                         <span className="text-sm">Send</span>
                       </>
                     )}

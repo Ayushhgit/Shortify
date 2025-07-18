@@ -22,6 +22,7 @@ services:
       - ./backend:/app
       - ./backend/shortify-876e7-firebase-adminsdk-fbsvc-9193bebcff.json:/app/firebase-credentials.json
       - ./backend/uploads:/app/uploads
+      - ./backend/assets:/app/assets
 
   db:
     image: postgres:15

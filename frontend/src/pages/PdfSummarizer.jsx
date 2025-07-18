@@ -98,9 +98,9 @@ const ChatWithDocument = ({ documentContent, isVisible, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
-      <div className="bg-gray-900 rounded-xl sm:rounded-2xl border border-gray-700 shadow-2xl w-full max-w-2xl h-[90vh] sm:h-[600px] flex flex-col">
+      <div className="bg-gray-900 rounded-xl sm:rounded-2xl border border-gray-700 shadow-2xl w-full max-w-2xl h-[95vh] sm:h-[600px] flex flex-col mx-2 sm:mx-0">
         {/* Chat Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-700">
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-700">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-emerald-600 rounded-lg">
               <MessageCircle className="h-5 w-5 text-white" />
@@ -123,7 +123,7 @@ const ChatWithDocument = ({ documentContent, isVisible, onClose }) => {
         </div>
 
         {/* Messages Container */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-4">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
           {messages.length === 0 && (
             <div className="text-center text-gray-400 py-8">
               <MessageCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
@@ -165,7 +165,7 @@ const ChatWithDocument = ({ documentContent, isVisible, onClose }) => {
         </div>
 
         {/* Input Area */}
-        <div className="p-6 border-t border-gray-700">
+        <div className="p-4 sm:p-6 border-t border-gray-700">
           <div className="flex gap-3">
             <input
               type="text"
@@ -480,8 +480,8 @@ export default function PremiumPdfSummarizer() {
 
       {/* Premium Glassmorphic Header */}
       {/* Header */}
-      <header className="fixed top-2 sm:top-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] max-w-7xl rounded-xl sm:rounded-2xl bg-white/20 backdrop-blur-xl shadow-2xl border border-white/30">
-        <div className="flex justify-between items-center h-12 sm:h-16 px-3 sm:px-6">
+      <header className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] max-w-7xl rounded-2xl bg-white/20 backdrop-blur-xl shadow-2xl border border-white/30">
+        <div className="flex justify-between items-center h-16 px-6">
           <div className="flex items-center">
             <div className="relative">
               <FileText className="h-8 w-8 text-teal-400 mr-3" />
@@ -513,7 +513,7 @@ export default function PremiumPdfSummarizer() {
      <main className="relative pt-20 sm:pt-32 pb-8 sm:pb-16 px-3 sm:px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-gray-800/50 to-gray-900/50 border border-emerald-500/30 rounded-full px-4 py-2 mb-6">
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-gray-800/50 to-gray-900/50 border border-emerald-500/30 rounded-full px-4 py-2 mb-6 mt-8 md:mt-0">
               <Zap className="h-4 w-4 text-emerald-400" />
               <span className="text-sm font-medium text-emerald-300">
                 Powered by Advanced AI
@@ -649,7 +649,7 @@ export default function PremiumPdfSummarizer() {
                         </div>
                       </div>
                       <div>
-                        <h4 className="font-bold text-white text-lg truncate max-w-md">
+                        <h4 className="font-bold text-white text-sm sm:text-base md:text-lg truncate max-w-[200px] sm:max-w-md">
                           {file.name}
                         </h4>
                         <div className="flex items-center gap-4 mt-1">
