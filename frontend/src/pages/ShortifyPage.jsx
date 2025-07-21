@@ -1426,7 +1426,7 @@ export default function ShortifyPage() {
           )}
 
           {/* Assignment Maker */}
-          {activeTab === "notes" && (
+          {activeTab === "assignment" && (
             <div className="max-w-4xl mx-auto space-y-8">
               <div className="text-center mb-12">
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600/20 border border-indigo-600/30 mb-6">
