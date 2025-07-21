@@ -10,7 +10,7 @@ def initialize_firebase():
     """Initialize Firebase Admin SDK if not already initialized"""
     if not firebase_admin._apps:
         # Use environment variable for credentials path
-        cred_path = settings.GOOGLE_APPLICATION_CREDENTIALS or "/app/firebase-credentials.json"
+        cred_path = settings.FIREBASE_SDK_CRED or "/app/firebase-credentials.json"
 
         try:
             cred = credentials.Certificate(cred_path)

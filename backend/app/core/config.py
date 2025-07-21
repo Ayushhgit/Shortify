@@ -63,7 +63,7 @@ class Settings(BaseSettings):
     ANTHROPIC_API_KEY:str = os.getenv("ANTHROPIC_API_KEY")
     PROXYCURL_API_KEY: str = os.getenv("PROXYCURL_API_KEY")
     GOOGLE_AI_API_KEY: str = os.getenv("GOOGLE_AI_API_KEY")
-    GOOGLE_APPLICATION_CREDENTIALS: Optional[str] = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+    FIREBASE_SDK_CRED: Optional[str] = os.getenv("FIREBASE_SDK_CRED")
     # Video Clip Settings
     MIN_CLIP_DURATION: int = 5  # in seconds
     MAX_CLIP_DURATION: int = 60  # in seconds
