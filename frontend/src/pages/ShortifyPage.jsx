@@ -1622,7 +1622,7 @@ export default function ShortifyPage() {
               </div>
 
               <div className="text-center">
-                <a href="/features/NotesGenerator">
+                <a href="/features/notes-generator">
                   <button className="bg-gradient-to-r from-blue-400 via-indigo-600 to-purple-400 hover:from-blue-500 hover:via-indigo-700 hover:to-purple-500 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-blue-500/25 flex items-center gap-3 mx-auto group">
                     <FileText className="w-6 h-6 group-hover:scale-110 transition-transform" />
                     Generate Study Notes
