@@ -48,8 +48,8 @@ class Settings(BaseSettings):
     DATABASE_URL: str = os.getenv("DATABASE_URL")
 
     # RazorPay
-    RAZORPAY_KEY_ID:str = "rzp_test_quVhZvf3j1rhIY"
-    RAZORPAY_KEY_SECRET:str = "zsw9XVjl3VNSVy8ybHa14Rd0"
+    RAZORPAY_KEY_ID:str = os.getenv("RAZORPAY_KEY_ID")
+    RAZORPAY_KEY_SECRET:str = os.getenv("RAZORPAY_KEY_SECRET")
     
 
     def str_to_bool(value: str) -> bool:

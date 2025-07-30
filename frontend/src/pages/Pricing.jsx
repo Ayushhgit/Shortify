@@ -153,7 +153,7 @@ export default function Pricing() {
       }
 
       const options = {
-        key: "rzp_test_quVhZvf3j1rhIY", // Replace with your Razorpay key
+        key: "rzp_live_Roih4zI5cd2ciw", // Replace with your Razorpay key
         amount: data.amount,
         currency: data.currency,
         name: "Shortify",
@@ -328,7 +328,7 @@ export default function Pricing() {
 
         {/* Success Message */}
         {paymentSuccess && (
-          <div className="fixed top-4 right-4 z-50 bg-gradient-to-r from-green-500 to-emerald-500 text-white p-6 rounded-2xl shadow-2xl max-w-md backdrop-blur-xl border border-green-400/20">
+          <div className="fixed top-4 right-4 z-60 bg-gradient-to-r from-green-500 to-emerald-500 text-white p-6 rounded-2xl shadow-2xl max-w-md backdrop-blur-xl border border-green-400/20">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <CheckCircle className="w-6 h-6 mr-3" />
