@@ -256,6 +256,12 @@ export default function Pricing() {
   const isCurrentPlan = (planName) => {
     return subscriptionStatus.subscription_type === planName.toLowerCase() && subscriptionStatus.is_active;
   };
+  const isDowngrade = (planName) => {
+    const planHierarchy = { 'free': 0, 'pro': 1, 'premium': 2 };
+    const currentPlanLevel = planHierarchy[subscriptionStatus.subscription_type.toLowerCase()] || 0;
+    const targetPlanLevel = planHierarchy[planName.toLowerCase()] || 0;
+    return subscriptionStatus.is_active && currentPlanLevel > targetPlanLevel;
+  };
 
   // Helper function to get display name for subscription type
   const getSubscriptionDisplayName = () => {
@@ -448,18 +454,22 @@ export default function Pricing() {
 
             <button
               className={`w-full py-4 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center ${isCurrentPlan('pro')
-                ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white cursor-default'
-                : processingPayment
-                  ? 'bg-gray-600/50 text-gray-400 cursor-not-allowed'
-                  : !user
-                    ? 'bg-white text-blue-600 hover:bg-gray-100'
-                    : 'bg-white text-blue-600 hover:bg-gray-100'
+                  ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white cursor-default'
+                  : isDowngrade('pro')
+                    ? 'bg-gray-600/50 text-gray-400 cursor-not-allowed border border-gray-600/50'
+                    : processingPayment
+                      ? 'bg-gray-600/50 text-gray-400 cursor-not-allowed'
+                      : !user
+                        ? 'bg-white text-blue-600 hover:bg-gray-100'
+                        : 'bg-white text-blue-600 hover:bg-gray-100'
                 }`}
               onClick={() => handlePaymentClick("Pro", 49)}
-              disabled={isCurrentPlan('pro') || processingPayment}
+              disabled={isCurrentPlan('pro') || isDowngrade('pro') || processingPayment}
             >
               {isCurrentPlan('pro') ? (
                 'Current Plan'
+              ) : isDowngrade('pro') ? (
+                'Downgrade Not Available'
               ) : processingPayment ? (
                 'Processing...'
               ) : !user ? (
