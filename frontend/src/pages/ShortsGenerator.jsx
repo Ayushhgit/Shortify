@@ -3,9 +3,14 @@ import {
   Home,
   Settings,
   User,
-  Video, ArrowRight, Clock, AlertCircle,
+  Video,
+  ArrowRight,
+  Clock,
+  AlertCircle,
   Check,
-  Sparkles, RotateCcw, Shield,
+  Sparkles,
+  RotateCcw,
+  Shield,
   Download,
   Share,
   Link as LinkIcon,
@@ -33,6 +38,8 @@ export default function ShortsGenerator() {
   const [processingMessage, setProcessingMessage] = useState("");
 
   const navigate = useNavigate();
+
+  const BASE_URL = "http://localhost:8000";
 
   const displayToast = (message, type = "success") => {
     setToastMessage(message);
@@ -184,18 +191,20 @@ export default function ShortsGenerator() {
       setProcessingMessage(getProgressMessage(5));
 
       // Step 1: Send URL to backend
-      const response = await fetch(
-        "https://kwixlab.com/api/shorts/generate",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${idToken}`,
-          },
-          body: JSON.stringify(requestBody),
-        }
-      );
+      const endpoint =
+        BASE_URL && BASE_URL !== ""
+          ? `${BASE_URL}/api/shorts/generate`
+          : "https://kwixlab.com/api/shorts/generate";
 
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
+        body: JSON.stringify(requestBody),
+      });
+      
       setProcessingProgress(10);
       setProcessingMessage(getProgressMessage(10));
 
@@ -401,8 +410,9 @@ export default function ShortsGenerator() {
 
       {/* Main Content */}
       <main
-        className={`flex-1 flex ${submitted ? "flex-col pt-24" : "items-center justify-center"
-          } px-4 sm:px-6 lg:px-8`}
+        className={`flex-1 flex ${
+          submitted ? "flex-col pt-24" : "items-center justify-center"
+        } px-4 sm:px-6 lg:px-8`}
       >
         <div className={`max-w-7xl mx-auto w-full ${submitted ? "" : "py-30"}`}>
           <div className="w-full">
@@ -429,12 +439,14 @@ export default function ShortsGenerator() {
             {/* Step Indicator */}
             <div className="flex justify-center items-center mb-10">
               <div
-                className={`flex items-center ${url ? "text-indigo-500" : "text-gray-500"
-                  }`}
+                className={`flex items-center ${
+                  url ? "text-indigo-500" : "text-gray-500"
+                }`}
               >
                 <div
-                  className={`rounded-full h-8 w-8 flex items-center justify-center border-2 ${url ? "border-indigo-500 bg-indigo-100" : "border-gray-300"
-                    }`}
+                  className={`rounded-full h-8 w-8 flex items-center justify-center border-2 ${
+                    url ? "border-indigo-500 bg-indigo-100" : "border-gray-300"
+                  }`}
                 >
                   {url ? <Check className="h-5 w-5" /> : "1"}
                 </div>
@@ -442,14 +454,16 @@ export default function ShortsGenerator() {
               </div>
               <div className="h-1 w-12 mx-4 bg-gray-200"></div>
               <div
-                className={`flex items-center ${submitted ? "text-indigo-500" : "text-gray-500"
-                  }`}
+                className={`flex items-center ${
+                  submitted ? "text-indigo-500" : "text-gray-500"
+                }`}
               >
                 <div
-                  className={`rounded-full h-8 w-8 flex items-center justify-center border-2 ${submitted
-                    ? "border-indigo-500 bg-indigo-100"
-                    : "border-gray-300"
-                    }`}
+                  className={`rounded-full h-8 w-8 flex items-center justify-center border-2 ${
+                    submitted
+                      ? "border-indigo-500 bg-indigo-100"
+                      : "border-gray-300"
+                  }`}
                 >
                   {submitted ? <Check className="h-5 w-5" /> : "2"}
                 </div>
@@ -487,8 +501,9 @@ export default function ShortsGenerator() {
                         onChange={handleUrlChange}
                         onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
                         placeholder="Paste your YouTube URL here..."
-                        className={`block w-full pl-20 pr-16 py-5 text-lg bg-transparent border-0 focus:ring-0 focus:outline-none placeholder-gray-300 text-white ${inputError ? "text-red-400" : ""
-                          }`}
+                        className={`block w-full pl-20 pr-16 py-5 text-lg bg-transparent border-0 focus:ring-0 focus:outline-none placeholder-gray-300 text-white ${
+                          inputError ? "text-red-400" : ""
+                        }`}
                       />
 
                       {/* Clear button */}
@@ -506,8 +521,11 @@ export default function ShortsGenerator() {
                     </div>
 
                     {/* Animated border bottom */}
-                    <div className={`h-1 bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 transform origin-left transition-transform duration-300 ${url ? "scale-x-100" : "scale-x-0"
-                      }`}></div>
+                    <div
+                      className={`h-1 bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 transform origin-left transition-transform duration-300 ${
+                        url ? "scale-x-100" : "scale-x-0"
+                      }`}
+                    ></div>
                   </div>
                 </div>
 
@@ -524,10 +542,11 @@ export default function ShortsGenerator() {
                   <button
                     type="submit"
                     disabled={isProcessing}
-                    className={`group relative overflow-hidden px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 ${isProcessing
-                      ? "bg-gray-300 cursor-not-allowed text-gray-500"
-                      : "bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-600 hover:from-purple-700 hover:via-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105"
-                      }`}
+                    className={`group relative overflow-hidden px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 ${
+                      isProcessing
+                        ? "bg-gray-300 cursor-not-allowed text-gray-500"
+                        : "bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-600 hover:from-purple-700 hover:via-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105"
+                    }`}
                   >
                     {/* Button background animation */}
                     {!isProcessing && (
@@ -600,24 +619,51 @@ export default function ShortsGenerator() {
 
                       {/* Processing steps */}
                       <div className="mt-4 grid grid-cols-3 gap-2 text-xs">
-                        <div className={`text-center p-2 rounded-lg transition-colors duration-300 ${processingProgress >= 33 ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"
-                          }`}>
+                        <div
+                          className={`text-center p-2 rounded-lg transition-colors duration-300 ${
+                            processingProgress >= 33
+                              ? "bg-green-100 text-green-700"
+                              : "bg-gray-100 text-gray-500"
+                          }`}
+                        >
                           <div className="flex items-center justify-center gap-1">
-                            {processingProgress >= 33 ? <Check className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
+                            {processingProgress >= 33 ? (
+                              <Check className="h-3 w-3" />
+                            ) : (
+                              <Clock className="h-3 w-3" />
+                            )}
                             <span>Analyzing</span>
                           </div>
                         </div>
-                        <div className={`text-center p-2 rounded-lg transition-colors duration-300 ${processingProgress >= 66 ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"
-                          }`}>
+                        <div
+                          className={`text-center p-2 rounded-lg transition-colors duration-300 ${
+                            processingProgress >= 66
+                              ? "bg-green-100 text-green-700"
+                              : "bg-gray-100 text-gray-500"
+                          }`}
+                        >
                           <div className="flex items-center justify-center gap-1">
-                            {processingProgress >= 66 ? <Check className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
+                            {processingProgress >= 66 ? (
+                              <Check className="h-3 w-3" />
+                            ) : (
+                              <Clock className="h-3 w-3" />
+                            )}
                             <span>Creating</span>
                           </div>
                         </div>
-                        <div className={`text-center p-2 rounded-lg transition-colors duration-300 ${processingProgress >= 100 ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"
-                          }`}>
+                        <div
+                          className={`text-center p-2 rounded-lg transition-colors duration-300 ${
+                            processingProgress >= 100
+                              ? "bg-green-100 text-green-700"
+                              : "bg-gray-100 text-gray-500"
+                          }`}
+                        >
                           <div className="flex items-center justify-center gap-1">
-                            {processingProgress >= 100 ? <Check className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
+                            {processingProgress >= 100 ? (
+                              <Check className="h-3 w-3" />
+                            ) : (
+                              <Clock className="h-3 w-3" />
+                            )}
                             <span>Finalizing</span>
                           </div>
                         </div>

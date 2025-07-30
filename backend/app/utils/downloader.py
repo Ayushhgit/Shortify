@@ -34,20 +34,36 @@ class VideoDownloader:
 
         # Fixed postprocessor configuration
         ydl_opts = {
-            'format': format or 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
-            'outtmpl': str(video_path),
-            'noplaylist': True,
-            'quiet': False,
-            'no_warnings': False,
-            'merge_output_format': 'mp4',
-            'writethumbnail': download_thumbnail,
-            'postprocessors': [
-                *(
-                    [{'key': 'FFmpegThumbnailsConvertor', 'format': 'jpg'}]
-                    if download_thumbnail else []
-                )
-            ]
-        }
+        'format': format or 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
+        'outtmpl': str(video_path),
+        'noplaylist': True,
+        'quiet': True,
+        'merge_output_format': 'mp4',
+        'no_warnings': False,
+        'writethumbnail': download_thumbnail,
+    
+        # ✅ Spoof real browser headers
+        'add_header': [
+        'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+        'Accept-Language: en-US,en;q=0.9'
+        ],
+    
+        'cookies': 'cookies.txt',  # path to your exported YouTube cookies
+
+        # ✅ Postprocessors for thumbnail if needed
+        'postprocessors': [
+        *(
+            [{'key': 'FFmpegThumbnailsConvertor', 'format': 'jpg'}]
+            if download_thumbnail else []
+        )
+        ],
+
+        # ✅ Retry logic 
+        'retries': 3,
+        'fragment_retries': 3,
+        'sleep_interval': 2,
+        'max_sleep_interval': 5
+        }   
 
         if max_filesize:
             ydl_opts['max_filesize'] = max_filesize
