@@ -429,7 +429,7 @@ export default function Pricing() {
               {isCurrentPlan('pro') ? (
                 <span className="bg-gradient-to-r from-green-500 to-emerald-500 text-white">Current Plan</span>
               ) : (
-                <span className="bg-gradient-to-r from-pink-500 to-rose-500 text-white">Most Popular</span>
+                <span className="bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-lg border p-1">Most Popular</span>
               )}
             </span>
 
