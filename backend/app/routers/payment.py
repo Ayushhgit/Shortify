@@ -143,42 +143,42 @@ async def get_subscription_status(
             "video_generation_count": 0
         }
 
-@router.post("/cancel-subscription")
-async def cancel_subscription(
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    """Cancel user's current subscription"""
-    try:
-        # Find user and update subscription
-        user = db.query(User).filter(User.email == current_user.email).first()
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found"
-            )
+# @router.post("/cancel-subscription")
+# async def cancel_subscription(
+#     current_user: User = Depends(get_current_user),
+#     db: Session = Depends(get_db)
+# ):
+#     """Cancel user's current subscription"""
+#     try:
+#         # Find user and update subscription
+#         user = db.query(User).filter(User.email == current_user.email).first()
+#         if not user:
+#             raise HTTPException(
+#                 status_code=status.HTTP_404_NOT_FOUND,
+#                 detail="User not found"
+#             )
         
-        # Set subscription to free and deactivate
-        user.subscription_type = 'free'
-        user.is_active = True  # Keep account active but downgrade plan
-        user.subscription_end = None
+#         # Set subscription to free and deactivate
+#         user.subscription_type = 'free'
+#         user.is_active = True  # Keep account active but downgrade plan
+#         user.subscription_end = None
         
-        db.commit()
+#         db.commit()
         
-        return {
-            "success": True,
-            "message": "Subscription cancelled successfully. You've been moved to the free plan."
-        }
+#         return {
+#             "success": True,
+#             "message": "Subscription cancelled successfully. You've been moved to the free plan."
+#         }
         
-    except Exception as e:
-        logger.error(f"Error cancelling subscription: {str(e)}")
-        db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to cancel subscription"
-        )
+#     except Exception as e:
+#         logger.error(f"Error cancelling subscription: {str(e)}")
+#         db.rollback()
+#         raise HTTPException(
+#             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#             detail="Failed to cancel subscription"
+#         )
 
-# Add a debug endpoint to test without authentication
+#Add a debug endpoint to test without authentication
 @router.get("/test-subscription")
 async def test_subscription_status(
     email: str,

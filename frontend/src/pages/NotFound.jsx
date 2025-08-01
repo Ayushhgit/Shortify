@@ -192,7 +192,7 @@ const NotFound = () => {
 
         {/* Enhanced error message with dynamic user name */}
         <div className="mb-12 space-y-6 max-w-2xl">
-          <h2 className="text-3xl md:text-4xl font-bold text-white animate-fade-in bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+          <h2 className="text-3xl md:text-4xl font-bold text-white animate-fade-in bg-gradient-to-r from-white to-gray-300 bg-clip-text">
             {userName}, we have a problem
           </h2>
           <p className="text-xl md:text-2xl text-gray-300 animate-fade-in-delay leading-relaxed">

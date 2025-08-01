@@ -518,7 +518,7 @@ export default function ShortifyPage() {
           <div className="p-8 pr-16 lg:pr-8 border-b border-gray-800">
             <div className="flex items-center gap-3">
               <a href="/">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center ml-8">
                   <img src={logo} alt="Logo" />
                 </div>{" "}
               </a>

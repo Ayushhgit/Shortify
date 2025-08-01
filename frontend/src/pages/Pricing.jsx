@@ -25,7 +25,7 @@ export default function Pricing() {
   });
   const [processingPayment, setProcessingPayment] = useState(false);
 
-  useEffect(() => {
+  {/*useEffect(() => {
     const handleMouseMove = (e) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
     };
@@ -37,7 +37,7 @@ export default function Pricing() {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, []);*/}
 
   // Monitor auth state
   useEffect(() => {
@@ -153,7 +153,7 @@ export default function Pricing() {
       }
 
       const options = {
-        key: "rzp_live_Roih4zI5cd2ciw", 
+        key: "rzp_test_quVhZvf3j1rhIY", // Replace with your Razorpay key
         amount: data.amount,
         currency: data.currency,
         name: "Shortify",
@@ -215,7 +215,7 @@ export default function Pricing() {
     }
   }
 
-  const handleCancelSubscription = async () => {
+  /*const handleCancelSubscription = async () => {
     if (!user || subscriptionStatus.subscription_type === 'free') return;
 
     if (!confirm('Are you sure you want to cancel your subscription? You will be downgraded to the free plan.')) {
@@ -242,7 +242,7 @@ export default function Pricing() {
       console.error("Error cancelling subscription:", error);
       alert("Failed to cancel subscription. Please try again.");
     }
-  };
+  };*/
 
   const formatDate = (dateString) => {
     if (!dateString) return '';
@@ -328,7 +328,7 @@ export default function Pricing() {
 
         {/* Success Message */}
         {paymentSuccess && (
-          <div className="fixed top-4 right-4 z-50 bg-gradient-to-r from-green-500 to-emerald-500 text-white p-6 rounded-2xl shadow-2xl max-w-md backdrop-blur-xl border border-green-400/20">
+          <div className="fixed top-4 right-4 z-60 bg-gradient-to-r from-green-500 to-emerald-500 text-white p-6 rounded-2xl shadow-2xl max-w-md backdrop-blur-xl border border-green-400/20">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <CheckCircle className="w-6 h-6 mr-3" />
@@ -351,28 +351,33 @@ export default function Pricing() {
 
         {/* Current Subscription Status */}
         {user && subscriptionStatus.subscription_type !== 'free' && subscriptionStatus.is_active && (
-          <div className="mb-12 bg-gradient-to-r from-white/5 to-white/[0.02] border border-white/10 rounded-2xl p-6 max-w-2xl mx-auto backdrop-blur-xl">
+          <div className="mb-12 bg-gradient-to-r from-white/5 to-white/[0.02] border border-white/10 rounded-2xl p-6 max-w-md w-full mx-auto backdrop-blur-xl">
             <div className="flex items-center justify-between">
-              <div className="flex items-center text-blue-400">
-                <Shield className="w-6 h-6 mr-3" />
-                <div className="text-left">
-                  <h3 className="font-semibold text-lg text-white">Active Subscription</h3>
-                  <p className="text-sm text-gray-300">
-                    Current Plan: <strong className="capitalize text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">{subscriptionStatus.subscription_type}</strong>
-                  </p>
-                  {subscriptionStatus.subscription_end && (
-                    <p className="text-sm text-gray-400">
-                      Valid until: <strong className="text-gray-300">{formatDate(subscriptionStatus.subscription_end)}</strong>
+              <div className="w-full flex justify-center">
+                <div className="flex items-center text-blue-400">
+                  <Shield className="w-6 h-6 mr-3" />
+                  <div className="text-left">
+                    <h3 className="font-semibold text-lg text-white">Active Subscription</h3>
+                    <p className="text-sm text-gray-300">
+                      Current Plan:
+                      <strong className="capitalize text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
+                        {subscriptionStatus.subscription_type}
+                      </strong>
                     </p>
-                  )}
+                    {subscriptionStatus.subscription_end && (
+                      <p className="text-sm text-gray-400">
+                        Valid until: <strong className="text-gray-300">{formatDate(subscriptionStatus.subscription_end)}</strong>
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
-              <button
+              {/*<button
                 onClick={handleCancelSubscription}
                 className="px-4 py-2 text-sm bg-red-500/20 text-red-400 rounded-xl hover:bg-red-500/30 transition-all duration-300 border border-red-500/20"
               >
                 Cancel Subscription
-              </button>
+              </button>*/}
             </div>
           </div>
         )}
@@ -427,9 +432,9 @@ export default function Pricing() {
             }`}>
             <span className="absolute top-4 right-4 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
               {isCurrentPlan('pro') ? (
-                <span className="bg-gradient-to-r from-green-500 to-emerald-500 text-white">Current Plan</span>
+                <span className="bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg border p-1">Current Plan</span>
               ) : (
-                <span className="bg-gradient-to-r from-pink-500 to-rose-500 text-white">Most Popular</span>
+                <span className="bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-lg border p-1">Most Popular</span>
               )}
             </span>
 
@@ -438,7 +443,7 @@ export default function Pricing() {
             </div>
 
             <h3 className="text-2xl font-light mb-2">Pro</h3>
-            <p className="text-5xl font-light text-white mb-2">₹49/mo</p>
+            <p className="text-5xl font-light text-white mb-2">₹1/mo</p>
             <p className="text-sm text-blue-200 mb-8">
               Great for growing teams
             </p>
@@ -454,16 +459,16 @@ export default function Pricing() {
 
             <button
               className={`w-full py-4 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center ${isCurrentPlan('pro')
-                  ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white cursor-default'
-                  : isDowngrade('pro')
-                    ? 'bg-gray-600/50 text-gray-400 cursor-not-allowed border border-gray-600/50'
-                    : processingPayment
-                      ? 'bg-gray-600/50 text-gray-400 cursor-not-allowed'
-                      : !user
-                        ? 'bg-white text-blue-600 hover:bg-gray-100'
-                        : 'bg-white text-blue-600 hover:bg-gray-100'
+                ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white cursor-default'
+                : isDowngrade('pro')
+                  ? 'bg-gray-600/50 text-gray-400 cursor-not-allowed border border-gray-600/50'
+                  : processingPayment
+                    ? 'bg-gray-600/50 text-gray-400 cursor-not-allowed'
+                    : !user
+                      ? 'bg-white text-blue-600 hover:bg-gray-100'
+                      : 'bg-white text-blue-600 hover:bg-gray-100'
                 }`}
-              onClick={() => handlePaymentClick("Pro", 49)}
+              onClick={() => handlePaymentClick("Pro", 1)}
               disabled={isCurrentPlan('pro') || isDowngrade('pro') || processingPayment}
             >
               {isCurrentPlan('pro') ? (
@@ -499,7 +504,7 @@ export default function Pricing() {
             </div>
 
             <h3 className="text-2xl font-light text-white mb-2">Premium</h3>
-            <p className="text-5xl font-light text-white mb-2">₹99/mo</p>
+            <p className="text-5xl font-light text-white mb-2">₹2/mo</p>
             <p className="text-sm text-gray-400 mb-8">
               Built for power users
             </p>
@@ -520,7 +525,7 @@ export default function Pricing() {
                   ? 'bg-gray-600/50 text-gray-400 cursor-not-allowed'
                   : 'border border-white/20 bg-white/5 text-white hover:bg-white/10 hover:border-white/30 backdrop-blur-xl'
                 }`}
-              onClick={() => handlePaymentClick("Premium", 99)}
+              onClick={() => handlePaymentClick("Premium", 2)}
               disabled={isCurrentPlan('premium') || processingPayment}
             >
               {isCurrentPlan('premium') ? (
