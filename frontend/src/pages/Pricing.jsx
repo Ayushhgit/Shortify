@@ -25,7 +25,7 @@ export default function Pricing() {
   });
   const [processingPayment, setProcessingPayment] = useState(false);
 
-  useEffect(() => {
+  {/*useEffect(() => {
     const handleMouseMove = (e) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
     };
@@ -37,7 +37,7 @@ export default function Pricing() {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, []);*/}
 
   // Monitor auth state
   useEffect(() => {
@@ -351,20 +351,25 @@ export default function Pricing() {
 
         {/* Current Subscription Status */}
         {user && subscriptionStatus.subscription_type !== 'free' && subscriptionStatus.is_active && (
-          <div className="mb-12 bg-gradient-to-r from-white/5 to-white/[0.02] border border-white/10 rounded-2xl p-6 max-w-2xl mx-auto backdrop-blur-xl">
+          <div className="mb-12 bg-gradient-to-r from-white/5 to-white/[0.02] border border-white/10 rounded-2xl p-6 max-w-md w-full mx-auto backdrop-blur-xl">
             <div className="flex items-center justify-between">
-              <div className="flex items-center text-blue-400">
-                <Shield className="w-6 h-6 mr-3" />
-                <div className="text-left">
-                  <h3 className="font-semibold text-lg text-white">Active Subscription</h3>
-                  <p className="text-sm text-gray-300">
-                    Current Plan: <strong className="capitalize text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">{subscriptionStatus.subscription_type}</strong>
-                  </p>
-                  {subscriptionStatus.subscription_end && (
-                    <p className="text-sm text-gray-400">
-                      Valid until: <strong className="text-gray-300">{formatDate(subscriptionStatus.subscription_end)}</strong>
+              <div className="w-full flex justify-center">
+                <div className="flex items-center text-blue-400">
+                  <Shield className="w-6 h-6 mr-3" />
+                  <div className="text-left">
+                    <h3 className="font-semibold text-lg text-white">Active Subscription</h3>
+                    <p className="text-sm text-gray-300">
+                      Current Plan:
+                      <strong className="capitalize text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
+                        {subscriptionStatus.subscription_type}
+                      </strong>
                     </p>
-                  )}
+                    {subscriptionStatus.subscription_end && (
+                      <p className="text-sm text-gray-400">
+                        Valid until: <strong className="text-gray-300">{formatDate(subscriptionStatus.subscription_end)}</strong>
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
               {/*<button
@@ -427,7 +432,7 @@ export default function Pricing() {
             }`}>
             <span className="absolute top-4 right-4 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
               {isCurrentPlan('pro') ? (
-                <span className="bg-gradient-to-r from-green-500 to-emerald-500 text-white">Current Plan</span>
+                <span className="bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg border p-1">Current Plan</span>
               ) : (
                 <span className="bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-lg border p-1">Most Popular</span>
               )}
@@ -454,14 +459,14 @@ export default function Pricing() {
 
             <button
               className={`w-full py-4 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center ${isCurrentPlan('pro')
-                  ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white cursor-default'
-                  : isDowngrade('pro')
-                    ? 'bg-gray-600/50 text-gray-400 cursor-not-allowed border border-gray-600/50'
-                    : processingPayment
-                      ? 'bg-gray-600/50 text-gray-400 cursor-not-allowed'
-                      : !user
-                        ? 'bg-white text-blue-600 hover:bg-gray-100'
-                        : 'bg-white text-blue-600 hover:bg-gray-100'
+                ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white cursor-default'
+                : isDowngrade('pro')
+                  ? 'bg-gray-600/50 text-gray-400 cursor-not-allowed border border-gray-600/50'
+                  : processingPayment
+                    ? 'bg-gray-600/50 text-gray-400 cursor-not-allowed'
+                    : !user
+                      ? 'bg-white text-blue-600 hover:bg-gray-100'
+                      : 'bg-white text-blue-600 hover:bg-gray-100'
                 }`}
               onClick={() => handlePaymentClick("Pro", 1)}
               disabled={isCurrentPlan('pro') || isDowngrade('pro') || processingPayment}
