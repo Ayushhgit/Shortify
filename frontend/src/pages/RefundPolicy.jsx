@@ -34,69 +34,65 @@ export default function RefundPolicy() {
               </div>
             </section>
 
-            {/* Section 2: Cancellation Policy */}
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4 border-b-2 border-blue-500 pb-2">
-                2. Cancellation Policy
-              </h2>
+            {/*
+<section className="mb-8">
+  <h2 className="text-2xl font-semibold text-gray-900 mb-4 border-b-2 border-blue-500 pb-2">
+    2. Cancellation Policy
+  </h2>
 
-              {/* 2.1 Eligibility */}
-              <div className="mb-6">
-                <h3 className="text-xl font-medium text-gray-800 mb-3">
-                  2.1 Eligibility:
-                </h3>
-                <p className="text-gray-700">
-                  All subscribers may cancel at any time at their choosing, no reason or approval required. You may do so in the dashboard following the steps outlined below.
-                </p>
-              </div>
+  <div className="mb-6">
+    <h3 className="text-xl font-medium text-gray-800 mb-3">
+      2.1 Eligibility:
+    </h3>
+    <p className="text-gray-700">
+      All subscribers may cancel at any time at their choosing, no reason or approval required. You may do so in the dashboard following the steps outlined below.
+    </p>
+  </div>
 
-              {/* 2.2 Cancellation Process */}
-              <div className="mb-6">
-                <h3 className="text-xl font-medium text-gray-800 mb-3">
-                  2.2 Cancellation Process:
-                </h3>
-                <p className="text-gray-700 mb-3">
-                  To cancel your subscription, follow these steps:
-                </p>
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <ol className="list-decimal list-inside space-y-2 text-gray-700">
-                    <li>Go to <span className="font-mono bg-gray-100 px-2 py-1 rounded">kwixlab/pricing</span></li>
-                    <li>Above the plans, there will a section showing current subscription</li>
-                    <li>Press the "cancel" button on that section</li>
-                  </ol>
-                </div>
-              </div>
+  <div className="mb-6">
+    <h3 className="text-xl font-medium text-gray-800 mb-3">
+      2.2 Cancellation Process:
+    </h3>
+    <p className="text-gray-700 mb-3">
+      To cancel your subscription, follow these steps:
+    </p>
+    <div className="bg-blue-50 p-4 rounded-lg">
+      <ol className="list-decimal list-inside space-y-2 text-gray-700">
+        <li>Go to <span className="font-mono bg-gray-100 px-2 py-1 rounded">kwixlab/pricing</span></li>
+        <li>Above the plans, there will a section showing current subscription</li>
+        <li>Press the "cancel" button on that section</li>
+      </ol>
+    </div>
+  </div>
 
-              {/* 2.3 Service Continuation */}
-              <div className="mb-6">
-                <h3 className="text-xl font-medium text-gray-800 mb-3">
-                  2.3 Service Continuation:
-                </h3>
-                <p className="text-gray-700">
-                  Upon cancellation, the plan will remain active until the end of the current billing cycle. The subscriber will continue to have full access to all features during this period.
-                </p>
-              </div>
+  <div className="mb-6">
+    <h3 className="text-xl font-medium text-gray-800 mb-3">
+      2.3 Service Continuation:
+    </h3>
+    <p className="text-gray-700">
+      Upon cancellation, the plan will remain active until the end of the current billing cycle. The subscriber will continue to have full access to all features during this period.
+    </p>
+  </div>
 
-              {/* 2.4 No Additional Charges */}
-              <div className="mb-6">
-                <h3 className="text-xl font-medium text-gray-800 mb-3">
-                  2.4 No Additional Charges:
-                </h3>
-                <p className="text-gray-700">
-                  No further payments will be collected after the cancellation has been processed.
-                </p>
-              </div>
+  <div className="mb-6">
+    <h3 className="text-xl font-medium text-gray-800 mb-3">
+      2.4 No Additional Charges:
+    </h3>
+    <p className="text-gray-700">
+      No further payments will be collected after the cancellation has been processed.
+    </p>
+  </div>
 
-              {/* 2.5 Data Retention */}
-              <div className="mb-6">
-                <h3 className="text-xl font-medium text-gray-800 mb-3">
-                  2.5 Data Retention:
-                </h3>
-                <p className="text-gray-700">
-                  Generally, data will be kept in case of reactivation. However, the Company reserves the right to delete any data upon cancellation. Please contact support if you wish to have your data removed in accordance to applicable privacy laws and our policy provisions.
-                </p>
-              </div>
-            </section>
+  <div className="mb-6">
+    <h3 className="text-xl font-medium text-gray-800 mb-3">
+      2.5 Data Retention:
+    </h3>
+    <p className="text-gray-700">
+      Generally, data will be kept in case of reactivation. However, the Company reserves the right to delete any data upon cancellation. Please contact support if you wish to have your data removed in accordance to applicable privacy laws and our policy provisions.
+    </p>
+  </div>
+</section>
+*/}
 
             {/* Section 3: Contact Information */}
             <section className="mb-8">

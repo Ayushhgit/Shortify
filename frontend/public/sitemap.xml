@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- 🌐 Core Pages -->
+  <url><loc>https://kwixlab.com/</loc></url>
+  <url><loc>https://kwixlab.com/pricing</loc></url>
+  <url><loc>https://kwixlab.com/tos</loc></url>
+  <url><loc>https://kwixlab.com/privacypolicy</loc></url>
+  <url><loc>https://kwixlab.com/refundpolicy</loc></url>
+
+  <!-- 🎥 Features: VIDEO TOOLS -->
+  <url><loc>https://kwixlab.com/features/shorts-generator</loc></url>
+  <url><loc>https://kwixlab.com/features/summarizer</loc></url>
+  <url><loc>https://kwixlab.com/features/clip-generator</loc></url>
+
+  <!-- 📄 Features: DOCUMENT TOOLS -->
+  <url><loc>https://kwixlab.com/features/pdf-summarizer</loc></url>
+  <url><loc>https://kwixlab.com/features/article-summarizer</loc></url>
+  <url><loc>https://kwixlab.com/features/resume-analyzer</loc></url>
+  <url><loc>https://kwixlab.com/features/cover-letter-generator</loc></url>
+  <url><loc>https://kwixlab.com/features/interview-prep-assistant</loc></url>
+
+  <!-- ⚙️ Features: PRODUCTIVITY TOOLS -->
+  <url><loc>https://kwixlab.com/features/notes-generator</loc></url>
+  <url><loc>https://kwixlab.com/features/research-assistant</loc></url>
+  <url><loc>https://kwixlab.com/features/eda</loc></url>
+  <url><loc>https://kwixlab.com/features/quiz-generator</loc></url>
+  <url><loc>https://kwixlab.com/features/linkwise-ai</loc></url>
+
+  <!-- 👥 Use Cases -->
+  <url><loc>https://kwixlab.com/use-cases/creators</loc></url>
+  <url><loc>https://kwixlab.com/use-cases/educators</loc></url>
+  <url><loc>https://kwixlab.com/use-cases/corporate</loc></url>
+
+  <!-- 📚 Resources -->
+  <url><loc>https://kwixlab.com/resources/blog</loc></url>
+  <url><loc>https://kwixlab.com/shortify</loc></url>
+
+</urlset>
