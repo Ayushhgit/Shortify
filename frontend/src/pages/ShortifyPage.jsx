@@ -201,20 +201,6 @@ export default function ShortifyPage() {
       glow: "shadow-cyan-500/25",
     },
     {
-      id: "shorts",
-      icon: Youtube,
-      label: "YouTube Clipper",
-      gradient: "from-red-500 to-pink-500",
-      glow: "shadow-red-500/25",
-    },
-    {
-      id: "summarizer",
-      icon: Video,
-      label: "YouTube Summarizer",
-      gradient: "from-purple-500 to-indigo-500",
-      glow: "shadow-purple-500/25",
-    },
-    {
       id: "pdf",
       icon: FileText,
       label: "Document Summarizer",
@@ -291,31 +277,23 @@ export default function ShortifyPage() {
       gradient: "from-pink-500 to-purple-500",
       glow: "shadow-green-500/25",
     },
+    {
+      id: "shorts",
+      icon: Youtube,
+      label: "YouTube Clipper",
+      gradient: "from-red-500 to-pink-500",
+      glow: "shadow-red-500/25",
+    },
+    {
+      id: "summarizer",
+      icon: Video,
+      label: "YouTube Summarizer",
+      gradient: "from-purple-500 to-indigo-500",
+      glow: "shadow-purple-500/25",
+    },
   ];
 
   const features = [
-    {
-      title: "AI YouTube Shorts Generator",
-      icon: Youtube,
-      desc: "Transform long-form videos into viral shorts using advanced AI that understands engagement patterns and optimal timing.",
-      gradient: "from-rose-500 via-pink-500 to-fuchsia-500",
-      link: "/features/shorts-generator",
-      label: "Generate Now",
-      badge: "LIVE",
-      animation: "pulse",
-      bgPattern: "waveform",
-    },
-    {
-      title: "YouTube Video Summarizer",
-      icon: Brain,
-      desc: "Quantum-speed processing extracts key insights from hours of content in seconds using next-generation NLP algorithms.",
-      gradient: "from-purple-500 via-indigo-500 to-blue-500",
-      link: "/features/summarizer",
-      label: "Analyze Now",
-      badge: "LIVE",
-      animation: "neural",
-      bgPattern: "neural-network",
-    },
     {
       title: "AI Document Summarizer",
       icon: BookText,
@@ -437,6 +415,28 @@ export default function ShortifyPage() {
       badge: "CAREER",
       animation: "none",
       bgPattern: "plus",
+    },
+    {
+      title: "AI YouTube Shorts Generator",
+      icon: Youtube,
+      desc: "Transform long-form videos into viral shorts using advanced AI that understands engagement patterns and optimal timing.",
+      gradient: "from-rose-500 via-pink-500 to-fuchsia-500",
+      link: "/features/shorts-generator",
+      label: "Coming Soon",
+      badge: "Coming Soon",
+      animation: "pulse",
+      bgPattern: "waveform",
+    },
+    {
+      title: "YouTube Video Summarizer",
+      icon: Brain,
+      desc: "Quantum-speed processing extracts key insights from hours of content in seconds using next-generation NLP algorithms.",
+      gradient: "from-purple-500 via-indigo-500 to-blue-500",
+      link: "/features/summarizer",
+      label: "Coming Soon",
+      badge: "Coming Soon",
+      animation: "neural",
+      bgPattern: "neural-network",
     },
   ];
 
@@ -648,8 +648,8 @@ export default function ShortifyPage() {
             <div className="md:hidden flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400 shadow-lg relative">
               <div className="absolute inset-0 rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400 animate-pulse opacity-75"></div>
               <span className="relative text-xs font-bold text-white z-10">AI</span>
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full animate-ping"></div>
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full"></div>
+              {/* <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full animate-ping"></div>
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full"></div> */}
             </div>
           </div>
         </div>

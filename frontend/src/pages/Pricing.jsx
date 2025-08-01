@@ -405,7 +405,15 @@ export default function Pricing() {
             </p>
 
             <ul className="space-y-4 text-left mb-8">
-              {["5 video summaries per month", "Basic analytics", "Standard support"].map((feature, i) => (
+              {[
+                "Limited access to features",
+                "Summarize 2 PDFs and 2 articles",
+                "Basic resume and cover letter support",
+                "Limited assignment and research help",
+                "Try out LinkedIn optimization and quiz generation",
+                "Email support",
+                "Community access"
+              ].map((feature, i) => (
                 <li key={i} className="flex items-center text-gray-300">
                   <CheckCircle className="text-green-500 w-5 h-5 mr-3 flex-shrink-0" />
                   <span className="font-light">{feature}</span>
@@ -443,13 +451,22 @@ export default function Pricing() {
             </div>
 
             <h3 className="text-2xl font-light mb-2">Pro</h3>
-            <p className="text-5xl font-light text-white mb-2">₹1/mo</p>
+            <p className="text-5xl font-light text-white mb-2">₹59/mo</p>
             <p className="text-sm text-blue-200 mb-8">
               Great for growing teams
             </p>
 
             <ul className="space-y-4 text-left mb-8">
-              {["50 video summaries per month", "Advanced analytics", "Priority support", "Custom branding"].map((feature, i) => (
+              {[
+                "Generate up to 5 videos daily",
+                "Summarize upto 10 PDFs, and 12 articles",
+                "Resume + cover letter generation",
+                "Up to 5 notes and 8 research assistance requests",
+                "Data analysis and quiz generation included",
+                "Up to 10 clips generation",
+                "Faster response time on support",
+                "Access to priority features before free users"
+              ].map((feature, i) => (
                 <li key={i} className="flex items-center">
                   <CheckCircle className="text-white w-5 h-5 mr-3 flex-shrink-0" />
                   <span className="font-light">{feature}</span>
@@ -468,7 +485,7 @@ export default function Pricing() {
                       ? 'bg-white text-blue-600 hover:bg-gray-100'
                       : 'bg-white text-blue-600 hover:bg-gray-100'
                 }`}
-              onClick={() => handlePaymentClick("Pro", 1)}
+              onClick={() => handlePaymentClick("Pro", 59)}
               disabled={isCurrentPlan('pro') || isDowngrade('pro') || processingPayment}
             >
               {isCurrentPlan('pro') ? (
@@ -504,13 +521,22 @@ export default function Pricing() {
             </div>
 
             <h3 className="text-2xl font-light text-white mb-2">Premium</h3>
-            <p className="text-5xl font-light text-white mb-2">₹2/mo</p>
+            <p className="text-5xl font-light text-white mb-2">₹99/mo</p>
             <p className="text-sm text-gray-400 mb-8">
               Built for power users
             </p>
 
             <ul className="space-y-4 text-left mb-8">
-              {["Unlimited video summaries", "Enterprise analytics", "24/7 dedicated support", "API access"].map((feature, i) => (
+              {[
+                "10 video generations per day",
+                "Summarize up to 30 PDFs, articles, and YouTube videos",
+                "ATS resume analyses & 20 cover letters",
+                "Extensive support for notes, data & research",
+                "25 quiz and clip generations",
+                "Access to interview preparation tools",
+                "Early access to new features",
+                "Priority support"
+              ].map((feature, i) => (
                 <li key={i} className="flex items-center text-gray-300">
                   <CheckCircle className="text-green-500 w-5 h-5 mr-3 flex-shrink-0" />
                   <span className="font-light">{feature}</span>
@@ -525,7 +551,7 @@ export default function Pricing() {
                   ? 'bg-gray-600/50 text-gray-400 cursor-not-allowed'
                   : 'border border-white/20 bg-white/5 text-white hover:bg-white/10 hover:border-white/30 backdrop-blur-xl'
                 }`}
-              onClick={() => handlePaymentClick("Premium", 2)}
+              onClick={() => handlePaymentClick("Premium", 99)}
               disabled={isCurrentPlan('premium') || processingPayment}
             >
               {isCurrentPlan('premium') ? (

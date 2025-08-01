@@ -465,7 +465,7 @@ export default function EnhancedProfile() {
           <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-blue-500/5 pointer-events-none" />
 
           {/* Logo Section */}
-          <div className="p-8 pr-16 lg:pr-8 border-b border-gray-800">
+          <div className="p-8 pr-16 lg:pr-8 border-b border-gray-800 ml-8">
             <div className="flex items-center gap-3">
               <a href="/" ><div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
                 <img src={logo} alt="Logo" />
@@ -575,12 +575,12 @@ export default function EnhancedProfile() {
           {/* User Section */}
           <div className="p-6 border-t border-gray-800">
             <div className="flex items-center gap-3 mb-4">
-              <a
+              {/* <a
                 href="https://github.com/Ayushhgit"
                 className="p-3 rounded-xl bg-gray-800 hover:bg-gray-700 transition-colors border border-gray-700 hover:border-gray-600"
               >
                 <Github size={18} className="text-gray-300" />
-              </a>
+              </a> */}
               <a href="/" ><div className="p-3 rounded-xl bg-gray-800 hover:bg-gray-700 transition-colors border border-gray-700 hover:border-gray-600">
                 <Home size={18} className="text-gray-300" />
               </div> </a>
@@ -762,10 +762,6 @@ export default function EnhancedProfile() {
                       <div className="flex justify-between items-center">
                         <span className="text-slate-400">Plan</span>
                         <span className="text-white font-semibold capitalize">{subscriptionType}</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-slate-400">Videos Generated</span>
-                        <span className="text-cyan-400 font-bold">{videoGenerationCount}</span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-slate-400">Expires</span>

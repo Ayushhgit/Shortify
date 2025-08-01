@@ -63,14 +63,14 @@ const AssignmentHelper = () => {
             name: "Upload Document",
             icon: Upload,
             color: "from-green-500 to-emerald-600",
-            description: "Upload PDF, DOCX, or image files"
+            description: "Upload PDF or DOCX files"
         },
         {
             id: "camera",
-            name: "Take Photo",
+            name: "Upload Image",
             icon: Camera,
             color: "from-purple-500 to-pink-600",
-            description: "upload the topic with your camera"
+            description: "upload the topic with your gallery"
         }
     ];
 
@@ -172,7 +172,8 @@ const AssignmentHelper = () => {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json'
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${idToken}`,
                     },
                     body: JSON.stringify(requestBody)
                 });
@@ -583,7 +584,7 @@ const AssignmentHelper = () => {
                                                             Drop your files here
                                                         </p>
                                                         <p className="text-gray-300">
-                                                            PDF, DOCX, or image files supported
+                                                            PDF, or DOCX files supported
                                                         </p>
                                                     </div>
                                                 </>
@@ -640,7 +641,7 @@ const AssignmentHelper = () => {
                                                     >
                                                         <div className="flex items-center space-x-3">
                                                             <Camera className="w-5 h-5" />
-                                                            <span>Take Photo</span>
+                                                            <span>Upload Image</span>
                                                         </div>
                                                     </button>
                                                 </div>
@@ -862,7 +863,7 @@ const AssignmentHelper = () => {
                                 </div>
                             </div>
 
-                            {/* Explanation */}
+                            {/* Explanation
                             <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20">
                                 <div className="flex items-center space-x-3 mb-4">
                                     <div className="p-3 bg-gray-500/20 rounded-xl">
@@ -871,7 +872,7 @@ const AssignmentHelper = () => {
                                     <h3 className="text-2xl font-bold text-white">Detailed Explanation</h3>
                                 </div>
                                 <p className="text-gray-300 text-lg leading-relaxed">{result.explanation}</p>
-                            </div>
+                            </div>*/}
 
                             {/* Updated Action Buttons */}
                             <div className="flex flex-col items-center space-y-4">

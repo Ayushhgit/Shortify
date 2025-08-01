@@ -40,7 +40,7 @@ const FeaturedToolsSection = () => {
     },
     {
       icon: Target,
-      name: 'Assignment Helper',
+      name: 'Notes Helper',
       bgColor: 'bg-red-500',
       iconBg: 'bg-red-500'
     },
