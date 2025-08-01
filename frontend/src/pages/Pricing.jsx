@@ -215,7 +215,7 @@ export default function Pricing() {
     }
   }
 
-  const handleCancelSubscription = async () => {
+  /*const handleCancelSubscription = async () => {
     if (!user || subscriptionStatus.subscription_type === 'free') return;
 
     if (!confirm('Are you sure you want to cancel your subscription? You will be downgraded to the free plan.')) {
@@ -242,7 +242,7 @@ export default function Pricing() {
       console.error("Error cancelling subscription:", error);
       alert("Failed to cancel subscription. Please try again.");
     }
-  };
+  };*/
 
   const formatDate = (dateString) => {
     if (!dateString) return '';
@@ -367,12 +367,12 @@ export default function Pricing() {
                   )}
                 </div>
               </div>
-              <button
+              {/*<button
                 onClick={handleCancelSubscription}
                 className="px-4 py-2 text-sm bg-red-500/20 text-red-400 rounded-xl hover:bg-red-500/30 transition-all duration-300 border border-red-500/20"
               >
                 Cancel Subscription
-              </button>
+              </button>*/}
             </div>
           </div>
         )}
@@ -438,7 +438,7 @@ export default function Pricing() {
             </div>
 
             <h3 className="text-2xl font-light mb-2">Pro</h3>
-            <p className="text-5xl font-light text-white mb-2">₹49/mo</p>
+            <p className="text-5xl font-light text-white mb-2">₹1/mo</p>
             <p className="text-sm text-blue-200 mb-8">
               Great for growing teams
             </p>
@@ -463,7 +463,7 @@ export default function Pricing() {
                         ? 'bg-white text-blue-600 hover:bg-gray-100'
                         : 'bg-white text-blue-600 hover:bg-gray-100'
                 }`}
-              onClick={() => handlePaymentClick("Pro", 49)}
+              onClick={() => handlePaymentClick("Pro", 1)}
               disabled={isCurrentPlan('pro') || isDowngrade('pro') || processingPayment}
             >
               {isCurrentPlan('pro') ? (
@@ -499,7 +499,7 @@ export default function Pricing() {
             </div>
 
             <h3 className="text-2xl font-light text-white mb-2">Premium</h3>
-            <p className="text-5xl font-light text-white mb-2">₹99/mo</p>
+            <p className="text-5xl font-light text-white mb-2">₹2/mo</p>
             <p className="text-sm text-gray-400 mb-8">
               Built for power users
             </p>
@@ -520,7 +520,7 @@ export default function Pricing() {
                   ? 'bg-gray-600/50 text-gray-400 cursor-not-allowed'
                   : 'border border-white/20 bg-white/5 text-white hover:bg-white/10 hover:border-white/30 backdrop-blur-xl'
                 }`}
-              onClick={() => handlePaymentClick("Premium", 99)}
+              onClick={() => handlePaymentClick("Premium", 2)}
               disabled={isCurrentPlan('premium') || processingPayment}
             >
               {isCurrentPlan('premium') ? (
