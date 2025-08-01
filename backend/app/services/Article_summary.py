@@ -12,14 +12,14 @@ from concurrent.futures import ThreadPoolExecutor
 import os
 import json
 import logging
-from groq import Groq  # Add this import
+from groq import Groq  
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Groq API configuration
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+GROQ_API_KEY = os.getenv("GROQ_ARTICLE_KEY")
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
 def generate_summary_with_groq(content: str) -> str:

@@ -48,8 +48,8 @@ class Settings(BaseSettings):
     DATABASE_URL: str = os.getenv("DATABASE_URL")
 
     # RazorPay
-    RAZORPAY_KEY_ID:str = "rzp_test_quVhZvf3j1rhIY"
-    RAZORPAY_KEY_SECRET:str = "zsw9XVjl3VNSVy8ybHa14Rd0"
+    RAZORPAY_KEY_ID:str = os.getenv("RAZORPAY_KEY_ID")
+    RAZORPAY_KEY_SECRET:str = os.getenv("RAZORPAY_KEY_SECRET")
     
 
     def str_to_bool(value: str) -> bool:
@@ -57,6 +57,12 @@ class Settings(BaseSettings):
 
     # AI Services
     GROQ_API_KEY:str = os.getenv("GROQ_API_KEY")
+    GROQ_PDF_KEY:str = os.getenv("GROQ_PDF_KEY")
+    GROQ_RESEARCH_KEY:str = os.getenv("GROQ_RESEARCH_KEY")
+    GROQ_ARTICLE_KEY:str = os.getenv("GROQ_ARTICLE_KEY")
+    GROQ_RESUME_KEY:str = os.getenv("GROQ_RESUME_KEY")
+    GROQ_QUIZ_KEY:str = os.getenv("GROQ_QUIZ_KEY")
+    GROQ_INTERVIEW_KEY:str = os.getenv("GROQ_INTERVIEW_KEY")
     OPENAI_API_KEY:str = os.getenv("OPEN_API_KEY")
     USE_GPT: bool = str_to_bool(os.getenv("USE_GPT"))
     USE_WHISPER: bool = str_to_bool(os.getenv("USE_WHISPER"))

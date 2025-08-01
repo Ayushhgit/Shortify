@@ -153,7 +153,7 @@ export default function Pricing() {
       }
 
       const options = {
-        key: "rzp_test_quVhZvf3j1rhIY", // Replace with your Razorpay key
+        key: "rzp_live_Roih4zI5cd2ciw", 
         amount: data.amount,
         currency: data.currency,
         name: "Shortify",

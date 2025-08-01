@@ -348,7 +348,7 @@ Example format:
     """
     
     try:
-        groq_client = GroqAPIClient(api_key=settings.GROQ_API_KEY)
+        groq_client = GroqAPIClient(api_key=settings.GROQ_INTERVIEW_KEY)
         messages = [
             {"role": "system", "content": "You are an expert interview coach specializing in personalized question generation."},
             {"role": "user", "content": prompt}
@@ -451,7 +451,7 @@ async def get_ai_chat_response(session_data: Dict, user_message: str) -> str:
     """
     
     try:
-        groq_client = GroqAPIClient(api_key=settings.GROQ_API_KEY)
+        groq_client = GroqAPIClient(api_key=settings.GROQ_INTERVIEW_KEY)
         messages = [
             {"role": "system", "content": "You are a supportive and knowledgeable interview coach. Provide practical, encouraging advice."},
             {"role": "user", "content": prompt}

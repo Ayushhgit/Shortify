@@ -16,7 +16,7 @@ from ..core.config import settings
 
 class PDFService:
     def __init__(self):
-        self.api_key = settings.GROQ_API_KEY
+        self.api_key = settings.GROQ_PDF_KEY
         self.api_url = "https://api.groq.com/openai/v1/chat/completions"
         self.upload_dir = Path(settings.UPLOAD_DIR)
         self.upload_dir.mkdir(exist_ok=True)

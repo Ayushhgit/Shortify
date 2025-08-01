@@ -13,7 +13,7 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+GROQ_API_KEY = os.getenv("GROQ_QUIZ_KEY")
 
 groq_client = GroqAPIClient(GROQ_API_KEY) if GROQ_API_KEY else GroqAPIClient("")
 quiz_generator = QuizGenerator(groq_client)
