@@ -59,7 +59,7 @@ Your tools remain the same:
 - search_tool: For real-time web search  
 - arxiv_tool: For academic papers
 
-Keep responses conversational and build on previous context when relevant.
+Do not give any bold heading or sub topic bold heading just give the answer. Keep responses conversational and build on previous context when relevant.
      """),
     ("placeholder", "{chat_history}"),
     ("human", "{input}"),

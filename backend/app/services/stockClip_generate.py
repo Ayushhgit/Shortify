@@ -294,7 +294,7 @@ def create_subtitle_clip(text: str, start_time: float, end_time: float, video_si
     
     # Responsive font size based on video dimensions
     base_font_size = min(video_width, video_height) // 25
-    font_size = max(28, min(40, base_font_size))  # Clamp between 28-40
+    font_size = max(22, min(34, base_font_size))  # Clamp between 28-40
     
     try:
         # Create text clip with improved styling
