@@ -280,11 +280,11 @@ export default function CreatorsUseCase() {
                   Save 15+ Hours Weekly On Content Creation
                 </h4>
                 <p className="text-white/90 mb-6">
-                  Join Hundreds of content creators who are scaling their social media presence effortlessly
+                  Join content creators who are scaling their social media presence effortlessly
                   with Shortify's AI-powered video transformation.
                 </p>
 
-                <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-6">
+                {/* <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-6">
                   <div className="flex items-center">
                     <div className="flex -space-x-2">
                       <div className="w-10 h-10 rounded-full bg-gradient-to-r from-orange-400 to-pink-400 border-2 border-white"></div>
@@ -304,7 +304,7 @@ export default function CreatorsUseCase() {
                     </div>
                     <span className="ml-2 text-sm font-semibold">4.6/5</span>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
