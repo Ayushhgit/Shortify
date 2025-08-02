@@ -12,6 +12,7 @@ import {
   Bell,
   ArrowRight,
 } from "lucide-react";
+import { useNavigate } from 'react-router-dom';
 
 export default function ShortsComingSoon() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -20,6 +21,8 @@ export default function ShortsComingSoon() {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
   const containerRef = useRef(null);
+
+  const navigate = useNavigate();
 
   // Generate random particles
   useEffect(() => {
@@ -168,6 +171,7 @@ export default function ShortsComingSoon() {
             ].map((item, index) => (
               <button
                 key={index}
+                onClick={() => navigate(item.path)}
                 className="p-3 rounded-xl hover:bg-white/20 transition-all duration-300 hover:scale-110 backdrop-blur-sm border border-white/10"
               >
                 <item.icon className="h-5 w-5 text-white/80 hover:text-white" />

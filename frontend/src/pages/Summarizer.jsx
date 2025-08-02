@@ -12,12 +12,15 @@ import {
   FileText,
   Download
 } from "lucide-react";
+import { useNavigate } from 'react-router-dom';
 
 export default function YouTubeSummarizerComingSoon() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [glitchActive, setGlitchActive] = useState(false);
   const [particles, setParticles] = useState([]);
   const containerRef = useRef(null);
+
+  const navigate = useNavigate();
 
   // Generate random particles
   useEffect(() => {
@@ -147,11 +150,12 @@ export default function YouTubeSummarizerComingSoon() {
           <div className="flex items-center space-x-2">
             {[
               { icon: Home, href: "/shortify" },
-              { icon: User, href: "/Profile" },
-              { icon: Settings, href: "/Settings" },
+              { icon: User, href: "/profile" },
+              { icon: Settings, href: "/settings" },
             ].map((item, index) => (
               <button
                 key={index}
+                onClick={() => navigate(item.href)}
                 className="p-3 rounded-xl hover:bg-white/20 transition-all duration-300 hover:scale-110 backdrop-blur-sm border border-white/10"
               >
                 <item.icon className="h-5 w-5 text-white/80 hover:text-white" />
