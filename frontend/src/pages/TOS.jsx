@@ -38,7 +38,7 @@ export default function TermsOfService() {
                 </p>
               </div>
 
-              <div className="mb-6">
+              {/* <div className="mb-6">
                 <h3 className="text-xl font-medium text-gray-800 mb-3">2.2 How to Cancel</h3>
                 <p className="text-gray-700 mb-3">
                   To cancel your subscription:
@@ -50,24 +50,24 @@ export default function TermsOfService() {
                     <li>Click the "Cancel" button to stop future billing.</li>
                   </ol>
                 </div>
-              </div>
+              </div> */}
 
               <div className="mb-6">
-                <h3 className="text-xl font-medium text-gray-800 mb-3">2.3 Service Continuation</h3>
+                <h3 className="text-xl font-medium text-gray-800 mb-3">2.2 Service Continuation</h3>
                 <p className="text-gray-700">
                   Your subscription will remain active until the end of the current billing cycle. You will continue to have full access during this time.
                 </p>
               </div>
 
               <div className="mb-6">
-                <h3 className="text-xl font-medium text-gray-800 mb-3">2.4 No Further Charges</h3>
+                <h3 className="text-xl font-medium text-gray-800 mb-3">2.3 No Further Charges</h3>
                 <p className="text-gray-700">
                   Once cancellation is confirmed, no further payments will be collected.
                 </p>
               </div>
 
               <div className="mb-6">
-                <h3 className="text-xl font-medium text-gray-800 mb-3">2.5 Data Retention</h3>
+                <h3 className="text-xl font-medium text-gray-800 mb-3">2.4 Data Retention</h3>
                 <p className="text-gray-700">
                   Your data may be retained for potential reactivation. However, we reserve the right to delete it after cancellation. You may request permanent data removal in accordance with applicable privacy laws by contacting support.
                 </p>
