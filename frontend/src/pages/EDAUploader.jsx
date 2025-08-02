@@ -433,7 +433,7 @@ const EDAUploader = () => {
                         <FileText className="w-16 h-16 text-white/60 mx-auto" />
                         <div>
                           <p className="text-white font-semibold text-lg">
-                            Drop your CSV or Excel file here
+                            Drop your CSV data file here
                           </p>
                           <p className="text-gray-300">
                             or click to browse files

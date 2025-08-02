@@ -14,14 +14,6 @@ export default function Header() {
       name: "Features",
       dropdown: [
         {
-          category: "VIDEO TOOLS",
-          items: [
-            { label: "YouTube Clipper", path: "/features/shorts-generator" },
-            { label: "YT-Video Summarizer", path: "/features/summarizer" },
-            { label: "MineCraft Clip Maker", path: "/features/clip-generator" },
-          ],
-        },
-        {
           category: "DOCUMENT TOOLS",
           items: [
             { label: "PDF Summarizer", path: "/features/pdf-summarizer" },
@@ -50,6 +42,14 @@ export default function Header() {
             { label: "LinkedIn Helper", path: "/features/linkwise-ai" },
           ],
         },
+        {
+          category: "VIDEO TOOLS",
+          items: [
+            { label: "MineCraft Clip Maker", path: "/features/clip-generator" },
+            { label: "YouTube Clipper", path: "/features/shorts-generator" },
+            { label: "YT-Video Summarizer", path: "/features/summarizer" },
+          ],
+        },
       ],
     },
     {
@@ -63,7 +63,7 @@ export default function Header() {
     {
       name: "Resources",
       dropdown: [
-        { label: "Blog", path: "/resources/blog" },
+        //{ label: "Blog", path: "/resources/blog" },
         { label: "Buy Me a Coffee", path: "https://coff.ee/kwixlab" },
         { label: "Tutorials", path: "/shortify" },
       ],

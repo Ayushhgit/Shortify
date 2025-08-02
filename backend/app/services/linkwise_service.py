@@ -214,7 +214,7 @@ class LinkedInService:
             4. Specific examples and quantifiable achievements
             5. Call-to-action and engagement opportunities
             
-            Make suggestions specific and actionable. Return as a JSON list of strings.
+            Do not just copy the data provided try to create new related to it Make suggestions specific and actionable. Return as a JSON list of strings.
             """
             
             response = self.groq_client.chat.completions.create(
@@ -272,7 +272,7 @@ class LinkedInService:
             - Include power words and keywords
             - Make them unique and memorable
             
-            Return as JSON array of strings.
+            Do not just copy the data provided try to create new related to it, Return as JSON array of strings.
             """
             
             response = self.groq_client.chat.completions.create(
@@ -328,7 +328,7 @@ class LinkedInService:
             - End with a call-to-action
             - Use paragraphs for readability
             
-            Return as JSON array of strings.
+            Do not just copy the data provided try to create new related to it make it simple engaging and try to imclude latest tech,Return as JSON array of strings.
             """
             
             response = self.groq_client.chat.completions.create(
@@ -382,7 +382,7 @@ class LinkedInService:
             - Include 3-5 relevant hashtags
             - End with engaging call-to-action question
             
-            Return as JSON with keys: content, hashtags, cta
+            Do not just copy the data provided try to create new related to it, Return as JSON with keys: content, hashtags, cta
             """
             
             response = self.groq_client.chat.completions.create(
@@ -478,7 +478,7 @@ class LinkedInService:
             - Professional tone
             - Mention common ground or specific interest
             
-            Return as JSON array of strings.
+            Do not just copy the data provided try to create new related to it, Return as JSON array of strings.
             """
             
             response = self.groq_client.chat.completions.create(

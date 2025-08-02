@@ -8,6 +8,8 @@ import {
   Sparkles,
   ArrowUpRight,
   Check,
+  BarChart3,
+  Binoculars,
 } from "lucide-react";
 import Header from "../components/Header.jsx";
 import HelloBot from "../components/HelloBot.jsx";
@@ -182,10 +184,10 @@ const ShortifyLanding = () => {
 
   const features = [
     {
-      icon: <Play className="w-7 h-7" />,
-      title: "YouTube Summarization",
+      icon: <BarChart3 className="w-7 h-7" />,
+      title: "Auto EDA",
       description:
-        "Transform hours of video content into actionable insights. Perfect for research, learning, and content analysis.",
+        "Intelligent data exploration that automatically generates insights and visualizations from your datasets with no manual effort.",
       gradient: "from-red-500/20 to-pink-500/20",
     },
     {
@@ -203,10 +205,10 @@ const ShortifyLanding = () => {
       gradient: "from-purple-500/20 to-indigo-500/20",
     },
     {
-      icon: <Sparkles className="w-7 h-7" />,
-      title: "YouTube Clipper",
+      icon: <Binoculars className="w-7 h-7" />,
+      title: "Research Assistant",
       description:
-        "Automatically detect and extract the most viral-worthy moments from your videos",
+        "AI-powered assistant that searches research papers, summarizes concepts, and answers your academic queries using real citations.",
       gradient: "from-emerald-500/20 to-teal-500/20",
     },
   ];
@@ -269,9 +271,9 @@ const ShortifyLanding = () => {
             </p>
 
             <p className="text-base sm:text-lg text-gray-400 font-light leading-relaxed mb-6">
-              From YouTube Shorts and video summaries to PDF insights, resume analysis,
-              and research help — everything AI-powered, all in one place. Built for
-              creators, learners, and professionals — designed for clarity, speed, and
+              From PDF insights and resume analysis to EDA tool, article summarizer,
+              and research help. Everything AI-powered, all in one place. Built for
+              creators, learners, and professionals designed for clarity, speed, and
               next-gen productivity.
             </p>
 
@@ -513,7 +515,7 @@ const ShortifyLanding = () => {
                     "Summarize YouTube videos into bite-sized insights instantly.",
                     "Get instant PDF and article summaries with a single click.",
                     "Analyze resumes and generate tailored cover letters effortlessly.",
-                    "Boost your productivity with AI-powered assignment and research tools.",
+                    "Boost your productivity with AI-powered Notes and research tools.",
                     "Transform data into insights with our smart Data Analyzer.",
                     "Optimize your professional presence with the LinkedIn Helper.",
                   ]}
@@ -591,7 +593,7 @@ const ShortifyLanding = () => {
                       "Summarize YouTube videos into bite-sized insights instantly.",
                       "Get instant PDF and article summaries with a single click.",
                       "Analyze resumes and generate tailored cover letters effortlessly.",
-                      "Boost your productivity with AI-powered assignment and research tools.",
+                      "Boost your productivity with AI-powered Notes and research tools.",
                       "Transform data into insights with our smart Data Analyzer.",
                       "Optimize your professional presence with the LinkedIn Helper.",
                     ]}

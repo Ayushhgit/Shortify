@@ -301,12 +301,10 @@ def create_subtitle_clip(text: str, start_time: float, end_time: float, video_si
         txt_clip = TextClip(
             text.upper(),
             fontsize=font_size,
-            font='Arial-Bold',
+            font='Impact',
             color='white',
-            stroke_color='black',
-            stroke_width=2,
             method='caption',
-            size=(video_width * 0.9, None)  # 90% of video width
+            size=(video_width * 0.9, None),  # 90% of video width
         )
         
         # Position at bottom with responsive margin

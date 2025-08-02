@@ -238,7 +238,7 @@ export default function EnhancedSettings() {
           <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-blue-500/5 pointer-events-none" />
 
           {/* Logo Section */}
-          <div className="p-8 pr-16 lg:pr-8 border-b border-gray-800">
+          <div className="p-8 pr-16 lg:pr-8 border-b border-gray-800 ml-8">
             <div className="flex items-center gap-3">
               <a href="/">
                 <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
@@ -291,49 +291,17 @@ export default function EnhancedSettings() {
               })}
             </div>
 
-            {/* Quick Settings Navigation */}
-            <div className="mt-8 space-y-2">
-              <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider px-3">Quick Access</h3>
-              <button
-                onClick={() => scrollToSection(generalRef)}
-                className="w-full flex items-center gap-3 px-3 py-2 text-sm text-slate-300 hover:text-cyan-400 hover:bg-slate-800/50 rounded-lg transition-all duration-200"
-              >
-                <Settings size={16} />
-                General
-              </button>
-              <button
-                onClick={() => scrollToSection(notificationsRef)}
-                className="w-full flex items-center gap-3 px-3 py-2 text-sm text-slate-300 hover:text-cyan-400 hover:bg-slate-800/50 rounded-lg transition-all duration-200"
-              >
-                <Bell size={16} />
-                Notifications
-              </button>
-              <button
-                onClick={() => scrollToSection(privacyRef)}
-                className="w-full flex items-center gap-3 px-3 py-2 text-sm text-slate-300 hover:text-cyan-400 hover:bg-slate-800/50 rounded-lg transition-all duration-200"
-              >
-                <Shield size={16} />
-                Privacy
-              </button>
-              <button
-                onClick={() => scrollToSection(accountRef)}
-                className="w-full flex items-center gap-3 px-3 py-2 text-sm text-slate-300 hover:text-cyan-400 hover:bg-slate-800/50 rounded-lg transition-all duration-200"
-              >
-                <Lock size={16} />
-                Account
-              </button>
-            </div>
           </div>
 
           {/* User Section */}
           <div className="p-6 border-t border-gray-800">
             <div className="flex items-center gap-3 mb-4">
-              <a
+              {/*<a
                 href="https://github.com/Ayushhgit"
                 className="p-3 rounded-xl bg-gray-800 hover:bg-gray-700 transition-colors border border-gray-700 hover:border-gray-600"
               >
                 <Github size={18} className="text-gray-300" />
-              </a>
+              </a>*/}
               <a href="/">
                 <div className="p-3 rounded-xl bg-gray-800 hover:bg-gray-700 transition-colors border border-gray-700 hover:border-gray-600">
                   <Home size={18} className="text-gray-300" />
