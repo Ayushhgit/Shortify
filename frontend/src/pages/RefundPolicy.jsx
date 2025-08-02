@@ -97,7 +97,7 @@ export default function RefundPolicy() {
             {/* Section 3: Contact Information */}
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4 border-b-2 border-blue-500 pb-2">
-                3. Contact Information
+                2. Contact Information
               </h2>
               <p className="text-gray-700 mb-4">
                 For any questions or concerns regarding this Refund Policy, please contact us:
@@ -115,7 +115,7 @@ export default function RefundPolicy() {
             {/* Section 4: Amendments */}
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4 border-b-2 border-blue-500 pb-2">
-                4. Amendments
+                3. Amendments
               </h2>
               <div className="space-y-4">
                 <p className="text-gray-700">
@@ -130,7 +130,7 @@ export default function RefundPolicy() {
             {/* Section 5: Governing Law */}
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4 border-b-2 border-blue-500 pb-2">
-                5. Governing Law
+                4. Governing Law
               </h2>
               <p className="text-gray-700">
                 This Policy shall be governed by and construed in accordance with the laws of the jurisdiction in which KwixLab is registered, without regard to its conflict of law provisions.
