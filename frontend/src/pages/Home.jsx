@@ -472,7 +472,7 @@ const ShortifyLanding = () => {
               </button>
             </div>
             
-            {/* Mobile-optimized feature list */}
+            {/* Mobile-optimized feature list 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-xs sm:text-sm text-gray-400">
               <div className="flex items-center gap-2">
                 <Check className="w-3 h-3 sm:w-4 sm:h-4 text-green-400 flex-shrink-0" />
@@ -486,7 +486,7 @@ const ShortifyLanding = () => {
                 <Check className="w-3 h-3 sm:w-4 sm:h-4 text-green-400 flex-shrink-0" />
                 <span>Cancel anytime</span>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
