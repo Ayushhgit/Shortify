@@ -153,7 +153,7 @@ export default function Pricing() {
       }
 
       const options = {
-        key: "rzp_test_quVhZvf3j1rhIY", // Replace with your Razorpay key
+        key: "rzp_live_Roih4zI5cd2ciw", 
         amount: data.amount,
         currency: data.currency,
         name: "Shortify",
@@ -326,6 +326,29 @@ export default function Pricing() {
           fits.
         </p>
 
+        {/* Success Message */}
+        {paymentSuccess && (
+          <div className="fixed top-4 right-4 z-60 bg-gradient-to-r from-green-500 to-emerald-500 text-white p-6 rounded-2xl shadow-2xl max-w-md backdrop-blur-xl border border-green-400/20">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <CheckCircle className="w-6 h-6 mr-3" />
+                <div>
+                  <h3 className="font-semibold">Payment Successful! 🎉</h3>
+                  <p className="text-sm mt-1 text-green-100">
+                    Welcome to {purchasedPlan} plan! Your subscription is now active.
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setPaymentSuccess(false)}
+                className="ml-4 text-green-100 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Current Subscription Status */}
         {user && subscriptionStatus.subscription_type !== 'free' && subscriptionStatus.is_active && (
           <div className="mb-12 bg-gradient-to-r from-white/5 to-white/[0.02] border border-white/10 rounded-2xl p-6 max-w-md w-full mx-auto backdrop-blur-xl">
@@ -378,19 +401,15 @@ export default function Pricing() {
             <h3 className="text-2xl font-light text-white mb-2">Free</h3>
             <p className="text-5xl font-light text-white mb-2">₹0</p>
             <p className="text-sm text-gray-400 mb-8">
-              Perfect for beginners
+             💡 Perfect for curious minds just getting started.
             </p>
 
             <ul className="space-y-4 text-left mb-8">
-              {[
-                "Limited access to features",
-                "Summarize 2 PDFs and 2 articles",
-                "Basic resume and cover letter support",
-                "Limited assignment and research help",
-                "Try out LinkedIn optimization and quiz generation",
-                "Email support",
-                "Community access"
-              ].map((feature, i) => (
+              {["Access core features like YouTube & PDF summarization", 
+              "Craft your resume & cover letter with guided insights", 
+              " Try out 13+ AI tools with limited access",
+              "Get AI-powered answers for your doubts and questions",
+            "No commitments, no Payments — just jump in!"].map((feature, i) => (
                 <li key={i} className="flex items-center text-gray-300">
                   <CheckCircle className="text-green-500 w-5 h-5 mr-3 flex-shrink-0" />
                   <span className="font-light">{feature}</span>
@@ -430,22 +449,17 @@ export default function Pricing() {
             <h3 className="text-2xl font-light mb-2">Pro</h3>
             <p className="text-5xl font-light text-white mb-2">₹59/mo</p>
             <p className="text-sm text-blue-200 mb-8">
-              Great for growing teams
+              ⚡ Step up your game. Let AI work for you — smarter, faster.
             </p>
 
             <ul className="space-y-4 text-left mb-8">
-              {[
-                "Generate up to 5 videos daily",
-                "Summarize upto 10 PDFs, and 12 articles",
-                "Resume + cover letter generation",
-                "Up to 5 notes and 8 research assistance requests",
-                "Data analysis and quiz generation included",
-                "Up to 10 clips generation",
-                "Faster response time on support",
-                "Access to priority features before free users"
-              ].map((feature, i) => (
+              {["Everything in Free, plus 5x the power",
+               " Unlock deeper summarizations for PDFs, videos, articles",
+                " Get assignment help + quiz generation that actually makes sense",
+                "Boost your LinkedIn & resume game before your peers do",
+              " Just ₹59 – Less than your daily coffee, but way more rewarding"].map((feature, i) => (
                 <li key={i} className="flex items-center">
-                  <CheckCircle className="text-white w-5 h-5 mr-3 flex-shrink-0" />
+                  <CheckCircle className="text-green-500 w-5 h-5 mr-3 flex-shrink-0" />
                   <span className="font-light">{feature}</span>
                 </li>
               ))}
@@ -500,20 +514,15 @@ export default function Pricing() {
             <h3 className="text-2xl font-light text-white mb-2">Premium</h3>
             <p className="text-5xl font-light text-white mb-2">₹99/mo</p>
             <p className="text-sm text-gray-400 mb-8">
-              Built for power users
+              🚀 All-in. No limits. Just results.
             </p>
 
             <ul className="space-y-4 text-left mb-8">
-              {[
-                "10 video generations per day",
-                "Summarize up to 30 PDFs, articles, and YouTube videos",
-                "ATS resume analyses & 20 cover letters",
-                "Extensive support for notes, data & research",
-                "25 quiz and clip generations",
-                "Access to interview preparation tools",
-                "Early access to new features",
-                "Priority support"
-              ].map((feature, i) => (
+              {["Everything in Pro, now on steroids", 
+              "Generate 10+ videos, 25+ clips, and summaries like a pro",
+               "20+ resume/cover letter requests to nail every job role",
+                "Powerful tools for content creators, data pros, and power users",
+              "Designed for professionals, freelancers, and hustlers who want to win — not just play."].map((feature, i) => (
                 <li key={i} className="flex items-center text-gray-300">
                   <CheckCircle className="text-green-500 w-5 h-5 mr-3 flex-shrink-0" />
                   <span className="font-light">{feature}</span>
@@ -766,30 +775,6 @@ export default function Pricing() {
           onAuthSuccess={handleAuthSuccess}
         />
       )}
-
-      {/* Success Message */}
-        {paymentSuccess && (
-          <div className="fixed top-4 right-4 z-60 bg-gradient-to-r from-green-500 to-emerald-500 text-white p-6 rounded-2xl shadow-2xl max-w-md backdrop-blur-xl border border-green-400/20">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <CheckCircle className="w-6 h-6 mr-3" />
-                <div>
-                  <h3 className="font-semibold">Payment Successful! 🎉</h3>
-                  <p className="text-sm mt-1 text-green-100">
-                    Welcome to {purchasedPlan} plan! Your subscription is now active.
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={() => setPaymentSuccess(false)}
-                className="ml-4 text-green-100 hover:text-white transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-        )}
-        
     </section>
 
   );
