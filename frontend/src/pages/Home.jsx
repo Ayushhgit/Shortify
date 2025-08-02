@@ -283,7 +283,7 @@ const ShortifyLanding = () => {
               </span>
             </p>
 
-            <div className="mt-10">
+            <div className="mt-10 hidden md:block">
               <HelloBot />
             </div>
           </div>
@@ -438,43 +438,43 @@ const ShortifyLanding = () => {
 
       {/* Final CTA Section */}
       <section className="relative py-16 sm:py-24 lg:py-32 px-4 sm:px-6">
-      <div className="max-w-5xl mx-auto">
-        <div className="relative p-6 sm:p-12 lg:p-16 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-cyan-600/10 backdrop-blur-xl border border-white/10 overflow-hidden">
-          {/* Background effects */}
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-cyan-500/5 rounded-2xl sm:rounded-3xl" />
-          <div className="absolute top-0 left-1/4 w-32 h-32 sm:w-64 sm:h-64 bg-blue-500/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 right-1/4 w-32 h-32 sm:w-64 sm:h-64 bg-purple-500/10 rounded-full blur-3xl" />
-          
-          <div className="relative z-10 text-center">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 sm:mb-8 tracking-tight leading-tight">
-              <span className="bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent">
-                Ready to Transform
-              </span>
-              <br />
-              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                Your Workflow?
-              </span>
-            </h2>
-            
-            <p className="text-lg sm:text-xl text-gray-300 mb-8 sm:mb-12 max-w-3xl mx-auto font-light leading-relaxed px-2">
-              Let AI handle the heavy reading — you focus on understanding
-              what matters.
-            </p>
-            
-            <div className="flex flex-col items-center mb-6 sm:mb-8">
-              <button
-                onClick={() => navigate("/pricing")}
-                className="group relative w-full sm:w-auto px-8 sm:px-12 py-4 sm:py-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl sm:rounded-2xl font-bold text-lg sm:text-xl overflow-hidden transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/30 active:scale-95 touch-manipulation"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <span className="relative z-10 flex items-center justify-center gap-3">
-                  Start Free Trial
-                  <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 group-hover:rotate-12 transition-transform duration-300" />
+        <div className="max-w-5xl mx-auto">
+          <div className="relative p-6 sm:p-12 lg:p-16 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-cyan-600/10 backdrop-blur-xl border border-white/10 overflow-hidden">
+            {/* Background effects */}
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-cyan-500/5 rounded-2xl sm:rounded-3xl" />
+            <div className="absolute top-0 left-1/4 w-32 h-32 sm:w-64 sm:h-64 bg-blue-500/10 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 right-1/4 w-32 h-32 sm:w-64 sm:h-64 bg-purple-500/10 rounded-full blur-3xl" />
+
+            <div className="relative z-10 text-center">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 sm:mb-8 tracking-tight leading-tight">
+                <span className="bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent">
+                  Ready to Transform
                 </span>
-              </button>
-            </div>
-            
-            {/* Mobile-optimized feature list 
+                <br />
+                <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                  Your Workflow?
+                </span>
+              </h2>
+
+              <p className="text-lg sm:text-xl text-gray-300 mb-8 sm:mb-12 max-w-3xl mx-auto font-light leading-relaxed px-2">
+                Let AI handle the heavy reading — you focus on understanding
+                what matters.
+              </p>
+
+              <div className="flex flex-col items-center mb-6 sm:mb-8">
+                <button
+                  onClick={() => navigate("/pricing")}
+                  className="group relative w-full sm:w-auto px-8 sm:px-12 py-4 sm:py-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl sm:rounded-2xl font-bold text-lg sm:text-xl overflow-hidden transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/30 active:scale-95 touch-manipulation"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <span className="relative z-10 flex items-center justify-center gap-3">
+                    Start Free Trial
+                    <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 group-hover:rotate-12 transition-transform duration-300" />
+                  </span>
+                </button>
+              </div>
+
+              {/* Mobile-optimized feature list 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-xs sm:text-sm text-gray-400">
               <div className="flex items-center gap-2">
                 <Check className="w-3 h-3 sm:w-4 sm:h-4 text-green-400 flex-shrink-0" />
@@ -489,103 +489,25 @@ const ShortifyLanding = () => {
                 <span>Cancel anytime</span>
               </div>
             </div> */}
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
       {/*footer*/}
-      <footer className="relative z-10 mt-10"> 
-      <div className="mx-auto max-w-7xl px-4 py-10">
-        <div className="bg-gray-800/10 backdrop-blur-md rounded-2xl border border-white/30 shadow-md px-6 sm:px-8 py-8">
-          
-          {/* Mobile Layout - Hidden on Desktop */}
-          <div className="lg:hidden flex flex-col space-y-8">
-            
-            {/* Brand Section - Mobile */}
-            <div className="text-center">
-              <h1 className="text-3xl font-extrabold text-white mb-3">
-                Kwix<span className="text-green-500">Lab</span>
-              </h1>
-              <div className="text-gray-300 text-sm leading-relaxed h-6">
-                <Typewriter
-                  words={[
-                    "Your all-in-one AI-powered platform for video, document, and productivity tools.",
-                    "Generate viral YouTube Shorts in seconds with AI.",
-                    "Summarize YouTube videos into bite-sized insights instantly.",
-                    "Get instant PDF and article summaries with a single click.",
-                    "Analyze resumes and generate tailored cover letters effortlessly.",
-                    "Boost your productivity with AI-powered Notes and research tools.",
-                    "Transform data into insights with our smart Data Analyzer.",
-                    "Optimize your professional presence with the LinkedIn Helper.",
-                  ]}
-                  typeSpeed={50}
-                  deleteSpeed={40}
-                  delaySpeed={1000}
-                />
-              </div>
-            </div>
+      <footer className="relative z-10 mt-10">
+        <div className="mx-auto max-w-7xl px-4 py-10">
+          <div className="bg-gray-800/10 backdrop-blur-md rounded-2xl border border-white/30 shadow-md px-6 sm:px-8 py-8">
 
-            {/* Legal and Contact Section - Mobile */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-lg mx-auto">
-              
-              {/* Legal Section */}
+            {/* Mobile Layout - Hidden on Desktop */}
+            <div className="lg:hidden flex flex-col space-y-8">
+
+              {/* Brand Section - Mobile */}
               <div className="text-center">
-                <h2 className="text-lg font-semibold text-white mb-4">Legal</h2>
-                <div className="space-y-3">
-                  <div>
-                    <a 
-                      href="/refund-policy" 
-                      className="text-sm text-gray-300 hover:text-green-500 transition-colors duration-200 hover:underline block"
-                    >
-                      Refund Policy
-                    </a>
-                  </div>
-                  <div>
-                    <a 
-                      href="/terms-of-service" 
-                      className="text-sm text-gray-300 hover:text-green-500 transition-colors duration-200 hover:underline block"
-                    >
-                      Terms of Service
-                    </a>
-                  </div>
-                  <div>
-                    <a 
-                      href="/privacy-policy" 
-                      className="text-sm text-gray-300 hover:text-green-500 transition-colors duration-200 hover:underline block"
-                    >
-                      Privacy Policy
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              {/* Contact Section */}
-              <div className="text-center">
-                <h2 className="text-lg font-semibold text-white mb-4">Contact Us</h2>
-                <div className="flex items-center justify-center space-x-2 text-gray-300">
-                  <Mail className="w-4 h-4 flex-shrink-0" />
-                  <a 
-                    href="mailto:info@kwixlab.com"
-                    className="text-sm hover:text-green-500 transition-colors duration-200 break-all"
-                  >
-                    info@kwixlab.com
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Desktop Layout - Hidden on Mobile */}
-          <div className="hidden lg:block">
-            <div className="flex justify-between items-start">
-              
-              {/* Brand Section for Desktop */}
-              <div className="flex-1 max-w-2xl">
                 <h1 className="text-3xl font-extrabold text-white mb-3">
                   Kwix<span className="text-green-500">Lab</span>
                 </h1>
-                <div className="text-gray-300 text-md leading-relaxed h-6">
+                <div className="text-gray-300 text-sm leading-relaxed h-6">
                   <Typewriter
                     words={[
                       "Your all-in-one AI-powered platform for video, document, and productivity tools.",
@@ -603,33 +525,33 @@ const ShortifyLanding = () => {
                   />
                 </div>
               </div>
-              
-              {/* Legal and Contact for Desktop */}
-              <div className="flex gap-12">
-                
+
+              {/* Legal and Contact Section - Mobile */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-lg mx-auto">
+
                 {/* Legal Section */}
-                <div>
+                <div className="text-center">
                   <h2 className="text-lg font-semibold text-white mb-4">Legal</h2>
                   <div className="space-y-3">
                     <div>
-                      <a 
-                        href="/refund-policy" 
+                      <a
+                        href="/refund-policy"
                         className="text-sm text-gray-300 hover:text-green-500 transition-colors duration-200 hover:underline block"
                       >
                         Refund Policy
                       </a>
                     </div>
                     <div>
-                      <a 
-                        href="/terms-of-service" 
+                      <a
+                        href="/terms-of-service"
                         className="text-sm text-gray-300 hover:text-green-500 transition-colors duration-200 hover:underline block"
                       >
                         Terms of Service
                       </a>
                     </div>
                     <div>
-                      <a 
-                        href="/privacy-policy" 
+                      <a
+                        href="/privacy-policy"
                         className="text-sm text-gray-300 hover:text-green-500 transition-colors duration-200 hover:underline block"
                       >
                         Privacy Policy
@@ -639,13 +561,13 @@ const ShortifyLanding = () => {
                 </div>
 
                 {/* Contact Section */}
-                <div>
+                <div className="text-center">
                   <h2 className="text-lg font-semibold text-white mb-4">Contact Us</h2>
-                  <div className="flex items-center space-x-2 text-gray-300">
+                  <div className="flex items-center justify-center space-x-2 text-gray-300">
                     <Mail className="w-4 h-4 flex-shrink-0" />
-                    <a 
+                    <a
                       href="mailto:info@kwixlab.com"
-                      className="text-sm hover:text-green-500 transition-colors duration-200"
+                      className="text-sm hover:text-green-500 transition-colors duration-200 break-all"
                     >
                       info@kwixlab.com
                     </a>
@@ -653,17 +575,95 @@ const ShortifyLanding = () => {
                 </div>
               </div>
             </div>
+
+            {/* Desktop Layout - Hidden on Mobile */}
+            <div className="hidden lg:block">
+              <div className="flex justify-between items-start">
+
+                {/* Brand Section for Desktop */}
+                <div className="flex-1 max-w-2xl">
+                  <h1 className="text-3xl font-extrabold text-white mb-3">
+                    Kwix<span className="text-green-500">Lab</span>
+                  </h1>
+                  <div className="text-gray-300 text-md leading-relaxed h-6">
+                    <Typewriter
+                      words={[
+                        "Your all-in-one AI-powered platform for video, document, and productivity tools.",
+                        "Generate viral YouTube Shorts in seconds with AI.",
+                        "Summarize YouTube videos into bite-sized insights instantly.",
+                        "Get instant PDF and article summaries with a single click.",
+                        "Analyze resumes and generate tailored cover letters effortlessly.",
+                        "Boost your productivity with AI-powered Notes and research tools.",
+                        "Transform data into insights with our smart Data Analyzer.",
+                        "Optimize your professional presence with the LinkedIn Helper.",
+                      ]}
+                      typeSpeed={50}
+                      deleteSpeed={40}
+                      delaySpeed={1000}
+                    />
+                  </div>
+                </div>
+
+                {/* Legal and Contact for Desktop */}
+                <div className="flex gap-12">
+
+                  {/* Legal Section */}
+                  <div>
+                    <h2 className="text-lg font-semibold text-white mb-4">Legal</h2>
+                    <div className="space-y-3">
+                      <div>
+                        <a
+                          href="/refund-policy"
+                          className="text-sm text-gray-300 hover:text-green-500 transition-colors duration-200 hover:underline block"
+                        >
+                          Refund Policy
+                        </a>
+                      </div>
+                      <div>
+                        <a
+                          href="/terms-of-service"
+                          className="text-sm text-gray-300 hover:text-green-500 transition-colors duration-200 hover:underline block"
+                        >
+                          Terms of Service
+                        </a>
+                      </div>
+                      <div>
+                        <a
+                          href="/privacy-policy"
+                          className="text-sm text-gray-300 hover:text-green-500 transition-colors duration-200 hover:underline block"
+                        >
+                          Privacy Policy
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Contact Section */}
+                  <div>
+                    <h2 className="text-lg font-semibold text-white mb-4">Contact Us</h2>
+                    <div className="flex items-center space-x-2 text-gray-300">
+                      <Mail className="w-4 h-4 flex-shrink-0" />
+                      <a
+                        href="mailto:info@kwixlab.com"
+                        className="text-sm hover:text-green-500 transition-colors duration-200"
+                      >
+                        info@kwixlab.com
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Copyright */}
+          <div className="text-center mt-6 text-sm text-gray-300">
+            © 2025 KwixLab. All Rights Reserved.
           </div>
         </div>
+      </footer>
 
-        {/* Bottom Copyright */}
-        <div className="text-center mt-6 text-sm text-gray-300">
-           © 2025 KwixLab. All Rights Reserved.
-        </div>
-      </div>
-    </footer>
 
-    
       <Toast
         show={showToast}
         message={toastMessage}
