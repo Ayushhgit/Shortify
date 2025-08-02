@@ -326,29 +326,6 @@ export default function Pricing() {
           fits.
         </p>
 
-        {/* Success Message */}
-        {paymentSuccess && (
-          <div className="fixed top-4 right-4 z-60 bg-gradient-to-r from-green-500 to-emerald-500 text-white p-6 rounded-2xl shadow-2xl max-w-md backdrop-blur-xl border border-green-400/20">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <CheckCircle className="w-6 h-6 mr-3" />
-                <div>
-                  <h3 className="font-semibold">Payment Successful! 🎉</h3>
-                  <p className="text-sm mt-1 text-green-100">
-                    Welcome to {purchasedPlan} plan! Your subscription is now active.
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={() => setPaymentSuccess(false)}
-                className="ml-4 text-green-100 hover:text-white transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-        )}
-
         {/* Current Subscription Status */}
         {user && subscriptionStatus.subscription_type !== 'free' && subscriptionStatus.is_active && (
           <div className="mb-12 bg-gradient-to-r from-white/5 to-white/[0.02] border border-white/10 rounded-2xl p-6 max-w-md w-full mx-auto backdrop-blur-xl">
@@ -789,6 +766,30 @@ export default function Pricing() {
           onAuthSuccess={handleAuthSuccess}
         />
       )}
+
+      {/* Success Message */}
+        {paymentSuccess && (
+          <div className="fixed top-4 right-4 z-60 bg-gradient-to-r from-green-500 to-emerald-500 text-white p-6 rounded-2xl shadow-2xl max-w-md backdrop-blur-xl border border-green-400/20">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <CheckCircle className="w-6 h-6 mr-3" />
+                <div>
+                  <h3 className="font-semibold">Payment Successful! 🎉</h3>
+                  <p className="text-sm mt-1 text-green-100">
+                    Welcome to {purchasedPlan} plan! Your subscription is now active.
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setPaymentSuccess(false)}
+                className="ml-4 text-green-100 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        )}
+        
     </section>
 
   );
