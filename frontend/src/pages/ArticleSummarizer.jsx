@@ -18,6 +18,7 @@ import {
 import { getToken } from '../firebase';
 import Toast from "../components/Toast";
 import { useNavigate } from "react-router-dom";
+import ReactMarkdown from "react-markdown";
 
 // Toast Component
 
@@ -128,7 +129,9 @@ const ChatWithDocument = ({ documentContent, isVisible, onClose }) => {
                 ? "bg-emerald-600 text-white"
                 : "bg-gray-800 text-gray-300 border border-gray-700"
                 }`}>
-                <p className="text-sm leading-relaxed">{message.content}</p>
+                <ReactMarkdown className="text-sm leading-relaxed">
+                  {message.content}
+                </ReactMarkdown>
               </div>
             </div>
           ))}
@@ -505,7 +508,9 @@ export default function ArticleSummarizer() {
                     </div>
                     <div className="prose max-w-none">
                       <div className="whitespace-pre-line text-gray-200 leading-relaxed text-lg">
-                        {summary}
+                        <ReactMarkdown>
+                          {summary}
+                        </ReactMarkdown>
                       </div>
                     </div>
                   </div>

@@ -22,6 +22,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import Toast from "../components/Toast";
 import { getToken } from "../firebase";
+import ReactMarkdown from "react-markdown";
 
 // Chat Component
 const ChatWithDocument = ({ documentContent, isVisible, onClose }) => {
@@ -134,18 +135,18 @@ const ChatWithDocument = ({ documentContent, isVisible, onClose }) => {
           {messages.map((message, index) => (
             <div
               key={index}
-              className={`flex ${
-                message.type === "user" ? "justify-end" : "justify-start"
-              }`}
+              className={`flex ${message.type === "user" ? "justify-end" : "justify-start"
+                }`}
             >
               <div
-                className={`max-w-[80%] p-4 rounded-2xl ${
-                  message.type === "user"
+                className={`max-w-[80%] p-4 rounded-2xl ${message.type === "user"
                     ? "bg-emerald-600 text-white"
                     : "bg-gray-800 text-gray-300 border border-gray-700"
-                }`}
+                  }`}
               >
-                <p className="text-sm leading-relaxed">{message.content}</p>
+                <ReactMarkdown className="text-sm leading-relaxed">
+                  {message.content}
+                </ReactMarkdown>
               </div>
             </div>
           ))}
@@ -510,7 +511,7 @@ export default function PremiumPdfSummarizer() {
       </header>
 
       {/* Hero Section */}
-     <main className="relative pt-20 sm:pt-32 pb-8 sm:pb-16 px-3 sm:px-6">
+      <main className="relative pt-20 sm:pt-32 pb-8 sm:pb-16 px-3 sm:px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 bg-gradient-to-r from-gray-800/50 to-gray-900/50 border border-emerald-500/30 rounded-full px-4 py-2 mb-6 mt-8 md:mt-0">
@@ -548,16 +549,14 @@ export default function PremiumPdfSummarizer() {
             ].map(({ step, label, completed, icon: Icon }, index) => (
               <React.Fragment key={step}>
                 <div
-                  className={`relative rounded-xl sm:rounded-2xl p-2 sm:p-4 border-2 transition-all duration-500 ${
-                    completed ? "text-emerald-400" : "text-gray-500"
-                  }`}
+                  className={`relative rounded-xl sm:rounded-2xl p-2 sm:p-4 border-2 transition-all duration-500 ${completed ? "text-emerald-400" : "text-gray-500"
+                    }`}
                 >
                   <div
-                    className={`relative rounded-2xl p-4 border-2 transition-all duration-500 ${
-                      completed
+                    className={`relative rounded-2xl p-4 border-2 transition-all duration-500 ${completed
                         ? "border-emerald-500 bg-gradient-to-r from-emerald-900/50 to-emerald-800/50 shadow-lg shadow-emerald-500/25"
                         : "border-gray-600 bg-gray-800/50"
-                    }`}
+                      }`}
                   >
                     {completed ? (
                       <div className="relative">
@@ -570,20 +569,18 @@ export default function PremiumPdfSummarizer() {
                   </div>
                   <span className="mt-3 font-semibold text-sm">{label}</span>
                   <div
-                    className={`mt-1 w-2 h-2 rounded-full transition-all duration-500 ${
-                      completed
+                    className={`mt-1 w-2 h-2 rounded-full transition-all duration-500 ${completed
                         ? "bg-emerald-400 shadow-lg shadow-emerald-500/50"
                         : "bg-gray-600"
-                    }`}
+                      }`}
                   ></div>
                 </div>
                 {index < 2 && (
                   <div
-                    className={`h-1 w-24 mx-6 rounded-full transition-all duration-500 ${
-                      completed
+                    className={`h-1 w-24 mx-6 rounded-full transition-all duration-500 ${completed
                         ? "bg-gradient-to-r from-emerald-500 to-blue-500"
                         : "bg-gray-600"
-                    }`}
+                      }`}
                   ></div>
                 )}
               </React.Fragment>
@@ -593,13 +590,12 @@ export default function PremiumPdfSummarizer() {
           {/* File Upload Zone */}
           <div className="max-w-2xl mx-auto mb-12">
             <div
-              className={`relative rounded-3xl border-2 border-dashed transition-all duration-500 ${
-                isDragOver
+              className={`relative rounded-3xl border-2 border-dashed transition-all duration-500 ${isDragOver
                   ? "border-emerald-400 bg-gradient-to-r from-emerald-900/30 to-blue-900/30 scale-105"
                   : file
-                  ? "border-emerald-500 bg-gradient-to-r from-emerald-900/20 to-emerald-800/20"
-                  : "border-gray-600 bg-gray-800/30 hover:border-emerald-500 hover:bg-emerald-900/20"
-              } backdrop-blur-sm shadow-xl`}
+                    ? "border-emerald-500 bg-gradient-to-r from-emerald-900/20 to-emerald-800/20"
+                    : "border-gray-600 bg-gray-800/30 hover:border-emerald-500 hover:bg-emerald-900/20"
+                } backdrop-blur-sm shadow-xl`}
               onDrop={handleDrop}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
@@ -682,11 +678,10 @@ export default function PremiumPdfSummarizer() {
             <button
               onClick={handleSubmit}
               disabled={!file || isProcessing}
-              className={`group relative overflow-hidden px-6 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-bold text-base text-center sm:text-lg transition-all duration-300 ${
-                !file || isProcessing
+              className={`group relative overflow-hidden px-6 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-bold text-base text-center sm:text-lg transition-all duration-300 ${!file || isProcessing
                   ? "bg-gray-700 text-gray-500 cursor-not-allowed"
                   : "bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-500 hover:to-blue-500 text-white shadow-xl hover:shadow-2xl hover:scale-105 hover:-translate-y-1"
-              }`}
+                }`}
             >
               {!file || isProcessing ? null : (
                 <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
@@ -772,7 +767,7 @@ export default function PremiumPdfSummarizer() {
                 {/* Quick Stats */}
                 {analysisData && (
                   <div className="px-8 py-6 border-b border-gray-700">
-                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6">
                       {[
                         {
                           label: "Words",
@@ -823,11 +818,10 @@ export default function PremiumPdfSummarizer() {
                     <button
                       key={id}
                       onClick={() => setActiveTab(id)}
-                      className={`flex items-center gap-2 px-3 sm:px-6 py-3 sm:py-4 font-medium whitespace-nowrap transition-all ${
-                        activeTab === id
+                      className={`flex items-center gap-2 px-3 sm:px-6 py-3 sm:py-4 font-medium whitespace-nowrap transition-all ${activeTab === id
                           ? "text-emerald-400 border-b-2 border-emerald-400 bg-emerald-900/30"
                           : "text-gray-400 hover:text-gray-200 hover:bg-gray-800/50"
-                      }`}
+                        }`}
                     >
                       <Icon className="h-4 w-4" />
                       {label}

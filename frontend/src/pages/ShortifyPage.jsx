@@ -1183,7 +1183,7 @@ export default function ShortifyPage() {
 
               {/* CTA */}
               <div className="text-center">
-                <a href="/features/ArticleSummarizer">
+                <a href="/features/article-summarizer">
                   <button className="bg-gradient-to-r from-orange-500 via-purple-500 to-pink-500 hover:from-orange-600 hover:via-purple-600 hover:to-pink-600 text-white py-4 px-12 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-green-500/25 flex items-center gap-3 mx-auto">
                     <FileText className="w-6 h-6" />
                     Try Now

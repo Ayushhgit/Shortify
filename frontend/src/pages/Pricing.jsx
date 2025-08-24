@@ -336,7 +336,8 @@ export default function Pricing() {
                   <Shield className="w-6 h-6 mr-3" />
                   <div className="text-left">
                     <h3 className="font-semibold text-lg text-white">Active Subscription</h3>
-                    <p className="text-sm text-gray-300">
+                    <p onClick={() => navigate("/profile")}
+                    className="text-sm text-gray-300">
                       Current Plan:
                       <strong className="capitalize text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
                         {subscriptionStatus.subscription_type}
