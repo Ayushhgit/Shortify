@@ -18,7 +18,8 @@ RUN apt-get update && apt-get install -y \
     pkg-config \
     libcairo2-dev \
     libgirepository1.0-dev \
-    && sed -i 's/rights="none"/rights="read|write"/g' /etc/ImageMagick-6/policy.xml \
+    && if [ -f /etc/ImageMagick-6/policy.xml ]; then sed -i 's/rights="none"/rights="read|write"/g' /etc/ImageMagick-6/policy.xml; fi \
+    && if [ -f /etc/ImageMagick-7/policy.xml ]; then sed -i 's/rights="none"/rights="read|write"/g' /etc/ImageMagick-7/policy.xml; fi \
     && rm -rf /var/lib/apt/lists/*
     
 # Set Firebase credentials
