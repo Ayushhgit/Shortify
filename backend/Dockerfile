@@ -1,51 +1,36 @@
-# ===========================
-# Stage 1 - Build environment
-# ===========================
-FROM python:3.10-slim AS builder
-
-WORKDIR /app
-
-# Install system dependencies for building Python packages
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    gcc \
-    libpq-dev \
-    pkg-config \
-    libcairo2-dev \
-    libgirepository1.0-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# Copy requirements first for caching
-COPY requirements.txt .
-
-# Upgrade pip and install dependencies to a temporary folder
-RUN pip install --upgrade pip && \
-    pip install --no-cache-dir --prefix=/install -r requirements.txt
-
-# ===========================
-# Stage 2 - Runtime environment
-# ===========================
+# Base Python image
 FROM python:3.10-slim
 
+# Set working directory
 WORKDIR /app
 
-# Install only runtime system dependencies (no build tools)
+# Install system dependencies required by moviepy and other packages
 RUN apt-get update && apt-get install -y \
     ffmpeg \
     libsm6 \
     libxext6 \
     libxrender1 \
     imagemagick \
+    build-essential \
+    gcc \
+    libpq-dev \
     curl \
+    pkg-config \
+    libcairo2-dev \
+    libgirepository1.0-dev \
     && if [ -f /etc/ImageMagick-6/policy.xml ]; then sed -i 's/rights="none"/rights="read|write"/g' /etc/ImageMagick-6/policy.xml; fi \
     && if [ -f /etc/ImageMagick-7/policy.xml ]; then sed -i 's/rights="none"/rights="read|write"/g' /etc/ImageMagick-7/policy.xml; fi \
     && rm -rf /var/lib/apt/lists/*
-
-# Copy installed Python packages from builder stage
-COPY --from=builder /install /usr/local
-
+    
 # Set Firebase credentials
 COPY shortify-876e7-firebase-adminsdk-fbsvc-9193bebcff.json /app/firebase-credentials.json
+
+# Copy requirements first for better caching
+COPY requirements.txt .
+
+# Upgrade pip and install Python dependencies with verbose output
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -v -r requirements.txt
 
 # Copy application source code
 COPY . .
