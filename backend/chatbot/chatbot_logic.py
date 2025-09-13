@@ -8,7 +8,7 @@ load_dotenv()
 # Configuration
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
-MODEL = "llama3-70b-8192"  # Options: llama3-70b-8192, gemma-7b-it
+MODEL = "llama-3.3-70b-versatile"  # Options: llama-3.3-70b-versatile, gemma-7b-it
 
 def generate_response(user_input: str) -> str:
     headers = {

@@ -26,7 +26,7 @@ load_dotenv()
 # Groq setup
 llm = ChatGroq(
     api_key=os.getenv("GROQ_RESEARCH_KEY"),
-    model="llama3-70b-8192",
+    model="llama-3.3-70b-versatile",
     temperature=0
 )
 

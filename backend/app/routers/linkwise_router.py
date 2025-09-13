@@ -545,7 +545,7 @@ async def analyze_profile_with_ai(profile_data: Dict[str, Any]) -> ProfileScore:
         """
         
         response = groq_client.chat.completions.create(
-            model="llama3-8b-8192",
+            model="llama-3.1-8b-instant",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.3,
             max_tokens=1500
@@ -724,7 +724,7 @@ async def generate_headlines_bio(request: HeadlineBioRequest) -> GeneratedConten
         """
         
         response = groq_client.chat.completions.create(
-            model="llama3-8b-8192",
+            model="llama-3.1-8b-instant",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.7
         )

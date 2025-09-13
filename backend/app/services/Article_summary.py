@@ -42,7 +42,7 @@ def generate_summary_with_groq(content: str) -> str:
         truncated_content = content[:6000] if len(content) > 6000 else content
         
         payload = {
-            "model": "llama3-70b-8192",  # You can also use "mixtral-8x7b-32768" or "gemma-7b-it"
+            "model": "llama-3.3-70b-versatile",  # You can also use "mixtral-8x7b-32768" or "gemma-7b-it"
             "messages": [
                 {
                     "role": "system",

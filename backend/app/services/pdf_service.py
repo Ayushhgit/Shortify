@@ -229,7 +229,7 @@ Document content:
         }
         
         payload = {
-            "model": "llama3-70b-8192",
+            "model": "llama-3.3-70b-versatile",
             "messages": messages,
             "max_tokens": 1000,
             "temperature": 0.3
@@ -362,7 +362,7 @@ INSTRUCTIONS:
         }
         
         payload = {
-            "model": "llama3-70b-8192",
+            "model": "llama-3.3-70b-versatile",
             "messages": messages,
             "max_tokens": 1000,
             "temperature": 0.3,

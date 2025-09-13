@@ -23,7 +23,7 @@ class GroqAPIClient:
             "Content-Type": "application/json"
         }
     
-    async def generate_completion(self, messages: List[Dict], model: str = "llama3-8b-8192", max_tokens: int = 2000) -> str:
+    async def generate_completion(self, messages: List[Dict], model: str = "llama-3.1-8b-instant", max_tokens: int = 2000) -> str:
         """Generate completion using Groq API"""
         payload = {
             "model": model,
