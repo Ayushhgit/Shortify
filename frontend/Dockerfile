@@ -16,7 +16,7 @@ COPY . .
 
 # FIX 3: Increase memory limit slightly (Assuming you added Swap)
 # We rely on the Swap space created in the previous step to handle this.
-RUN NODE_OPTIONS="--max-old-space-size=4096" npm run build
+RUN NODE_OPTIONS="--max-old-space-size=2048" npm run build
 
 # Stage 2: Serve with nginx
 FROM nginx:alpine
