@@ -32,38 +32,43 @@ class VideoDownloader:
 
         video_path.parent.mkdir(parents=True, exist_ok=True)
 
-        # Fixed postprocessor configuration
+        # [UPDATED] Anti-Bot Configuration mimicking Android Client
         ydl_opts = {
-        'format': format or 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
-        'outtmpl': str(video_path),
-        'noplaylist': True,
-        'quiet': True,
-        'merge_output_format': 'mp4',
-        'no_warnings': False,
-        'writethumbnail': download_thumbnail,
-    
-        # ✅ Spoof real browser headers
-        'add_header': [
-        'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-        'Accept-Language: en-US,en;q=0.9'
-        ],
-    
-        'cookies': 'cookies.txt',  # path to your exported YouTube cookies
+            'format': format or 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
+            'outtmpl': str(video_path),
+            'noplaylist': True,
+            'quiet': True,
+            'merge_output_format': 'mp4',
+            'no_warnings': True,
+            'writethumbnail': download_thumbnail,
+            
+            # --- CRITICAL ANTI-BOT SETTINGS ---
+            'extractor_args': {
+                'youtube': {
+                    'player_client': ['android', 'web'],
+                    'player_skip': ['webpage', 'config'],
+                }
+            },
+            'http_headers': {
+                'User-Agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36',
+                'Accept-Language': 'en-US,en;q=0.9',
+            },
+            'cookies': 'cookies.txt',  # Will look for cookies.txt in the backend root
+            # ----------------------------------
 
-        # ✅ Postprocessors for thumbnail if needed
-        'postprocessors': [
-        *(
-            [{'key': 'FFmpegThumbnailsConvertor', 'format': 'jpg'}]
-            if download_thumbnail else []
-        )
-        ],
+            'postprocessors': [
+                *(
+                    [{'key': 'FFmpegThumbnailsConvertor', 'format': 'jpg'}]
+                    if download_thumbnail else []
+                )
+            ],
 
-        # ✅ Retry logic 
-        'retries': 3,
-        'fragment_retries': 3,
-        'sleep_interval': 2,
-        'max_sleep_interval': 5
-        }   
+            # Enhanced Retry Logic for Production
+            'retries': 10,
+            'fragment_retries': 10,
+            'sleep_interval': 3,
+            'max_sleep_interval': 10
+        }
 
         if max_filesize:
             ydl_opts['max_filesize'] = max_filesize

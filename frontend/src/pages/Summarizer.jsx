@@ -1,100 +1,148 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from "react";
 import {
   Link2, Home,
   Settings, User,
-  Clock,
-  Sparkles,
-  Shield,
-  Zap,
-  Brain,
-  Bell,
-  Youtube,
-  FileText,
-  Download
+  PlayCircle,
+  Loader2, Check, X, Sparkles
 } from "lucide-react";
-import { useNavigate } from 'react-router-dom';
+import Toast from "../components/Toast";
+import { useNavigate } from "react-router-dom";
+import { getToken } from "../firebase";
 
-export default function YouTubeSummarizerComingSoon() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [glitchActive, setGlitchActive] = useState(false);
-  const [particles, setParticles] = useState([]);
-  const containerRef = useRef(null);
+
+export default function YouTubeSummarizer() {
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState("success");
+  const [youtubeUrl, setYoutubeUrl] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [summary, setSummary] = useState("");
+  const [videoDetails, setVideoDetails] = useState(null);
+  const [inputError, setInputError] = useState("");
 
   const navigate = useNavigate();
 
-  // Generate random particles
-  useEffect(() => {
-    const generateParticles = () => {
-      const newParticles = [];
-      for (let i = 0; i < 30; i++) {
-        newParticles.push({
-          id: i,
-          x: Math.random() * 100,
-          y: Math.random() * 100,
-          size: Math.random() * 3 + 1,
-          opacity: Math.random() * 0.5 + 0.2,
-          duration: Math.random() * 8 + 5,
-          delay: Math.random() * 4,
+  const displayToast = (message, type = "success") => {
+    setToastMessage(message);
+    setToastType(type);
+    setShowToast(true);
+  };
+
+  const handleUrlChange = (event) => {
+    setYoutubeUrl(event.target.value);
+    setInputError("");
+  };
+
+  const isValidYouTubeUrl = (url) => {
+    const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+/;
+    return youtubeRegex.test(url);
+  };
+
+  const handleClear = () => {
+    setYoutubeUrl("");
+    setSummary("");
+    setVideoDetails(null);
+    setInputError("");
+  };
+
+  const handleSubmit = async (event) => {
+    try {
+      if (event) event.preventDefault();
+
+      const idToken = await getToken();
+      if (!idToken) {
+        console.error("User not authenticated");
+        displayToast(
+          "Authentication failed. Please try logging in again.",
+          "error"
+        );
+        return; // ⛔ Stop execution if not authenticated
+      }
+
+      if (!youtubeUrl.trim()) {
+        setInputError("Please enter a YouTube URL");
+        return;
+      }
+
+      if (!isValidYouTubeUrl(youtubeUrl)) {
+        setInputError("Please enter a valid YouTube URL");
+        return;
+      }
+
+      setIsProcessing(true);
+
+      const response = await fetch("https://kwixlab.com/api/ytSummary/summarize", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({
+          url: youtubeUrl,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ detail: "Unknown error" }));
+        console.error("Server error:", errorData);
+
+        // Handle different error types
+        if (response.status === 400) {
+          displayToast(`Invalid request: ${errorData.detail}`, "error");
+        } else if (response.status === 500) {
+          displayToast("Server error occurred. Please try again later.", "error");
+        } else {
+          displayToast(`Error: ${errorData.detail || response.status}`, "error");
+        }
+        return;
+      }
+
+      const data = await response.json();
+
+      if (data && data.videoDetails) {
+        setVideoDetails({
+          title: data.videoDetails.title,
+          channelName: data.videoDetails.channelName,
+          duration: data.videoDetails.duration,
+          publishDate: data.videoDetails.publishDate,
+          thumbnailUrl: data.videoDetails.thumbnailUrl,
         });
       }
-      setParticles(newParticles);
-    };
 
-    generateParticles();
-  }, []);
+      setSummary(data.summary);
+      displayToast("Video summarized successfully!");
+    } catch (error) {
+      console.error("Error:", error);
+      displayToast("Failed to summarize", "error");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
+  const handleCopySummary = async () => {
+    try {
+      await navigator.clipboard.writeText(summary);
+      displayToast("Summary copied to clipboard!");
+    } catch (error) {
+      displayToast("Failed to copy summary", "error");
+    }
+  };
 
-    const glitchInterval = setInterval(() => {
-      setGlitchActive(true);
-      setTimeout(() => setGlitchActive(false), 150);
-    }, 7000 + Math.random() * 4000);
+  const handleDownloadSummary = () => {
+    const element = document.createElement("a");
+    const file = new Blob([summary], { type: 'text/plain' });
+    element.href = URL.createObjectURL(file);
+    element.download = `${videoDetails?.title || 'video'}_summary.txt`;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+    displayToast("Summary downloaded successfully!");
+  };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      clearInterval(glitchInterval);
-    };
-  }, []);
-
-  const FloatingElement = ({ delay, duration, x, y, children, className = "" }) => (
-    <div 
-      className={`absolute ${className}`}
-      style={{
-        left: `${x}%`,
-        top: `${y}%`,
-        animation: `float ${duration}s ease-in-out ${delay}s infinite alternate`,
-        willChange: 'transform',
-      }}
-    >
-      {children}
-    </div>
-  );
-
-  const Particle = ({ particle }) => (
-    <div
-      className="absolute rounded-full bg-gradient-to-r from-purple-400 to-pink-400"
-      style={{
-        left: `${particle.x}%`,
-        top: `${particle.y}%`,
-        width: `${particle.size}px`,
-        height: `${particle.size}px`,
-        opacity: particle.opacity,
-        animation: `twinkle ${particle.duration}s ease-in-out ${particle.delay}s infinite alternate`,
-      }}
-    />
-  );
 
   return (
-    <div 
-      ref={containerRef}
-      className="min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800"
-    >
-      {/* Animated background - maintaining original YouTube summarizer style */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800 relative overflow-hidden">
+      {/* Animated Background */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -inset-10 opacity-50">
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
@@ -102,38 +150,6 @@ export default function YouTubeSummarizerComingSoon() {
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse delay-500"></div>
         </div>
       </div>
-
-      {/* Floating particles */}
-      <div className="absolute inset-0 pointer-events-none">
-        {particles.map((particle) => (
-          <Particle key={particle.id} particle={particle} />
-        ))}
-      </div>
-
-      {/* Floating geometric shapes */}
-      <FloatingElement delay={0} duration={6} x={12} y={25} className="opacity-30">
-        <div className="w-20 h-20 border-2 border-purple-400 rotate-45 animate-spin-slow rounded-lg backdrop-blur-sm" />
-      </FloatingElement>
-      <FloatingElement delay={2} duration={8} x={85} y={20} className="opacity-25">
-        <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full animate-pulse shadow-lg shadow-purple-500/50" />
-      </FloatingElement>
-      <FloatingElement delay={1} duration={7} x={15} y={70} className="opacity-40">
-        <Youtube className="w-12 h-12 text-purple-400 animate-bounce" />
-      </FloatingElement>
-      <FloatingElement delay={3} duration={5} x={80} y={75} className="opacity-30">
-        <div className="w-14 h-14 border-2 border-pink-400 rounded-full animate-ping" />
-      </FloatingElement>
-
-      {/* Enhanced mouse follower effect */}
-      <div 
-        className="fixed w-96 h-96 rounded-full pointer-events-none z-0 opacity-20 blur-3xl transition-all duration-500 ease-out"
-        style={{
-          left: mousePosition.x - 192,
-          top: mousePosition.y - 192,
-          background: 'radial-gradient(circle, rgba(147,51,234,0.4) 0%, rgba(236,72,153,0.3) 35%, rgba(59,130,246,0.2) 70%, transparent 100%)',
-          transform: `scale(${1 + Math.sin(Date.now() * 0.001) * 0.1})`,
-        }}
-      />
 
       {/* Header */}
       <header className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] max-w-7xl rounded-2xl bg-white/20 backdrop-blur-xl shadow-2xl border border-white/30">
@@ -150,14 +166,12 @@ export default function YouTubeSummarizerComingSoon() {
           <div className="flex items-center space-x-2">
             {[
               { icon: Home, href: "/shortify" },
-              { icon: User, href: "/profile" },
-              { icon: Settings, href: "/settings" },
+              { icon: User, href: "/Profile" },
+              { icon: Settings, href: "/Settings" },
             ].map((item, index) => (
               <button
                 key={index}
-                onClick={() => navigate(item.href)}
-                className="p-3 rounded-xl hover:bg-white/20 transition-all duration-300 hover:scale-110 backdrop-blur-sm border border-white/10"
-              >
+                className="p-3 rounded-xl hover:bg-white/20 transition-all duration-300 hover:scale-110 backdrop-blur-sm border border-white/10" onClick={() => navigate(item.href)}>
                 <item.icon className="h-5 w-5 text-white/80 hover:text-white" />
               </button>
             ))}
@@ -165,176 +179,197 @@ export default function YouTubeSummarizerComingSoon() {
         </div>
       </header>
 
-      {/* Main content */}
-      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center text-center p-4 pt-24">
-        
-        {/* Coming Soon Badge */}
-        <div className="inline-flex items-center gap-2 bg-purple-500/20 border border-purple-500/30 rounded-full px-6 py-3 mb-8 animate-fade-in mt-5">
-          <Clock className="h-5 w-5 text-purple-400 animate-pulse" />
-          <span className="text-lg font-medium text-purple-300">
-            Coming Soon
-          </span>
-        </div>
+      {/* Main Content */}
+      <main className="relative z-10 pt-32 pb-16 px-6">
+        <div className="max-w-6xl mx-auto">
+          {/* Hero Section */}
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-purple-500/20 border border-purple-500/30 text-purple-300 text-sm font-medium mb-6">
+              <Sparkles className="w-4 h-4 mr-2" />
+              AI-Powered Video Summarization
+            </div>
+            <h1 className="text-6xl font-bold text-white mb-6 leading-tight">
+              Transform Videos
+              <span className="block bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                Into Insights
+              </span>
+            </h1>
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+              Get instant, AI-driven summaries from YouTube videos to save time and extract key information
+            </p>
+          </div>
 
-        {/* Enhanced glitch effect container for title */}
-        <div className="relative mb-8 perspective-1000">
-          <h1 
-            className={`text-6xl sm:text-7xl lg:text-8xl font-bold bg-gradient-to-r from-white to-purple-400 text-transparent bg-clip-text tracking-tight select-none transition-all duration-200 mb-4 ${
-              glitchActive ? 'animate-pulse' : ''
-            }`}
-            style={{
-              filter: glitchActive ? 'hue-rotate(90deg) saturate(2) brightness(1.3)' : 'none',
-              textShadow: glitchActive 
-                ? '0 0 30px rgba(147, 51, 234, 0.8), 0 0 60px rgba(236, 72, 153, 0.4)' 
-                : '0 0 40px rgba(147, 51, 234, 0.3)',
-              transform: glitchActive ? 'translateZ(20px) rotateX(5deg)' : 'translateZ(0) rotateX(0deg)',
-            }}
-          >
-            Summ
-            <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-              lytic
-            </span>
-          </h1>
-          
-          {/* Enhanced glitch overlay */}
-          {glitchActive && (
-            <>
-              <h1 
-                className="absolute inset-0 text-6xl sm:text-7xl lg:text-8xl font-bold text-pink-400 opacity-40 animate-pulse"
-                style={{ 
-                  transform: 'translate(2px, -2px)',
-                  mixBlendMode: 'screen',
-                  filter: 'blur(1px)'
-                }}
-              >
-                Summlytic
-              </h1>
-              <h1 
-                className="absolute inset-0 text-6xl sm:text-7xl lg:text-8xl font-bold text-purple-400 opacity-30 animate-pulse"
-                style={{ 
-                  transform: 'translate(-1px, 1px)',
-                  mixBlendMode: 'overlay'
-                }}
-              >
-                Summlytic
-              </h1>
-            </>
+          {/* YouTube URL Input */}
+          <div className="max-w-2xl mx-auto mb-12">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                  <Link2 className="h-6 w-6 text-purple-400" />
+                </div>
+                <input
+                  type="text"
+                  value={youtubeUrl}
+                  onChange={handleUrlChange}
+                  placeholder="Paste YouTube video URL here..."
+                  className={`block w-full pl-14 pr-12 py-4 border-2 ${inputError ? "border-red-400/50" : "border-white/30"
+                    } rounded-2xl shadow-xl focus:ring-2 focus:ring-purple-400 focus:border-transparent bg-white/10 backdrop-blur-sm text-white placeholder-gray-300 text-lg font-medium hover:bg-white/20 transition-all duration-300`}
+                />
+                {youtubeUrl && (
+                  <button
+                    type="button"
+                    onClick={() => setYoutubeUrl("")}
+                    className="absolute inset-y-0 right-0 flex items-center pr-4 hover:scale-110 transition-transform"
+                  >
+                    <X className="h-6 w-6 text-gray-400 hover:text-white" />
+                  </button>
+                )}
+              </div>
+
+              {inputError && (
+                <p className="text-red-400 text-center font-medium">{inputError}</p>
+              )}
+
+              <div className="flex justify-center gap-4">
+                <button
+                  type="submit"
+                  disabled={isProcessing}
+                  className={`group relative px-8 py-4 rounded-2xl font-bold text-white transition-all duration-300 hover:scale-105 hover:shadow-2xl ${isProcessing
+                    ? "bg-gray-600/50 cursor-not-allowed"
+                    : "bg-gradient-to-r from-purple-500 to-pink-500"
+                    }`}
+                >
+                  <div className="flex items-center space-x-3">
+                    {isProcessing ? (
+                      <>
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        <span className="text-lg">Processing...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="h-5 w-5" />
+                        <span className="text-lg">Summarize Video</span>
+                      </>
+                    )}
+                  </div>
+                  {!isProcessing && (
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
+                  )}
+                </button>
+
+                {youtubeUrl && !isProcessing && (
+                  <button
+                    type="button"
+                    onClick={handleClear}
+                    className="px-8 py-4 border-2 border-white/30 rounded-2xl text-white font-bold hover:bg-white/20 transition-all duration-300 backdrop-blur-sm"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+            </form>
+          </div>
+
+          {/* Video Summary Section */}
+          {videoDetails && summary && (
+            <div className="max-w-4xl mx-auto animate-fadeIn">
+              <div className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden mb-6">
+                <div className="flex flex-col lg:flex-row">
+                  <div className="lg:w-2/5">
+                    <div className="relative pb-[56.25%] bg-gradient-to-br from-purple-500/20 to-pink-500/20">
+                      <img
+                        src={videoDetails.thumbnailUrl}
+                        alt="Video thumbnail"
+                        className="absolute inset-0 w-full h-full object-cover rounded-tl-3xl lg:rounded-bl-3xl lg:rounded-tr-none"
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-tl-3xl lg:rounded-bl-3xl lg:rounded-tr-none">
+                        <PlayCircle className="w-20 h-20 text-white opacity-80" />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-6 lg:w-3/5">
+                    <h3 className="text-xl font-bold text-white line-clamp-2 mb-2">
+                      {videoDetails.title}
+                    </h3>
+                    <p className="text-purple-300 font-medium mb-3">
+                      {videoDetails.channelName}
+                    </p>
+                    <div className="flex space-x-4 text-sm text-gray-300">
+                      <span className="bg-white/10 px-3 py-1 rounded-full">{videoDetails.duration}</span>
+                      <span className="bg-white/10 px-3 py-1 rounded-full">{videoDetails.publishDate}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-8 border-t border-white/20">
+                  <div className="flex items-center space-x-3 mb-6">
+                    <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl">
+                      <Sparkles className="w-5 h-5 text-white" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-white">AI Summary</h2>
+                  </div>
+                  <div className="prose max-w-none">
+                    <div className="whitespace-pre-line text-gray-200 leading-relaxed text-lg">{summary}</div>
+                  </div>
+                </div>
+
+                <div className="p-6 bg-white/5 border-t border-white/20 flex justify-end space-x-4">
+                  <button className="px-6 py-3 text-white border-2 border-white/30 hover:bg-white/20 rounded-xl transition-all duration-300 font-medium backdrop-blur-sm"
+                    onClick={handleCopySummary}>
+                    Copy Summary
+                  </button>
+                  <button className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl transition-all duration-300 font-medium hover:scale-105"
+                    onClick={handleDownloadSummary}>
+                    Download as Text
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* How It Works Section */}
+          {!summary && (
+            <div className="max-w-5xl mx-auto mt-20">
+              <h2 className="text-3xl font-bold text-center mb-12 text-white">
+                How It Works
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {[
+                  { icon: Link2, title: "Paste Link", desc: "Simply paste any YouTube video URL to get started", color: "from-purple-500 to-purple-600" },
+                  { icon: Loader2, title: "AI Processing", desc: "Our AI analyzes the video content and extracts key points", color: "from-pink-500 to-pink-600" },
+                  { icon: Check, title: "Get Summary", desc: "Receive a concise summary with all the essential information", color: "from-blue-500 to-blue-600" }
+                ].map((item, index) => (
+                  <div key={index} className="bg-white/10 backdrop-blur-xl p-8 rounded-3xl shadow-xl border border-white/20 text-center hover:scale-105 transition-all duration-300 hover:bg-white/20">
+                    <div className={`bg-gradient-to-r ${item.color} rounded-2xl w-16 h-16 flex items-center justify-center mx-auto mb-6`}>
+                      <item.icon className="h-8 w-8 text-white" />
+                    </div>
+                    <h3 className="font-bold text-xl mb-3 text-white">{item.title}</h3>
+                    <p className="text-gray-300 leading-relaxed">
+                      {item.desc}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
         </div>
-
-        {/* Enhanced description */}
-        <div className="mb-12 space-y-6 max-w-3xl animate-fade-in-delay">
-          <h2 className="text-3xl md:text-4xl font-bold text-white bg-gradient-to-r from-white to-gray-300 bg-clip-text">
-            Transform Videos Into Insights
-          </h2>
-          <p className="text-xl md:text-2xl text-gray-300 leading-relaxed">
-            Get instant, AI-driven summaries from YouTube videos to save time and extract key information with advanced natural language processing
-          </p>
-          <div className="w-32 h-1 bg-gradient-to-r from-purple-400 to-pink-400 mx-auto rounded-full animate-fade-in-delay-2" />
-        </div>
-
-        {/* Features Preview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mb-12 animate-fade-in-delay">
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 hover:bg-white/15 transition-all duration-300 hover:scale-105">
-            <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-4 mx-auto">
-              <Brain className="h-6 w-6 text-white" />
-            </div>
-            <h3 className="text-lg font-semibold text-white mb-2">AI-Powered Analysis</h3>
-            <p className="text-gray-300 text-sm">Advanced natural language processing extracts key insights and main points</p>
-          </div>
-          
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 hover:bg-white/15 transition-all duration-300 hover:scale-105">
-            <div className="w-12 h-12 bg-gradient-to-r from-pink-500 to-purple-500 rounded-xl flex items-center justify-center mb-4 mx-auto">
-              <FileText className="h-6 w-6 text-white" />
-            </div>
-            <h3 className="text-lg font-semibold text-white mb-2">Instant Summaries</h3>
-            <p className="text-gray-300 text-sm">Get comprehensive summaries from any YouTube video in seconds</p>
-          </div>
-          
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 hover:bg-white/15 transition-all duration-300 hover:scale-105">
-            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center mb-4 mx-auto">
-              <Download className="h-6 w-6 text-white" />
-            </div>
-            <h3 className="text-lg font-semibold text-white mb-2">Export & Share</h3>
-            <p className="text-gray-300 text-sm">Copy, download, and share your summaries in multiple formats</p>
-          </div>
-        </div>
-
-        {/* Enhanced decorative elements */}
-        <div className="flex space-x-12 text-4xl animate-fade-in-delay-2">
-          <div className="animate-bounce hover:scale-125 transition-transform cursor-pointer" style={{ animationDelay: '0s' }}>🎬</div>
-          <div className="animate-bounce hover:scale-125 transition-transform cursor-pointer" style={{ animationDelay: '0.5s' }}>🧠</div>
-          <div className="animate-bounce hover:scale-125 transition-transform cursor-pointer" style={{ animationDelay: '1s' }}>⚡</div>
-          <div className="animate-bounce hover:scale-125 transition-transform cursor-pointer" style={{ animationDelay: '1.5s' }}>📝</div>
-        </div>
-      </div>
+      </main>
 
       {/* Footer */}
       <footer className="relative z-10 bg-white/5 backdrop-blur-sm border-t border-white/20 mt-8">
         <div className="max-w-7xl mx-auto px-6 py-8 flex items-center justify-center">
-          <div className="flex items-center gap-2 text-gray-300">
-            <Sparkles className="w-4 h-4" />
-            <span className="text-sm">© 2025 KwixLab. All Rights Reserved.</span>
-            <Sparkles className="w-4 h-4" />
-          </div>
+          <p className="text-gray-300 text-center">
+            © 2025 KwixLab. All Rights Reserved.
+          </p>
         </div>
       </footer>
 
-      {/* Enhanced CSS animations */}
-      <style jsx>{`
-        @keyframes float {
-          0% { transform: translateY(0px) rotate(0deg) scale(1); }
-          100% { transform: translateY(-30px) rotate(180deg) scale(1.1); }
-        }
-        
-        @keyframes fade-in {
-          from { opacity: 0; transform: translateY(30px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes fade-in-delay {
-          from { opacity: 0; transform: translateY(30px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes fade-in-delay-2 {
-          from { opacity: 0; transform: translateY(30px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes twinkle {
-          0% { opacity: 0.2; transform: scale(1); }
-          50% { opacity: 0.7; transform: scale(1.2); }
-          100% { opacity: 0.2; transform: scale(1); }
-        }
-        
-        @keyframes spin-slow {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        
-        .animate-fade-in {
-          animation: fade-in 1.2s ease-out forwards;
-        }
-        
-        .animate-fade-in-delay {
-          animation: fade-in-delay 1.2s ease-out 0.6s forwards;
-          opacity: 0;
-        }
-        
-        .animate-fade-in-delay-2 {
-          animation: fade-in-delay-2 1.2s ease-out 1.2s forwards;
-          opacity: 0;
-        }
-        
-        .animate-spin-slow {
-          animation: spin-slow 8s linear infinite;
-        }
-        
-        .perspective-1000 {
-          perspective: 1000px;
-        }
-      `}</style>
+      {/* Toast */}
+      <Toast
+        show={showToast}
+        message={toastMessage}
+        type={toastType}
+        onClose={() => setShowToast(false)}
+      />
     </div>
   );
 }

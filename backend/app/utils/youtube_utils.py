@@ -8,12 +8,32 @@ import time
 import logging
 from xml.etree.ElementTree import ParseError
 import google.generativeai as genai
-import tempfile
 from app.core.config import settings
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# --- ANTI-BOT CONFIGURATION ---
+# This configuration mimics an Android device to bypass bot detection
+ANDROID_USER_AGENT = 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36'
+
+COMMON_YDL_OPTS = {
+    'quiet': True,
+    'no_warnings': True,
+    'extractor_args': {
+        'youtube': {
+            'player_client': ['android', 'web'],
+            'player_skip': ['webpage', 'config'],
+        }
+    },
+    'http_headers': {
+        'User-Agent': ANDROID_USER_AGENT,
+        'Accept-Language': 'en-US,en;q=0.9',
+    },
+    'cookiefile': 'cookies.txt',  # Will look for cookies.txt in the backend root
+}
+# ------------------------------
 
 def transcribe_with_gemini(video_url: str) -> str:
     """Primary transcription using Google Gemini API with file state checking"""
@@ -27,12 +47,11 @@ def transcribe_with_gemini(video_url: str) -> str:
         with tempfile.TemporaryDirectory() as temp_dir:
             audio_path = os.path.join(temp_dir, "audio.%(ext)s")
             
-            # Download audio only with better format selection
+            # [UPDATED] Applied COMMON_YDL_OPTS here
             ydl_opts = {
+                **COMMON_YDL_OPTS,
                 'format': 'bestaudio[ext=m4a]/bestaudio[ext=mp3]/bestaudio/best',
                 'outtmpl': audio_path,
-                'quiet': True,
-                'no_warnings': True,
                 'extract_flat': False,
             }
             
@@ -108,10 +127,11 @@ def extract_video_id(url: str) -> str:
 
 def get_video_details(video_url: str):
     """Get video metadata"""
+    # [UPDATED] Applied COMMON_YDL_OPTS here and set extract_flat to True
     ydl_opts = {
-        'quiet': True,
+        **COMMON_YDL_OPTS,
         'skip_download': True,
-        'extract_flat': False,
+        'extract_flat': True,
     }
     with YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(video_url, download=False)
@@ -254,12 +274,11 @@ def transcribe_audio(video_url: str) -> str:
         with tempfile.TemporaryDirectory() as temp_dir:
             audio_path = os.path.join(temp_dir, "audio.%(ext)s")
             
-            # Download audio only with better format selection
+            # [UPDATED] Applied COMMON_YDL_OPTS here
             ydl_opts = {
+                **COMMON_YDL_OPTS,
                 'format': 'bestaudio[ext=m4a]/bestaudio[ext=mp3]/bestaudio/best',
                 'outtmpl': audio_path,
-                'quiet': True,
-                'no_warnings': True,
                 'extract_flat': False,
             }
             
