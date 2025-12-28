@@ -13,7 +13,7 @@ import json
 
 # LangChain and Groq imports
 from langchain_groq import ChatGroq
-from langchain.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate
 
 # File processing imports
 import PyPDF2
