@@ -44,7 +44,7 @@ class VideoDownloader:
             
             # --- CRITICAL ANTI-BOT SETTINGS ---
             'http_headers': {
-                'User-Agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36',
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
                 'Accept-Language': 'en-US,en;q=0.9',
             },
             'cookiefile': '/app/cookies.txt',  # Will look for cookies.txt in the backend root

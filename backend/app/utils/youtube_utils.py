@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 # --- ANTI-BOT CONFIGURATION ---
 # This configuration mimics an Android device to bypass bot detection
-ANDROID_USER_AGENT = 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36'
+ANDROID_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36'
 
 COMMON_YDL_OPTS = {
     'quiet': True,
