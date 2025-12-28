@@ -1,5 +1,4 @@
 # Stage 1: Build the Vite app
-# FIX 1: Use Node 20 (Required by your app) and 'slim' (Smaller/Faster)
 FROM node:20-slim AS builder
 
 # Set working directory
@@ -8,14 +7,14 @@ WORKDIR /app
 # Install dependencies
 COPY package.json package-lock.json ./
 
-# FIX 2: Use 'npm ci' which is faster and cleaner for production builds than 'npm install'
-RUN npm ci
+# [CHANGED] Use 'npm install' instead of 'npm ci' to fix the lockfile mismatch
+# Added --legacy-peer-deps to be safe against conflict errors
+RUN npm install --legacy-peer-deps
 
 # Copy the rest of the app
 COPY . .
 
-# FIX 3: Increase memory limit slightly (Assuming you added Swap)
-# We rely on the Swap space created in the previous step to handle this.
+# Build the app (Using the memory limit for your Swap space)
 RUN NODE_OPTIONS="--max-old-space-size=2048" npm run build
 
 # Stage 2: Serve with nginx
