@@ -21,17 +21,11 @@ ANDROID_USER_AGENT = 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHT
 COMMON_YDL_OPTS = {
     'quiet': True,
     'no_warnings': True,
-    'extractor_args': {
-        'youtube': {
-            'player_client': ['android', 'web'],
-            'player_skip': ['webpage', 'config'],
-        }
-    },
     'http_headers': {
         'User-Agent': ANDROID_USER_AGENT,
         'Accept-Language': 'en-US,en;q=0.9',
     },
-    'cookiefile': 'cookies.txt',  # Will look for cookies.txt in the backend root
+    'cookiefile': '/app/cookies.txt',  # Will look for cookies.txt in the backend root
 }
 # ------------------------------
 

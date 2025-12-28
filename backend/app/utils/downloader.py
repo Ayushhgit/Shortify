@@ -43,17 +43,11 @@ class VideoDownloader:
             'writethumbnail': download_thumbnail,
             
             # --- CRITICAL ANTI-BOT SETTINGS ---
-            'extractor_args': {
-                'youtube': {
-                    'player_client': ['android', 'web'],
-                    'player_skip': ['webpage', 'config'],
-                }
-            },
             'http_headers': {
                 'User-Agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36',
                 'Accept-Language': 'en-US,en;q=0.9',
             },
-            'cookies': 'cookies.txt',  # Will look for cookies.txt in the backend root
+            'cookiefile': '/app/cookies.txt',  # Will look for cookies.txt in the backend root
             # ----------------------------------
 
             'postprocessors': [
