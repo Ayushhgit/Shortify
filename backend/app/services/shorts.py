@@ -48,6 +48,8 @@ class ShortsService:
             # Create clips concurrently using the optimized method
             clips = await VideoEditor.create_clips(video_path, segments)
             logger.info(f"[ShortsService] {len(clips)} clips created for video {video_id}")
+            await VideoDownloader.cleanup_files(video_id)
+            logger.info(f"[ShortsService] Cleaned up original video files for {video_id}")
 
             return VideoClipsResponse(
                 video_id=video_id,
