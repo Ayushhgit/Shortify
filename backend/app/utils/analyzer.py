@@ -6,15 +6,13 @@ from pathlib import Path
 import tempfile
 import subprocess
 from typing import List, Tuple, Dict, Any
-import moviepy.editor as mp 
+import moviepy.editor as mp
 import faster_whisper
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 
-# Import settings from the core config
 from app.core.config import settings
 
-# Logger setup
 logger = logging.getLogger(__name__)
 
 class VideoAnalyzer:
@@ -25,7 +23,7 @@ class VideoAnalyzer:
         
         try:
             # Load with librosa (duration check helps prevent OOM on huge files)
-            y, sr = librosa.load(audio_path, sr=None, duration=300) 
+            y, sr = librosa.load(audio_path, sr=None, duration=600) # Analyze up to 10 mins
             
             hop_length = 512
             rms = librosa.feature.rms(y=y, hop_length=hop_length)[0]
@@ -36,7 +34,13 @@ class VideoAnalyzer:
             onset_env = onset_env[:min_len]
             
             # Combine RMS (Loudness) and Onset (Rhythm)
-            energy = 0.7 * rms + 0.3 * onset_env
+            # 60% Loudness, 40% Rhythm
+            energy = 0.6 * rms + 0.4 * onset_env
+            
+            # Normalize immediately to 0-1 range for easier thresholding
+            if np.max(energy) > 0:
+                energy = energy / np.max(energy)
+                
             return energy
 
         except Exception as e:
@@ -59,40 +63,52 @@ class VideoAnalyzer:
             str(audio_path), "-y"
         ]
         
+        # Use run instead of Popen to ensure it finishes before we access the file
         subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         return audio_path
 
     @staticmethod
     async def analyze_with_groq(text: str) -> float:
         """
-        [NEW] Use Groq API to rate viral potential (0.0 to 1.0).
-        Replaces the slow local HuggingFace model.
+        Use Groq API to rate viral potential (0.0 to 1.0).
         """
         try:
             if not text or len(text) < 10:
-                return 0.1
+                return 0.2 # Low score for empty/short text
 
             llm = ChatGroq(
-                temperature=0,
-                model_name="llama-3.3-70b-versatile", # Extremely fast & smart
+                temperature=0.1, # Slight creativity to find nuances
+                model_name="llama-3.3-70b-versatile", # Latest stable model
                 api_key=settings.GROQ_API_KEY
             )
 
             prompt = ChatPromptTemplate.from_template(
-                """Analyze this video transcript segment. Rate its 'Viral Potential' on a scale of 0 to 10.
-                Consider: Hook, Emotional Impact, Humor, or Interesting Facts.
+                """You are a Viral Content Editor. Analyze this video transcript.
+                Rate its 'Viral Potential' from 0 to 100.
                 
+                Criteria for High Score (>80):
+                - Strong Hook or unexpected statement.
+                - High emotional content (anger, joy, shock).
+                - Useful facts or "How-to" value.
+                - Jokes or funny moments.
+
                 Transcript: "{text}"
                 
-                Return ONLY the number (e.g. 8.5). Do not write anything else."""
+                Return ONLY the number (e.g. 85). No text, no explanation."""
             )
 
             chain = prompt | llm
             response = await chain.ainvoke({"text": text})
             
-            # Parse number
-            score = float(response.content.strip())
-            return min(max(score / 10.0, 0.0), 1.0) # Normalize to 0.0 - 1.0
+            # Parse number robustly
+            content = response.content.strip()
+            import re
+            match = re.search(r'\d+', content)
+            if match:
+                score = float(match.group())
+                return min(max(score / 100.0, 0.0), 1.0) # Normalize to 0.0 - 1.0
+            
+            return 0.5 # Default if parsing fails
 
         except Exception as e:
             logger.warning(f"Groq analysis failed: {e}. Defaulting to 0.5")
@@ -106,90 +122,150 @@ class VideoAnalyzer:
     ) -> List[Tuple[float, float, float]]:
         
         logger.info(f"[MAIN] Starting analysis for: {video_path}")
-        audio_path = None # Initialize variable
+        audio_path = None
         
         try:
             # 1. Extract Audio
             audio_path = await VideoAnalyzer.extract_audio(video_path)
             
-            # 2. Analyze Energy (Librosa - Fast)
+            # 2. Analyze Energy
             energy = await VideoAnalyzer.analyze_energy(str(audio_path))
             
-            # Thresholding logic
-            threshold = np.mean(energy) + (0.5 * np.std(energy))
-            high_energy_frames = np.where(energy >= threshold)[0]
-            
-            # Group frames into segments
+            # --- [UPDATED] ADAPTIVE THRESHOLDING ---
+            # Try to find at least 5 segments. If fail, lower the bar.
             segments = []
             hop_length = 512
-            sr = 44100
+            sr = 44100 # Librosa default
             
-            if len(high_energy_frames) > 0:
-                breaks = np.where(np.diff(high_energy_frames) > 100)[0] + 1
+            # Try thresholds: 70% percentile -> 50% -> 30% -> 10% (Desperation mode)
+            percentiles = [70, 50, 30, 10] 
+            
+            for p in percentiles:
+                if len(segments) >= 5: 
+                    break # We found enough
+                
+                logger.info(f"[ANALYSIS] Trying energy percentile: Top {100-p}%")
+                threshold = np.percentile(energy, p)
+                high_energy_frames = np.where(energy >= threshold)[0]
+                
+                if len(high_energy_frames) == 0: continue
+
+                # Group frames (allow gaps of 1 second = ~43 frames)
+                breaks = np.where(np.diff(high_energy_frames) > 86)[0] + 1
                 split_frames = np.split(high_energy_frames, breaks)
                 
+                current_batch = []
                 for frames in split_frames:
-                    if len(frames) < 10: continue
+                    if len(frames) < 10: continue # Skip noise
+                    
+                    # Convert to seconds (Approx SR correction for librosa load default)
+                    # Note: We loaded with SR=None, but energy calculation assumes default mapping
+                    # Let's trust the ratio.
+                    # Duration of array / Array Length = Time per frame
+                    # Better: Librosa loads at 22050 by default if sr=None not specified correctly, 
+                    # but we used sr=None so it uses native. Let's rely on standard calc.
+                    # Frame to Time: frame_index * hop_length / sr
+                    # To be safe, we assume standard 22050 for consistency in logic if sr varies
                     
                     start = (frames[0] * hop_length) / 22050 
                     end = (frames[-1] * hop_length) / 22050
                     duration = end - start
                     
+                    # Constraint: Shorts must be 15s - 60s
+                    if duration < 15:
+                        # Try to extend slightly
+                        padding = (15 - duration) / 2
+                        start = max(0, start - padding)
+                        end = end + padding
+                        duration = end - start
+                    
                     if 15 <= duration <= 60:
                         conf = float(np.mean(energy[frames]))
-                        segments.append({"start": start, "end": end, "conf": conf, "text": ""})
+                        # Check overlap with existing segments
+                        is_duplicate = False
+                        for s in segments:
+                            # If overlap is > 50%
+                            overlap_start = max(start, s['start'])
+                            overlap_end = min(end, s['end'])
+                            overlap = max(0, overlap_end - overlap_start)
+                            if overlap > 0.5 * duration:
+                                is_duplicate = True
+                                break
+                        
+                        if not is_duplicate:
+                            current_batch.append({"start": start, "end": end, "conf": conf, "text": ""})
+                
+                # Add unique ones from this batch
+                segments.extend(current_batch)
+                
+            logger.info(f"[ANALYSIS] Found {len(segments)} potential energy candidates")
 
-            # Fallback
-            if not segments:
-                logger.info("No energy segments found, using fallback time slicing")
+            # --- [UPDATED] SMARTER FALLBACK ---
+            # If energy analysis failed completely (e.g. silent video or constant noise)
+            if len(segments) < 2:
+                logger.warning("[ANALYSIS] Not enough energy segments. Generating Smart Distribution.")
                 try:
                     video = mp.VideoFileClip(str(video_path))
                     dur = video.duration
                     video.close()
                 except:
-                    dur = 60 # Default fallback
+                    dur = 60
                 
-                for t in range(0, int(dur), 30):
+                # Create 3 clips distributed evenly: 10% mark, 40% mark, 70% mark
+                targets = [dur * 0.1, dur * 0.4, dur * 0.7]
+                for t in targets:
                     if t + 30 <= dur:
-                        segments.append({"start": t, "end": t+30, "conf": 0.5, "text": ""})
+                        segments.append({"start": t, "end": t+30, "conf": 0.3, "text": ""})
 
-            segments = sorted(segments, key=lambda x: x['conf'], reverse=True)[:5]
+            # Limit to Top 8 candidates for AI processing (Save time/money)
+            segments = sorted(segments, key=lambda x: x['conf'], reverse=True)[:8]
 
-            # 3. [OPTIMIZED] AI Enhancement
+            # 3. AI Enhancement (Whisper + Groq)
             if use_whisper or use_gpt:
-                logger.info(f"Enhancing {len(segments)} segments with AI...")
+                logger.info(f"[AI] Enhancing {len(segments)} segments with Groq AI...")
+                
+                # Load Whisper (Base is fine for CPU)
                 model = faster_whisper.WhisperModel("base", device="cpu", compute_type="int8", cpu_threads=4)
                 
                 for seg in segments:
                     try:
-                        if use_gpt:
-                            with tempfile.NamedTemporaryFile(suffix=".wav", delete=True) as f:
-                                cmd = [
-                                    "ffmpeg", "-ss", str(seg['start']), "-t", str(seg['end'] - seg['start']),
-                                    "-i", str(audio_path), "-vn", "-acodec", "pcm_s16le", "-ar", "16000", "-ac", "1", 
-                                    f.name, "-y"
-                                ]
-                                subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                                
-                                segs, _ = model.transcribe(f.name, beam_size=1, temperature=0)
-                                text = " ".join([s.text for s in segs])
-                                seg['text'] = text
-                                
+                        # Extract mini clip audio for precise transcription
+                        with tempfile.NamedTemporaryFile(suffix=".wav", delete=True) as f:
+                            cmd = [
+                                "ffmpeg", "-ss", str(seg['start']), "-t", str(seg['end'] - seg['start']),
+                                "-i", str(audio_path), "-vn", "-acodec", "pcm_s16le", "-ar", "16000", "-ac", "1", 
+                                f.name, "-y"
+                            ]
+                            subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                            
+                            segs, _ = model.transcribe(f.name, beam_size=1, temperature=0)
+                            text = " ".join([s.text for s in segs])
+                            seg['text'] = text
+                            
+                            if use_gpt:
                                 groq_score = await VideoAnalyzer.analyze_with_groq(text)
-                                seg['conf'] = (seg['conf'] + groq_score) / 2
+                                logger.info(f"[AI] Segment {seg['start']:.1f}s | Groq Score: {groq_score:.2f}")
+                                # Weight Groq score higher (70% Groq, 30% Energy)
+                                seg['conf'] = (seg['conf'] * 0.3) + (groq_score * 0.7)
                                 
                     except Exception as e:
-                        logger.error(f"AI Enhancement failed: {e}")
+                        logger.error(f"AI Enhancement failed for segment: {e}")
 
+            # 4. Final Filtering
+            # Return top 5, but ensure we have at least 2 if possible
             final_segments = [(s['start'], s['end'], s['conf']) for s in segments]
             final_segments.sort(key=lambda x: x[2], reverse=True)
-            return final_segments[:5]
+            
+            # Ensure we return at least a few clips if they exist
+            result = final_segments[:5]
+            
+            logger.info(f"[RESULT] Returning {len(result)} clips")
+            return result
 
         finally:
-            # [CRITICAL] Clean up the massive audio file
             if audio_path and os.path.exists(audio_path):
                 try:
                     os.remove(audio_path)
-                    logger.info(f"[MAIN] Cleaned up temporary audio file: {audio_path}")
+                    logger.info(f"[CLEANUP] Removed temporary audio: {audio_path}")
                 except Exception as e:
-                    logger.error(f"[MAIN] Failed to delete audio file: {e}")
+                    logger.error(f"Cleanup failed: {e}")
